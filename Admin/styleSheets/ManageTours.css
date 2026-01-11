@@ -28,8 +28,8 @@ html, body {
     border-bottom-right-radius: 18px;
     position: relative;
     z-index: 2;
-    transition: box-shadow 0.2s;
     overflow-y: auto;
+    transition: box-shadow 0.2s;
 }
 
 .sidebar-title {
@@ -110,7 +110,8 @@ html, body {
     box-shadow: 0 8px 32px rgba(34, 48, 74, 0.16);
 }
 
-.user-actions {
+/* Tour actions/search/add button */
+.tour-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -119,7 +120,7 @@ html, body {
     flex-wrap: wrap;
 }
 
-.user-search {
+.tour-search {
     padding: 10px 16px;
     border: 1px solid #dbe6f3;
     border-radius: 8px;
@@ -128,12 +129,12 @@ html, body {
     transition: border-color 0.2s;
 }
 
-.user-search:focus {
+.tour-search:focus {
     border-color: #4fc3f7;
     outline: none;
 }
 
-.add-user-btn {
+.add-tour-btn {
     background: #4fc3f7;
     color: #fff;
     border: none;
@@ -146,16 +147,17 @@ html, body {
     box-shadow: 0 2px 8px rgba(79, 195, 247, 0.10);
 }
 
-.add-user-btn:hover {
+.add-tour-btn:hover {
     background: #22304a;
     color: #4fc3f7;
 }
 
-.user-table-container {
+/* Table container and table */
+.tour-table-container {
     overflow-x: auto;
 }
 
-.user-table {
+.tour-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 8px;
@@ -165,27 +167,28 @@ html, body {
     box-shadow: 0 2px 8px rgba(34, 48, 74, 0.06);
 }
 
-.user-table th, .user-table td {
+.tour-table th, .tour-table td {
     padding: 14px 16px;
     text-align: left;
     font-size: 1em;
 }
 
-.user-table th {
+.tour-table th {
     background: #e9f3fa;
     color: #22304a;
     font-weight: 700;
     border-bottom: 2px solid #dbe6f3;
 }
 
-.user-table tr {
+.tour-table tr {
     transition: background 0.18s;
 }
 
-.user-table tr:hover {
+.tour-table tr:hover {
     background: #e3f2fd;
 }
 
+/* Status badges */
 .status {
     display: inline-block;
     padding: 4px 12px;
@@ -204,6 +207,7 @@ html, body {
     color: #c62828;
 }
 
+/* Action buttons */
 .edit-btn, .delete-btn {
     background: #fff;
     border: 1px solid #4fc3f7;
@@ -266,7 +270,7 @@ html, body {
     .admin-card {
         padding: 16px;
     }
-    .user-table th, .user-table td {
+    .tour-table th, .tour-table td {
         padding: 10px 8px;
         font-size: 0.95em;
     }

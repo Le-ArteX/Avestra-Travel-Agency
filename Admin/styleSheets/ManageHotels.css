@@ -4,32 +4,32 @@ html, body {
     background: #fff !important;
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
     color: #22304a;
+    height: 100%;
     overflow: hidden;
-    height: 100vh;
 }
 
 .admin-container {
     display: flex;
     height: 100vh;
-    background: #fff;
     overflow: hidden;
+    background: #fff;
 }
 
 .sidebar {
     width: 240px;
+    height: 100vh;
     background: linear-gradient(135deg, #22304a 80%, #2e3e5c 100%);
     color: #fff;
-    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     box-shadow: 2px 0 16px rgba(34, 48, 74, 0.10);
     border-top-right-radius: 18px;
     border-bottom-right-radius: 18px;
-    position: relative;
     z-index: 2;
     transition: box-shadow 0.2s;
     overflow-y: auto;
+    flex-shrink: 0;
 }
 
 .sidebar-title {
@@ -77,11 +77,11 @@ html, body {
 
 .main-content {
     flex: 1;
+    height: 100vh;
+    overflow-y: auto;
     padding: 48px 48px 32px 48px;
     background: #fff;
-    height: 100vh;
     box-sizing: border-box;
-    overflow-y: auto;
 }
 
 .admin-header h1 {
@@ -110,7 +110,7 @@ html, body {
     box-shadow: 0 8px 32px rgba(34, 48, 74, 0.16);
 }
 
-.user-actions {
+.hotel-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -119,7 +119,16 @@ html, body {
     flex-wrap: wrap;
 }
 
-.user-search {
+.section-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.hotel-search {
     padding: 10px 16px;
     border: 1px solid #dbe6f3;
     border-radius: 8px;
@@ -128,12 +137,26 @@ html, body {
     transition: border-color 0.2s;
 }
 
-.user-search:focus {
+.hotel-search:focus {
     border-color: #4fc3f7;
     outline: none;
 }
 
-.add-user-btn {
+.section-search {
+    padding: 10px 16px;
+    border: 1px solid #dbe6f3;
+    border-radius: 8px;
+    font-size: 1em;
+    width: 220px;
+    transition: border-color 0.2s;
+}
+
+.section-search:focus {
+    border-color: #4fc3f7;
+    outline: none;
+}
+
+.add-hotel-btn {
     background: #4fc3f7;
     color: #fff;
     border: none;
@@ -146,16 +169,38 @@ html, body {
     box-shadow: 0 2px 8px rgba(79, 195, 247, 0.10);
 }
 
-.add-user-btn:hover {
+.add-hotel-btn:hover {
     background: #22304a;
     color: #4fc3f7;
 }
 
-.user-table-container {
+.add-section-btn {
+    background: #4fc3f7;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(79, 195, 247, 0.10);
+}
+
+.add-section-btn:hover {
+    background: #22304a;
+    color: #4fc3f7;
+}
+
+.hotel-table-container {
     overflow-x: auto;
 }
 
-.user-table {
+.section-table-container {
+    overflow-x: auto;
+}
+
+.hotel-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 8px;
@@ -165,24 +210,55 @@ html, body {
     box-shadow: 0 2px 8px rgba(34, 48, 74, 0.06);
 }
 
-.user-table th, .user-table td {
+.hotel-table th, .hotel-table td {
     padding: 14px 16px;
     text-align: left;
     font-size: 1em;
 }
 
-.user-table th {
+.hotel-table th {
     background: #e9f3fa;
     color: #22304a;
     font-weight: 700;
     border-bottom: 2px solid #dbe6f3;
 }
 
-.user-table tr {
+.hotel-table tr {
     transition: background 0.18s;
 }
 
-.user-table tr:hover {
+.hotel-table tr:hover {
+    background: #e3f2fd;
+}
+
+.section-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    background: #f4f6fb;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(34, 48, 74, 0.06);
+}
+
+.section-table th, .section-table td {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 1em;
+}
+
+.section-table th {
+    background: #e9f3fa;
+    color: #22304a;
+    font-weight: 700;
+    border-bottom: 2px solid #dbe6f3;
+}
+
+.section-table tr {
+    transition: background 0.18s;
+}
+
+.section-table tr:hover {
     background: #e3f2fd;
 }
 
@@ -266,7 +342,11 @@ html, body {
     .admin-card {
         padding: 16px;
     }
-    .user-table th, .user-table td {
+    .section-table th, .section-table td {
+        padding: 10px 8px;
+        font-size: 0.95em;
+    }
+    .hotel-table th, .hotel-table td {
         padding: 10px 8px;
         font-size: 0.95em;
     }

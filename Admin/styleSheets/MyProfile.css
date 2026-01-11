@@ -110,123 +110,116 @@ html, body {
     box-shadow: 0 8px 32px rgba(34, 48, 74, 0.16);
 }
 
-.user-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.admin-card h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #22304a;
     margin-bottom: 24px;
-    gap: 16px;
-    flex-wrap: wrap;
 }
 
-.user-search {
-    padding: 10px 16px;
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding-bottom: 32px;
+    border-bottom: 2px solid #e9f3fa;
+}
+
+.profile-avatar {
+    flex-shrink: 0;
+}
+
+.profile-avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid #4fc3f7;
+    object-fit: cover;
+}
+
+.profile-info h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.8em;
+    color: #22304a;
+}
+
+.profile-role {
+    margin: 0 0 4px 0;
+    font-size: 1.1em;
+    color: #4fc3f7;
+    font-weight: 600;
+}
+
+.profile-status {
+    margin: 0;
+    font-size: 1em;
+    color: #2e7d32;
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-row label {
+    font-weight: 600;
+    color: #22304a;
+    font-size: 1em;
+}
+
+.form-row input {
+    padding: 10px 14px;
     border: 1px solid #dbe6f3;
     border-radius: 8px;
     font-size: 1em;
-    width: 220px;
-    transition: border-color 0.2s;
+    background: #f9fbfd;
+    color: #22304a;
+    transition: all 0.3s ease;
 }
 
-.user-search:focus {
+.form-row input:hover {
+    border-color: #4fc3f7;
+    background: #f4f9ff;
+}
+
+.form-row input:focus {
     border-color: #4fc3f7;
     outline: none;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(79, 195, 247, 0.2);
 }
 
-.add-user-btn {
+.form-row input:disabled {
+    background: #e9eff6;
+    color: #a0b4c8;
+    cursor: not-allowed;
+}
+
+.update-profile-btn {
     background: #4fc3f7;
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 10px 24px;
+    padding: 12px 32px;
     font-size: 1em;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.2s, box-shadow 0.2s;
     box-shadow: 0 2px 8px rgba(79, 195, 247, 0.10);
+    align-self: flex-start;
 }
 
-.add-user-btn:hover {
+.update-profile-btn:hover {
     background: #22304a;
     color: #4fc3f7;
-}
-
-.user-table-container {
-    overflow-x: auto;
-}
-
-.user-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-    background: #f4f6fb;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(34, 48, 74, 0.06);
-}
-
-.user-table th, .user-table td {
-    padding: 14px 16px;
-    text-align: left;
-    font-size: 1em;
-}
-
-.user-table th {
-    background: #e9f3fa;
-    color: #22304a;
-    font-weight: 700;
-    border-bottom: 2px solid #dbe6f3;
-}
-
-.user-table tr {
-    transition: background 0.18s;
-}
-
-.user-table tr:hover {
-    background: #e3f2fd;
-}
-
-.status {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 0.95em;
-    font-weight: 600;
-}
-
-.status.active {
-    background: #d0f8e8;
-    color: #2e7d32;
-}
-
-.status.inactive {
-    background: #ffe0e0;
-    color: #c62828;
-}
-
-.edit-btn, .delete-btn {
-    background: #fff;
-    border: 1px solid #4fc3f7;
-    color: #22304a;
-    border-radius: 8px;
-    padding: 6px 16px;
-    font-size: 0.98em;
-    font-weight: 600;
-    cursor: pointer;
-    margin-right: 6px;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-
-.edit-btn:hover {
-    background: #4fc3f7;
-    color: #fff;
-    border-color: #22304a;
-}
-
-.delete-btn:hover {
-    background: #c62828;
-    color: #fff;
-    border-color: #c62828;
+    box-shadow: 0 4px 12px rgba(79, 195, 247, 0.2);
 }
 
 @media (max-width: 900px) {
@@ -266,8 +259,13 @@ html, body {
     .admin-card {
         padding: 16px;
     }
-    .user-table th, .user-table td {
-        padding: 10px 8px;
-        font-size: 0.95em;
+    .profile-header {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+    .profile-avatar img {
+        width: 80px;
+        height: 80px;
     }
 }

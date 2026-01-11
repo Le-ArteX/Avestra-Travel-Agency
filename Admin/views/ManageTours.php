@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Users - Avestra Travel Agency</title>
-    <link rel="stylesheet" href="../styleSheets/ManageUsers.css">
+    <title>Manage Tours - Avestra Travel Agency</title>
+    <link rel="stylesheet" href="../styleSheets/ManageTours.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 
@@ -22,10 +22,10 @@
             <nav>
                 <ul class="sidebar-menu">
                     <li><a href="Admin.php">Dashboard</a></li>
-                    <li><a href="ManageUsers.php" class="active">Manage Users</a></li>
+                    <li><a href="ManageUsers.php">Manage Users</a></li>
                     <li><a href="ManageBookings.php">Bookings</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
-                    <li><a href="ManageTours.php">Tours</a></li>
+                    <li><a href="ManageTours.php" class="active">Tours</a></li>
                     <li><a href="Reports.php">Reports</a></li>
                     <li><a href="Payments.php">Payments</a></li>
                     <li><a href="Settings.php">Settings</a></li>
@@ -37,51 +37,50 @@
 
         <main class="main-content">
             <header class="admin-header">
-                <h1>Manage Users</h1>
+                <h1>Manage Tours</h1>
             </header>
 
             <section class="admin-section">
                 <div class="admin-card">
-                    <div class="user-actions">
-                        <input type="text" class="user-search" placeholder="Search users...">
-                        <button class="add-user-btn">+ Add User</button>
+                    <div class="tour-actions">
+                        <input type="text" class="tour-search" placeholder="Search tours...">
+                        <button class="add-tour-btn">+ Add Tour</button>
                     </div>
-                    <div class="user-table-container">
-                        <table class="user-table">
+                    <div class="tour-table-container">
+                        <table class="tour-table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
+                                    <th>Tour Name</th>
+                                    <th>Destination</th>
+                                    <th>Duration</th>
+                                    <th>Price</th>
                                     <th>Status</th>
-                                    <th>Registered</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Jane Doe</td>
-                                    <td>jane.doe@email.com</td>
-                                    <td>Admin</td>
+                                    <td>City Explorer Tour</td>
+                                    <td>New York</td>
+                                    <td>3 Days</td>
+                                    <td>$499</td>
                                     <td><span class="status active">Active</span></td>
-                                    <td>2024-05-01</td>
                                     <td>
                                         <button class="edit-btn">Edit</button>
                                         <button class="delete-btn">Delete</button>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>John Smith</td>
-                                    <td>john.smith@email.com</td>
-                                    <td>Manager</td>
-                                    <td><span class="status inactive">Inactive</span></td>
-                                    <td>2024-04-15</td>
+                                    <td>Beach Paradise Tour</td>
+                                    <td>Maldives</td>
+                                    <td>5 Days</td>
+                                    <td>$899</td>
+                                    <td><span class="status active">Active</span></td>
                                     <td>
                                         <button class="edit-btn">Edit</button>
                                         <button class="delete-btn">Delete</button>
                                     </td>
                                 </tr>
-                                <!-- Add more user rows as needed -->
                             </tbody>
                         </table>
                     </div>

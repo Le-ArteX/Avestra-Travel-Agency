@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Users - Avestra Travel Agency</title>
-    <link rel="stylesheet" href="../styleSheets/ManageUsers.css">
+    <title>Manage Hotels - Avestra Travel Agency</title>
+    <link rel="stylesheet" href="../styleSheets/ManageHotels.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
-
 <body>
     <div class="admin-container">
-
         <aside class="sidebar">
             <div style="padding: 24px 32px;">
                 <div style="text-align: center; margin-bottom: 16px;">
@@ -22,9 +19,9 @@
             <nav>
                 <ul class="sidebar-menu">
                     <li><a href="Admin.php">Dashboard</a></li>
-                    <li><a href="ManageUsers.php" class="active">Manage Users</a></li>
+                    <li><a href="ManageUsers.php">Manage Users</a></li>
                     <li><a href="ManageBookings.php">Bookings</a></li>
-                    <li><a href="ManageHotels.php">Hotels</a></li>
+                    <li><a href="ManageHotels.php" class="active">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
                     <li><a href="Reports.php">Reports</a></li>
                     <li><a href="Payments.php">Payments</a></li>
@@ -34,54 +31,62 @@
                 </ul>
             </nav>
         </aside>
-
         <main class="main-content">
             <header class="admin-header">
-                <h1>Manage Users</h1>
+                <h1>Manage Hotels</h1>
             </header>
-
             <section class="admin-section">
                 <div class="admin-card">
-                    <div class="user-actions">
-                        <input type="text" class="user-search" placeholder="Search users...">
-                        <button class="add-user-btn">+ Add User</button>
+                    <div class="section-actions">
+                        <input type="text" class="section-search" placeholder="Search hotels...">
+                        <button class="add-section-btn">+ Add Hotel</button>
                     </div>
-                    <div class="user-table-container">
-                        <table class="user-table">
+                    <div class="section-table-container">
+                        <table class="section-table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
+                                    <th>Hotel Name</th>
+                                    <th>Location</th>
+                                    <th>Rating</th>
+                                    <th>Rooms</th>
                                     <th>Status</th>
-                                    <th>Registered</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Jane Doe</td>
-                                    <td>jane.doe@email.com</td>
-                                    <td>Admin</td>
+                                    <td>Grand Hotel</td>
+                                    <td>New York, USA</td>
+                                    <td>★★★★★</td>
+                                    <td>150</td>
                                     <td><span class="status active">Active</span></td>
-                                    <td>2024-05-01</td>
                                     <td>
                                         <button class="edit-btn">Edit</button>
                                         <button class="delete-btn">Delete</button>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>John Smith</td>
-                                    <td>john.smith@email.com</td>
-                                    <td>Manager</td>
-                                    <td><span class="status inactive">Inactive</span></td>
-                                    <td>2024-04-15</td>
+                                    <td>Sunset Resort</td>
+                                    <td>Malibu, USA</td>
+                                    <td>★★★★</td>
+                                    <td>80</td>
+                                    <td><span class="status active">Active</span></td>
                                     <td>
                                         <button class="edit-btn">Edit</button>
                                         <button class="delete-btn">Delete</button>
                                     </td>
                                 </tr>
-                                <!-- Add more user rows as needed -->
+                                <tr>
+                                    <td>Mountain Lodge</td>
+                                    <td>Denver, USA</td>
+                                    <td>★★★</td>
+                                    <td>45</td>
+                                    <td><span class="status inactive">Inactive</span></td>
+                                    <td>
+                                        <button class="edit-btn">Edit</button>
+                                        <button class="delete-btn">Delete</button>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -89,7 +94,6 @@
             </section>
         </main>
     </div>
-
     <script src="../js/theme.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -97,5 +101,4 @@
         });
     </script>
 </body>
-
 </html>

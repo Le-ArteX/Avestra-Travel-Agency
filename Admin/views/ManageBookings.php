@@ -21,11 +21,12 @@
                     <li><a href="Admin.php">Dashboard</a></li>
                     <li><a href="ManageUsers.php">Manage Users</a></li>
                     <li><a href="ManageBookings.php" class="active">Bookings</a></li>
-                    <li><a href="ManageHotels.html">Hotels</a></li>
-                    <li><a href="ManageTours.html">Tours</a></li>
-                    <li><a href="Reports.html">Reports</a></li>
-                    <li><a href="Payments.html">Payments</a></li>
-                    <li><a href="Settings.html">Settings</a></li>
+                    <li><a href="ManageHotels.php">Hotels</a></li>
+                    <li><a href="ManageTours.php">Tours</a></li>
+                    <li><a href="Reports.php">Reports</a></li>
+                    <li><a href="Payments.php">Payments</a></li>
+                    <li><a href="Settings.php">Settings</a></li>
+                    <li><a href="MyProfile.php">My Profile</a></li>
                     <li><a href="homePage.php">Logout</a></li>
                 </ul>
             </nav>
