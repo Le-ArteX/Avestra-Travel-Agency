@@ -129,12 +129,20 @@ html, body {
     flex-shrink: 0;
 }
 
-.profile-avatar img {
-    width: 100px;
-    height: 100px;
+.profile-avatar img,
+.profile-image-circle {
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
-    border: 4px solid #4fc3f7;
+    /* border: 4px solid #4fc3f7; */
     object-fit: cover;
+    display: block;
+    margin-top: -15px;
+}
+
+.profile-info {
+    flex: 1;
+    min-width: 0;
 }
 
 .profile-info h2 {
@@ -174,7 +182,10 @@ html, body {
     font-size: 1em;
 }
 
-.form-row input {
+.form-row input[type="text"],
+.form-row input[type="email"],
+.form-row input[type="tel"],
+.form-row input[type="password"] {
     padding: 10px 14px;
     border: 1px solid #dbe6f3;
     border-radius: 8px;
@@ -182,6 +193,10 @@ html, body {
     background: #f9fbfd;
     color: #22304a;
     transition: all 0.3s ease;
+}
+
+.form-row input[type="file"] {
+    font-size: 1em;
 }
 
 .form-row input:hover {
@@ -220,6 +235,44 @@ html, body {
     background: #22304a;
     color: #4fc3f7;
     box-shadow: 0 4px 12px rgba(79, 195, 247, 0.2);
+}
+
+/* Profile image upload overlay styles */
+.profile-image-upload-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 50px;
+}
+
+.profile-image-upload-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.profile-image-input {
+    position: absolute;
+    top: 0; left: 0;
+    width: 80px;
+    height: 80px;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.profile-image-upload-icon {
+    position: absolute;
+    bottom: -40px;
+    right: -50px;
+    background: #bbbbbb; 
+    color: #fff;
+    border-radius: 60%;
+    padding: 3px;
+    font-size: 18px;
+    z-index: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(79, 195, 247, 0.15);
 }
 
 @media (max-width: 900px) {
@@ -264,8 +317,18 @@ html, body {
         gap: 16px;
         text-align: center;
     }
-    .profile-avatar img {
-        width: 80px;
-        height: 80px;
+    .profile-avatar img,
+    .profile-image-circle {
+        width: 120px;
+        height: 120px;
     }
+    .profile-image-upload-container {
+        width: 120px;
+        height: 120px;
+    
+    .profile-image-input {
+        width: 120px;
+        height: 120px;
+    }
+}
 }

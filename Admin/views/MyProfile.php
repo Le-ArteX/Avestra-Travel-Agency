@@ -44,69 +44,82 @@
                 <div class="admin-card">
                     <div class="profile-header">
                         <div class="profile-avatar">
-                            <img src="../images/logo.png" alt="Profile Avatar" style="width: 100px; height: 100px; border-radius: 50%;">
+                            <img id="profileImagePreview" src="../images/logo.png" alt="Profile Avatar"
+                                class="profile-image-circle">
                         </div>
                         <div class="profile-info">
-                            <h2>Admin User</h2>
+                            <h2 id="profileName">Admin User</h2>
                             <p class="profile-role">Administrator</p>
                             <p class="profile-status">Active</p>
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="admin-card">
                     <h3>Profile Information</h3>
-                    <form class="profile-form">
+                    <form class="profile-form" enctype="multipart/form-data" id="profileForm">
+                        <div class="form-row profile-image-upload-row">
+                            <div class="profile-image-upload-container">
+                                <img id="profileImagePreview" src="../images/logo.png" alt="Profile Avatar"
+                                    class="profile-image-circle">
+                                <input type="file" id="profile-image" name="profile-image" accept="image/*"
+                                    class="profile-image-input">
+                                <span class="profile-image-upload-icon">&#128247;</span>
+                            </div>
+                        </div>
                         <div class="form-row">
                             <label for="full-name">Full Name:</label>
-                            <input type="text" id="full-name" name="full-name" value="Admin User" placeholder="Enter full name">
+                            <input type="text" id="full-name" name="full-name" value="Admin User"
+                                placeholder="Enter full name">
                         </div>
                         <div class="form-row">
                             <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" value="admin@avestra.com" placeholder="Enter email">
+                            <input type="email" id="email" name="email" value="admin@avestra.com"
+                                placeholder="Enter email">
                         </div>
                         <div class="form-row">
-                            <label for="phone">Phone:</label>
-                            <input type="tel" id="phone" name="phone" value="+1-800-123-4567" placeholder="Enter phone number">
+                            <label for="phone">Mobile Number:</label>
+                            <input type="tel" id="phone" name="phone" value="+1-800-123-4567"
+                                placeholder="Enter mobile number">
                         </div>
                         <div class="form-row">
                             <label for="department">Department:</label>
-                            <input type="text" id="department" name="department" value="Administration" placeholder="Enter department">
+                            <input type="text" id="department" name="department" value="Administration"
+                                placeholder="Enter department">
                         </div>
                         <div class="form-row">
                             <label for="joined-date">Joined Date:</label>
-                            <input type="text" id="joined-date" name="joined-date" value="2024-01-15" disabled placeholder="Joined date">
+                            <input type="text" id="joined-date" name="joined-date" value="2024-01-15" disabled
+                                placeholder="Joined date">
+                        </div>
+                        <div class="form-row">
+                            <label for="profile-password">Password:</label>
+                            <input type="password" id="profile-password" name="profile-password" value="********"
+                                placeholder="Enter password" disabled>
+                            <small style="color: #888;">To change your password, use the section below.</small>
                         </div>
                         <div class="form-row">
                             <button type="submit" class="update-profile-btn">Update Profile</button>
                         </div>
                     </form>
                 </div>
-
-                <div class="admin-card">
-                    <h3>Change Password</h3>
-                    <form class="profile-form">
-                        <div class="form-row">
-                            <label for="current-pwd">Current Password:</label>
-                            <input type="password" id="current-pwd" name="current-pwd" placeholder="Enter current password">
-                        </div>
-                        <div class="form-row">
-                            <label for="new-pwd">New Password:</label>
-                            <input type="password" id="new-pwd" name="new-pwd" placeholder="Enter new password">
-                        </div>
-                        <div class="form-row">
-                            <label for="confirm-pwd">Confirm Password:</label>
-                            <input type="password" id="confirm-pwd" name="confirm-pwd" placeholder="Confirm new password">
-                        </div>
-                        <div class="form-row">
-                            <button type="submit" class="update-profile-btn">Change Password</button>
-                        </div>
-                    </form>
-                </div>
             </section>
         </main>
     </div>
+    <script>
 
+        document.getElementById('profile-image').addEventListener('change', function (event) {
+            const [file] = event.target.files;
+            if (file) {
+                document.querySelector('.profile-image-upload-container #profileImagePreview').src = URL.createObjectURL(file);
+            }
+        });
+
+        document.querySelector('.profile-image-upload-icon').addEventListener('click', function () {
+            document.getElementById('profile-image').click();
+        });
+
+    </script>
     <script src="../js/theme.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {

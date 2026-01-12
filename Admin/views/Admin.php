@@ -9,7 +9,6 @@
 </head>
 <body>
     <div class="admin-container">
-        <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div style="padding: 24px 32px;">
                 <div style="text-align: center; margin-bottom: 16px;">
@@ -37,7 +36,6 @@
         <main class="main-content">
             <header class="admin-header">
                 <h1>Welcome to the Admin Dashboard</h1>
-                <p>Overview of your travel agency management system</p>
             </header>
             
             <section class="admin-section">
