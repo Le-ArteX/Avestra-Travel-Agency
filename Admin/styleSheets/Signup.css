@@ -91,6 +91,11 @@ body {
     opacity: 0.7;
 }
 
+.signup-form input:focus::placeholder,
+.signup-form input:not(:placeholder-shown)::placeholder {
+    color: transparent;
+}
+
 /* Float label */
 .signup-form input:focus + label,
 .signup-form input:not(:placeholder-shown) + label {
@@ -219,8 +224,8 @@ body.dark-mode .signup-form label {
 
 body.dark-mode .signup-form input:focus + label,
 body.dark-mode .signup-form input:not(:placeholder-shown) + label {
-    background: var(--mid-bg) !important;
-    padding: 0 5px !important;
+    background: var(--mid-bg);
+    padding: 0 5px;
 }
 
 body.dark-mode .signup-form select {
@@ -249,7 +254,7 @@ body.dark-mode .signup-footer {
     .signup-form input[type="text"],
     .signup-form input[type="email"],
     .signup-form input[type="password"],
-    .signup-form input[type="confirm-password"],
+    .signup-form input[type="tel"],
     .signup-form select {
         font-size: 1em;
         padding: 10px 8px;

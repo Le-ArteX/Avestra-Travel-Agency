@@ -24,12 +24,20 @@
             </div>
 
             <div class="form-group">
-                <input type="password" id="password" name="password" placeholder=" " required autocomplete="current-password">
+                <input type="password" id="password" name="password" placeholder=" " required
+                    autocomplete="current-password">
                 <label for="password">Password</label>
             </div>
-             <div class="forgot-link">
-                <a href="forgotPassword.php">Forgot password?</a>
+            <div class="login-form-row">
+                <div class="form-group">
+                    <input type="checkbox" id="remember-me" name="remember-me">
+                    <label for="remember-me" class="checkbox-label">Remember</label>
+                </div>
+                <div class="forgot-link">
+                    <a href="forgotPassword.php">Forgot password?</a>
+                </div>
             </div>
+
             <button type="submit">Login</button>
         </form>
         <div class="login-footer">
@@ -39,7 +47,7 @@
 
     <script src="../js/theme.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             applyStoredTheme();
         });
     </script>

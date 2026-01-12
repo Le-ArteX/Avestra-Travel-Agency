@@ -42,6 +42,7 @@ body {
     margin-bottom: 24px;
     text-align: center;
 }
+
 .logo-container {
     text-align: center;
     margin-bottom: 20px;
@@ -150,6 +151,52 @@ body {
     transform: translateY(1px);
 }
 
+/* --- Checkbox and Remember Row Alignment --- */
+.login-form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    margin-bottom: 18px;
+}
+
+.login-form-row .form-group {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    position: static;
+}
+
+.login-form-row .form-group input[type="checkbox"] {
+    margin: 0 8px 0 0;
+    position: relative;
+    top: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.login-form-row .form-group .checkbox-label {
+    position: static;
+    font-weight: bold;
+    color: var(--accent);
+    margin: 0;
+    padding: 0;
+    font-size: 0.95em;
+    line-height: 1;
+}
+
+.login-form-row .forgot-link {
+    margin: 0;
+    margin-top: -3px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 0.93em;
+    display: block;
+}
+
+/* --- End Checkbox and Remember Row Alignment --- */
+
 .login-footer {
     text-align: center;
     margin-top: 18px;
@@ -165,10 +212,11 @@ body {
 .login-footer a:hover {
     text-decoration: underline;
 }
+
 .forgot-link {
     text-align: right;
     font-weight: bold;
-    margin: 0 0 14px auto;
+    margin-bottom: 0;
     font-size: 0.93em;
     display: block;
 }
@@ -211,13 +259,11 @@ body.dark-mode .login-form input::placeholder {
 /* Ensure placeholder hides on focus or when input has value in dark mode */
 body.dark-mode .login-form input:focus::placeholder {
     color: transparent;
-
 }
 
 body.dark-mode .login-form input:not(:placeholder-shown)::placeholder {
     color: transparent;
 }
-
 
 body.dark-mode .login-form label {
     background: transparent;
@@ -238,6 +284,7 @@ body.dark-mode .login-form input:focus {
 body.dark-mode .login-footer {
     color: var(--light-bg);
 }
+
 /* Responsive styles for mobile */
 @media (max-width: 300px) {
     .login-container {
@@ -256,4 +303,3 @@ body.dark-mode .login-footer {
         padding: 10px;
     }
 }
-

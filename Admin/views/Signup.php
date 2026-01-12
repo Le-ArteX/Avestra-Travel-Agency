@@ -15,12 +15,18 @@
         <form class="signup-form" action="Signup.php" method="post">
             <div class="form-group">
                 <input type="text" id="username" name="username" placeholder=" " required autocomplete="username">
-                <label for="username">Username</label>
+                <label for="username">Full Name</label>
             </div>
 
             <div class="form-group">
                 <input type="email" id="email" name="email" placeholder=" " required autocomplete="email">
                 <label for="email">Email</label>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="phoneNumber" name="phoneNumber" placeholder=" " required
+                    autocomplete="phoneNumber">
+                <label for="phoneNumber">Phone Number</label>
             </div>
 
             <div class="form-group select-group">
@@ -32,12 +38,14 @@
             </div>
 
             <div class="form-group">
-                <input type="password" id="password" name="password" placeholder=" " required autocomplete="new-password">
+                <input type="password" id="password" name="password" placeholder=" " required
+                    autocomplete="new-password">
                 <label for="password">Password</label>
             </div>
 
             <div class="form-group">
-                <input type="password" id="confirm-password" name="confirm-password" placeholder=" " required autocomplete="new-password">
+                <input type="password" id="confirm-password" name="confirm-password" placeholder=" " required
+                    autocomplete="new-password">
                 <label for="confirm-password">Confirm Password</label>
             </div>
 
@@ -50,7 +58,7 @@
 
     <script src="../js/theme.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             applyStoredTheme();
         });
     </script>
