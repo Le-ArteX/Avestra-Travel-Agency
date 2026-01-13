@@ -66,7 +66,7 @@ body {
 .signup-form input[type="text"],
 .signup-form input[type="email"],
 .signup-form input[type="password"],
-.signup-form input[type="tel"] {
+.signup-form input[type="phoneNumber"] {
     width: 100%;
     padding: 12px 12px;
     border: 1px solid #cfd8e3;
@@ -188,7 +188,7 @@ body.dark-mode .signup-container {
 body.dark-mode .signup-form input[type="text"],
 body.dark-mode .signup-form input[type="email"],
 body.dark-mode .signup-form input[type="password"],
-body.dark-mode .signup-form input[type="tel"] {
+body.dark-mode .signup-form input[type="phoneNumber"] {
     background: var(--dark-bg);
     border: 1px solid var(--accent);
     color: var(--light-bg);
