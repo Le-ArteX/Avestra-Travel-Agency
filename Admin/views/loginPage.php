@@ -20,7 +20,7 @@ include '../controller/loginFormDataHandler.php';
             </a>
         </div>
         <h2>Login to Your Account</h2>
-        <?php include '../controller/MessageDisplay.php'; ?>
+        <?php include '../controller/LoginMessageDisplay.php'; ?>
         <?php
         // Clear session after displaying messages
         unset($_SESSION['login_form_data']);
