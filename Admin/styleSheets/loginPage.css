@@ -169,16 +169,6 @@ body.dark-mode .error-message {
     background-color: rgba(255, 82, 82, 0.2);
 }
 
-.success-message {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
-    padding: 12px 15px;
-    border-radius: 8px;
-    margin-bottom: 18px;
-    font-weight: 500;
-}
-
 .general-error-message {
     color: #d32f2f !important;
     background-color: rgba(211, 47, 47, 0.15);
@@ -213,12 +203,6 @@ body.dark-mode .error-message {
 /* Dark mode message styles */
 body.dark-mode .error-message {
     color: #ff6b6b;
-}
-
-body.dark-mode .success-message {
-    background-color: #2d5016;
-    border-color: #3d6b22;
-    color: #a8e6a1;
 }
 
 body.dark-mode .general-error-message {

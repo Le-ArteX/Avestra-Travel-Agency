@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // If no errors, process login
         if (empty($email_error) && empty($password_error) && empty($general_error)) {
             // Check if user exists
-            $check_user = $conn->prepare("SELECT id, username, email, password, role FROM signup WHERE email = ?");
+            $check_user = $conn->prepare("SELECT username, email, password, role FROM signup WHERE email = ?");
             $check_user->bind_param("s", $email);
             $check_user->execute();
             $result = $check_user->get_result();
@@ -55,11 +55,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Verify password
                 if (password_verify($password, $user['password'])) {
                     // Set session variables
-                    $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
                     $_SESSION['success_message'] = "Login successful!";
+                    
+                        // Remember me: set/clear cookies for 30 days
+                        if (isset($_POST['remember-me'])) {
+                            $cookie_time = time() + (30 * 24 * 60 * 60); // 30 days
+                            setcookie('remember_email', $email, $cookie_time, '/');
+                            setcookie('remember_password', $password, $cookie_time, '/');
+                        } else {
+                            // Clear cookies if not selected
+                            setcookie('remember_email', '', time() - 3600, '/');
+                            setcookie('remember_password', '', time() - 3600, '/');
+                        }
                     
                     // Clear form data
                     unset($_SESSION['login_form_data']);
