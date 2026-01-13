@@ -27,7 +27,7 @@ body {
 
 .signup-container {
     background: var(--surface);
-    padding: 40px 30px 30px 30px;
+    padding: 28px 22px 22px 22px;
     border-radius: 12px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(0, 0, 0, 0.05);
@@ -39,13 +39,13 @@ body {
 
 .signup-container h2 {
     color: var(--accent);
-    margin-bottom: 18px;
+    margin-bottom: 12px;
     text-align: center;
 }
 
 .signup-form .form-group {
     position: relative;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .signup-form label {
@@ -124,6 +124,13 @@ body {
     cursor: pointer;
 }
 
+.signup-container .success-message,
+.signup-container .general-error-message {
+    width: 100%;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+}
+
 .signup-form .select-group label {
     position: static;
     display: block;
@@ -140,7 +147,7 @@ body {
 
 .signup-form button {
     width: 100%;
-    padding: 10px;
+    padding: 9px;
     background:  var(--accent);
     color: var(--dark-bg);
     border: none;
@@ -159,7 +166,7 @@ body {
 
 .signup-footer {
     text-align: center;
-    margin-top: 14px;
+    margin-top: 10px;
     font-size: 0.95em;
 }
 
@@ -276,36 +283,13 @@ body.dark-mode .form-group select.error {
     background-color: rgba(255, 82, 82, 0.1);
 }
 
-/* Success message container - fixed at top with opacity background */
-.success-message-top {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    padding: 8px 20px;
-    background: rgba(0, 0, 0, 0.6);
-    animation: slideDown 0.4s ease-out;
-}
-
-@keyframes slideDown {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* Success message styles */
+/* Success message (inline, below heading) */
 .success-message {
     color: #2e7d32 !important;
     background-color: rgba(46, 125, 50, 0.15);
     font-size: 0.9em;
-    margin-bottom: 8px;
-    padding: 6px 10px;
+    margin: 0 0 12px 0;
+    padding: 10px 12px;
     border-radius: 6px;
     display: block;
     font-weight: 600;
@@ -316,6 +300,8 @@ body.dark-mode .success-message {
     color: #4caf50 !important;
     background-color: rgba(76, 175, 80, 0.2);
 }
+
+/* (Legacy) .success-message-top removed in favor of inline .success-message */
 
 /* Responsive styles for mobile */
 @media (max-width: 300px) {

@@ -16,7 +16,7 @@ include '../controller/SignupFormDataHandler.php';
 <body>
     <div class="signup-container">
         <h2>Create Your Account</h2>
-        <?php include '../controller/MessageDisplay.php'; ?>
+        <?php include '../controller/SignupMessageDisplay.php'; ?>
         
         <form class="signup-form" action="../controller/SignupValidation.php" method="post">
             <div class="form-group">
