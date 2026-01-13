@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,7 +40,7 @@
             <header class="admin-header">
                 <h1>Welcome to the Admin Dashboard</h1>
             </header>
-            
+                        
             <section class="admin-section">
                 <div class="admin-card">
                     <h3>Statistics Overview</h3>
