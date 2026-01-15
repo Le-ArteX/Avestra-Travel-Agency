@@ -78,17 +78,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = $check_email->get_result();
         
         if ($result->num_rows > 0) {
-            $_SESSION['success_error'] = "Email already registered. Please use a different email.";
+            $_SESSION['signup_error_message'] = "Email already registered. Please use a different email.";
         } else {
             // Hash the password for security
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             
-            // Insert new user
-            $insert = $conn->prepare("INSERT INTO signup (username, email, phoneNumber, role, password) VALUES (?, ?, ?, ?, ?)");
-            $insert->bind_param("sssss", $username, $email, $phoneNumber, $role, $hashed_password);
+            // Get current date and time
+            $date = date('Y-m-d H:i:s');
+            
+            // Insert new user with registration date
+            $insert = $conn->prepare("INSERT INTO signup (username, email, phoneNumber, role, password, Date) VALUES (?, ?, ?, ?, ?, ?)");
+            $insert->bind_param("ssssss", $username, $email, $phoneNumber, $role, $hashed_password, $date);
             
             if ($insert->execute()) {
-                $_SESSION['success_message'] = "Account created successfully!";
+                $_SESSION['signup_success_message'] = "Account created successfully!";
                 // Clear form data
                 unset($_SESSION['form_data']);
                 unset($_SESSION['form_errors']);
@@ -96,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: ../views/Signup.php");
                 exit();
             } else {
-                $_SESSION['success_error'] = "Error creating account. Please try again.";
+                $_SESSION['signup_error_message'] = "Error creating account. Please try again.";
             }
             $insert->close();
         }
@@ -108,3 +111,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 }
 ?>
+ 
