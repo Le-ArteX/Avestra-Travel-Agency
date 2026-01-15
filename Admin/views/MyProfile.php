@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <?php include('../controller/MyProfileController.php'); ?>
     <div class="admin-container">
 
         <aside class="sidebar">
@@ -41,6 +42,19 @@
             </header>
 
             <section class="admin-section">
+                <?php if (!empty($error_message)): ?>
+                    <div style="padding:12px; background:#ffe0e0; color:#c62828; border-radius:8px; margin-bottom:16px;">
+                        <?php echo htmlspecialchars($error_message); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if (!empty($success_message)): ?>
+                    <div style="padding:12px; background:#d0f8e8; color:#2e7d32; border-radius:8px; margin-bottom:16px;">
+                        <?php echo htmlspecialchars($success_message); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if ($is_admin_logged_in): ?>
                 <div class="admin-card">
                     <div class="profile-header">
                         <div class="profile-avatar">
@@ -48,9 +62,9 @@
                                 class="profile-image-circle">
                         </div>
                         <div class="profile-info">
-                            <h2 id="profileName">Admin User</h2>
-                            <p class="profile-role">Administrator</p>
-                            <p class="profile-status">Active</p>
+                            <h2 id="profileName"><?php echo htmlspecialchars($admin_name); ?></h2>
+                            <p class="profile-role"><?php echo htmlspecialchars($admin_role); ?></p>
+                            <p class="profile-status"><?php echo htmlspecialchars($admin_status); ?></p>
                         </div>
                     </div>
                 </div>
@@ -69,27 +83,27 @@
                         </div>
                         <div class="form-row">
                             <label for="full-name">Full Name:</label>
-                            <input type="text" id="full-name" name="full-name" value="Admin User"
-                                placeholder="Enter full name">
+                            <input type="text" id="full-name" name="full-name" value="<?php echo htmlspecialchars($admin_name); ?>"
+                                placeholder="Enter full name" readonly>
                         </div>
                         <div class="form-row">
                             <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" value="admin@avestra.com"
-                                placeholder="Enter email">
+                            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($admin_email); ?>"
+                                placeholder="Enter email" readonly>
                         </div>
                         <div class="form-row">
                             <label for="phone">Mobile Number:</label>
-                            <input type="tel" id="phone" name="phone" value="+1-800-123-4567"
-                                placeholder="Enter mobile number">
+                            <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($admin_phone); ?>"
+                                placeholder="Enter mobile number" readonly>
                         </div>
                         <div class="form-row">
                             <label for="department">Department:</label>
-                            <input type="text" id="department" name="department" value="Administration"
+                            <input type="text" id="department" name="department" value="<?php echo htmlspecialchars($admin_role); ?>"
                                 placeholder="Enter department">
                         </div>
                         <div class="form-row">
                             <label for="joined-date">Joined Date:</label>
-                            <input type="text" id="joined-date" name="joined-date" value="2024-01-15" disabled
+                            <input type="text" id="joined-date" name="joined-date" value="<?php echo $admin_date; ?>" disabled
                                 placeholder="Joined date">
                         </div>
                         <div class="form-row">
@@ -103,6 +117,11 @@
                         </div>
                     </form>
                 </div>
+                <?php else: ?>
+                <div class="admin-card" style="text-align: center; padding: 40px;">
+                    <p style="color: #c62828; font-size: 1.1em;">Please log in with an active account to view your profile.</p>
+                </div>
+                <?php endif; ?>
             </section>
         </main>
     </div>

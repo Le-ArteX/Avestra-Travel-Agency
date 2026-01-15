@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // If no errors, process login
         if (empty($email_error) && empty($password_error) && empty($general_error)) {
             // Check if user exists
-            $check_user = $conn->prepare("SELECT username, email, password, role FROM signup WHERE email = ?");
+            $check_user = $conn->prepare("SELECT username, email, password, role, status, phoneNumber, Date FROM signup WHERE email = ?");
             $check_user->bind_param("s", $email);
             $check_user->execute();
             $result = $check_user->get_result();
@@ -54,7 +54,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Verify password
                 if (password_verify($password, $user['password'])) {
-                    // Set session variables
+                    // Set session variables (admin_ prefix for MyProfile compatibility)
+                    $_SESSION['admin_name'] = $user['username'];
+                    $_SESSION['admin_email'] = $user['email'];
+                    $_SESSION['admin_role'] = $user['role'];
+                    $_SESSION['admin_status'] = $user['status'];
+                    $_SESSION['admin_phone'] = $user['phoneNumber'];
+                    $_SESSION['admin_date'] = $user['Date'];
+                    
+                    // Also set non-prefixed versions for backward compatibility
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
