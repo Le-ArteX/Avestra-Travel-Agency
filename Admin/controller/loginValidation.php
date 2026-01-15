@@ -58,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
-                    $_SESSION['success_message'] = "Login successful!";
                     
                         // Remember me: set/clear cookies for 30 days
                         if (isset($_POST['remember-me'])) {
@@ -79,16 +78,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     if ($user['role'] === 'admin') {
                         header("Location: ../views/Admin.php");
                     } else {
-                        header("Location: ../../User/views/homepageUser.php");
+                    	header("Location: ../../User/views/homepageUser.php");
                     }
                     exit();
                 } else {
-                    $_SESSION['success_error'] = "Invalid email or password.";
+                    $_SESSION['login_error_message'] = "Invalid email or password.";
                     header("Location: ../views/loginPage.php");
                     exit();
                 }
             } else {
-                $_SESSION['success_error'] = "Invalid email or password.";
+                $_SESSION['login_error_message'] = "Invalid email or password.";
                 header("Location: ../views/loginPage.php");
                 exit();
             }

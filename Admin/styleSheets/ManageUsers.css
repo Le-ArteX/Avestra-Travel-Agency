@@ -482,10 +482,16 @@ html, body {
     font-weight: 700;
     display: block;
     margin-bottom: 4px;
+    font-size: 0.9em;
 }
 
 .form-input {
     width: 100%;
+    padding: 3px 6px !important;
+    height: 28px !important;
+    font-size: 0.9em !important;
+    border: 1px solid #dbe6f3 !important;
+    border-radius: 6px !important;
 }
 
 .modal-actions {
