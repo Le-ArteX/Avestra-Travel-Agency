@@ -6,8 +6,6 @@ function openAddModal() {
     document.getElementById('modalTitle').textContent = 'Add User';
     document.getElementById('modalAction').value = 'add';
     document.getElementById('userForm').reset();
-    document.getElementById('passwordField').style.display = 'block';
-    document.getElementById('modalPassword').required = true;
     document.getElementById('userModal').style.display = 'flex';
 }
 
@@ -17,10 +15,7 @@ function openEditModal(user) {
     document.getElementById('oldEmail').value = user.email;
     document.getElementById('modalUsername').value = user.username;
     document.getElementById('modalEmail').value = user.email;
-    document.getElementById('modalRole').value = user.role || 'Customer';
     document.getElementById('modalStatus').value = user.status || 'Active';
-    document.getElementById('passwordField').style.display = 'none';
-    document.getElementById('modalPassword').required = false;
     document.getElementById('userModal').style.display = 'flex';
 }
 
@@ -48,16 +43,29 @@ function closeConfirmModal() {
 }
 
 function submitPendingAction() {
-    if (!pendingAction || !pendingEmail) return closeConfirmModal();
+    if (!pendingAction) return closeConfirmModal();
+    
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = '../controller/ManageUsersActions.php';
-    form.innerHTML = `
-        <input type="hidden" name="action" value="${pendingAction}">
-        <input type="hidden" name="email" value="${pendingEmail}">
-      `;
+    
+    if (pendingAction === 'approve_admin') {
+        // For approve_admin, use request_id instead of email
+        form.innerHTML = `
+            <input type="hidden" name="action" value="${pendingAction}">
+            <input type="hidden" name="request_id" value="${pendingEmail}">
+        `;
+    } else {
+        // For other actions, use email
+        form.innerHTML = `
+            <input type="hidden" name="action" value="${pendingAction}">
+            <input type="hidden" name="email" value="${pendingEmail}">
+        `;
+    }
+    
     document.body.appendChild(form);
     form.submit();
+    closeConfirmModal();
 }
 
 function deleteUser(email, username) {
@@ -70,4 +78,28 @@ function blockUser(email) {
 
 function unblockUser(email) {
     openConfirmModal('Unblock this user?', 'unblock', email);
+}
+function approveAdminRequest(requestId, username) {
+    // Store data for custom modal submission
+    window.approveData = {
+        requestId: requestId,
+        username: username
+    };
+    openConfirmModal(`Approve admin request from ${username}?`, 'approve_admin', requestId);
+}
+
+function rejectAdminRequest(requestId, username) {
+    const reason = prompt(`Reject admin request from ${username}?\n\nReason (optional):`, '');
+    if (reason !== null) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '../controller/ManageUsersActions.php';
+        form.innerHTML = `
+            <input type="hidden" name="action" value="reject_admin">
+            <input type="hidden" name="request_id" value="${requestId}">
+            <input type="hidden" name="reason" value="${reason}">
+        `;
+        document.body.appendChild(form);
+        form.submit();
+    }
 }

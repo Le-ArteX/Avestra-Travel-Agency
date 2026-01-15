@@ -71,39 +71,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // If no errors, process signup
     if (empty($username_error) && empty($email_error) && empty($phoneNumber_error) && empty($role_error) && empty($password_error) && empty($confirmPassword_error) && empty($general_error)) {
-        // Check if email already exists
-        $check_email = $conn->prepare("SELECT email FROM signup WHERE email = ?");
-        $check_email->bind_param("s", $email);
-        $check_email->execute();
-        $result = $check_email->get_result();
+        // Hash the password for security
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
-        if ($result->num_rows > 0) {
-            $_SESSION['signup_error_message'] = "Email already registered. Please use a different email.";
-        } else {
-            // Hash the password for security
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        // Get current date and time
+        $date = date('Y-m-d H:i:s');
+        
+        // If role is Admin, insert into admin table with Pending status
+        if (strtolower($role) === 'admin') {
+            // Check if email already exists in admin table
+            $check_email = $conn->prepare("SELECT email FROM admin WHERE email = ?");
+            $check_email->bind_param("s", $email);
+            $check_email->execute();
+            $result = $check_email->get_result();
             
-            // Get current date and time
-            $date = date('Y-m-d H:i:s');
-            
-            // Insert new user with registration date
-            $insert = $conn->prepare("INSERT INTO signup (username, email, phoneNumber, role, password, Date) VALUES (?, ?, ?, ?, ?, ?)");
-            $insert->bind_param("ssssss", $username, $email, $phoneNumber, $role, $hashed_password, $date);
-            
-            if ($insert->execute()) {
-                $_SESSION['signup_success_message'] = "Account created successfully!";
-                // Clear form data
-                unset($_SESSION['form_data']);
-                unset($_SESSION['form_errors']);
-                // Redirect back to signup page to show success message
-                header("Location: ../views/Signup.php");
-                exit();
+            if ($result->num_rows > 0) {
+                $_SESSION['signup_error_message'] = "Email already exists. Please use a different email.";
             } else {
-                $_SESSION['signup_error_message'] = "Error creating account. Please try again.";
+                // Insert into admin table with Pending status
+                $status = 'Pending';
+                $insert = $conn->prepare("INSERT INTO admin (username, email, phoneNumber, role, password, date, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $insert->bind_param("sssssss", $username, $email, $phoneNumber, $role, $hashed_password, $date, $status);
+                
+                if ($insert->execute()) {
+                    $_SESSION['signup_success_message'] = "Admin request submitted successfully! Your request will be reviewed by the system administrator.";
+                    // Clear form data
+                    unset($_SESSION['form_data']);
+                    unset($_SESSION['form_errors']);
+                    // Redirect back to signup page to show success message
+                    header("Location: ../views/Signup.php");
+                    exit();
+                } else {
+                    $_SESSION['signup_error_message'] = "Error submitting admin request. Please try again.";
+                }
+                $insert->close();
             }
-            $insert->close();
+            $check_email->close();
+        } else {
+            // For customer role, check if email exists in customer table
+            $check_email = $conn->prepare("SELECT email FROM customer WHERE email = ?");
+            $check_email->bind_param("s", $email);
+            $check_email->execute();
+            $result = $check_email->get_result();
+            
+            if ($result->num_rows > 0) {
+                $_SESSION['signup_error_message'] = "Email already registered. Please use a different email.";
+            } else {
+                // For customer role, insert directly into customer table
+                $insert = $conn->prepare("INSERT INTO customer (username, email, phoneNumber, role, password, date, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $insert->bind_param("sssssss", $username, $email, $phoneNumber, $role, $hashed_password, $date, $status);
+                $status = 'Active';
+                
+                if ($insert->execute()) {
+                    $_SESSION['signup_success_message'] = "Account created successfully!";
+                    // Clear form data
+                    unset($_SESSION['form_data']);
+                    unset($_SESSION['form_errors']);
+                    // Redirect back to signup page to show success message
+                    header("Location: ../views/Signup.php");
+                    exit();
+                } else {
+                    $_SESSION['signup_error_message'] = "Error creating account. Please try again.";
+                }
+                $insert->close();
+            }
+            $check_email->close();
         }
-        $check_email->close();
     }
 
     // Redirect back to signup form with errors/data in session
@@ -111,4 +144,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit();
 }
 ?>
- 

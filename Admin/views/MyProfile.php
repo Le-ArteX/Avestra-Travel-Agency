@@ -58,7 +58,7 @@
                 <div class="admin-card">
                     <div class="profile-header">
                         <div class="profile-avatar">
-                            <img id="profileImagePreview" src="../images/logo.png" alt="Profile Avatar"
+                            <img id="profileImagePreview" src="<?php echo htmlspecialchars($admin_profile_image); ?>" alt="Profile Avatar"
                                 class="profile-image-circle">
                         </div>
                         <div class="profile-info">
@@ -71,10 +71,10 @@
                 
                 <div class="admin-card">
                     <h3>Profile Information</h3>
-                    <form class="profile-form" enctype="multipart/form-data" id="profileForm">
+                    <form class="profile-form" action="../controller/UpdateProfileController.php" method="POST" enctype="multipart/form-data" id="profileForm">
                         <div class="form-row profile-image-upload-row">
                             <div class="profile-image-upload-container">
-                                <img id="profileImagePreview" src="../images/logo.png" alt="Profile Avatar"
+                                <img id="profileImagePreviewForm" src="<?php echo htmlspecialchars($admin_profile_image); ?>" alt="Profile Avatar"
                                     class="profile-image-circle">
                                 <input type="file" id="profile-image" name="profile-image" accept="image/*"
                                     class="profile-image-input">
@@ -130,7 +130,9 @@
         document.getElementById('profile-image').addEventListener('change', function (event) {
             const [file] = event.target.files;
             if (file) {
-                document.querySelector('.profile-image-upload-container #profileImagePreview').src = URL.createObjectURL(file);
+                const previewUrl = URL.createObjectURL(file);
+                document.getElementById('profileImagePreviewForm').src = previewUrl;
+                document.getElementById('profileImagePreview').src = previewUrl;
             }
         });
 

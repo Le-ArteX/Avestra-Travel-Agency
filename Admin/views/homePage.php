@@ -1,3 +1,10 @@
+<?php
+session_start();
+include('../database/MaintenanceCheck.php');
+
+// Check if maintenance mode is enabled - allow admin bypass
+checkMaintenanceMode(true);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,9 +14,39 @@
     <title>Avestra Travel Agency : Book Tickets, Hotel, Transport</title>
     <link rel="stylesheet" href="../styleSheets/homePage.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
+    <style>
+        .alert {
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 1100px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
 </head>
 
 <body>
+    <?php
+    if (isset($_SESSION['contact_success'])) {
+        echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['contact_success']) . '</div>';
+        unset($_SESSION['contact_success']);
+    }
+    if (isset($_SESSION['contact_error'])) {
+        echo '<div class="alert alert-error">' . htmlspecialchars($_SESSION['contact_error']) . '</div>';
+        unset($_SESSION['contact_error']);
+    }
+    ?>
     <header>
         <button id="mode-toggle">🌙</button>
         <div class="container">
@@ -133,18 +170,21 @@
                     <li><strong>Visit:</strong> Kuril,khilkhet, Dhaka, Bangladesh</li>
                 </ul>
             </div>
-            <form class="contact-form">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your name" required>
+            <div>
+                <div id="contact-message" style="display:none; margin-bottom:15px;"></div>
+                <form class="contact-form" id="contactForm">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your name" required>
 
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
 
-                <label for="message">Message</label>
-                <textarea id="message" name="message" rows="4" placeholder="Tell us how we can help" required></textarea>
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Tell us how we can help" required></textarea>
 
-                <button type="submit" class="button_1">Send Message</button>
-            </form>
+                    <button type="submit" class="button_1">Send Message</button>
+                </form>
+            </div>
         </div>
     </section>
 
@@ -190,6 +230,52 @@
                     window.location.href = 'loader.php';
                 });
             }
+
+            // AJAX Contact Form
+            const contactForm = document.getElementById('contactForm');
+            const contactMessage = document.getElementById('contact-message');
+            
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(contactForm);
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                
+                // Disable button during submission
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+                
+                fetch('../controller/ContactFormHandler.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        contactMessage.className = 'alert alert-success';
+                        contactMessage.textContent = data.message;
+                        contactForm.reset();
+                    } else {
+                        contactMessage.className = 'alert alert-error';
+                        contactMessage.textContent = data.message;
+                    }
+                    contactMessage.style.display = 'block';
+                    
+                    // Hide message after 5 seconds
+                    setTimeout(() => {
+                        contactMessage.style.display = 'none';
+                    }, 5000);
+                })
+                .catch(error => {
+                    contactMessage.className = 'alert alert-error';
+                    contactMessage.textContent = 'Error sending message. Please try again.';
+                    contactMessage.style.display = 'block';
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Message';
+                });
+            });
         });
     </script>
 </body>

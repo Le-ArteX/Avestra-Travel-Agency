@@ -47,8 +47,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // If no errors, process password reset
     if (empty($email_error) && empty($newPassword_error) && empty($confirmPassword_error) && empty($general_error)) {
-        // Check if email exists in database
-        $check_email = $conn->prepare("SELECT email FROM signup WHERE email = ?");
+        // Check if email exists in customer table
+        $check_email = $conn->prepare("SELECT email FROM customer WHERE email = ?");
         $check_email->bind_param("s", $email);
         $check_email->execute();
         $result = $check_email->get_result();
@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $hashed_password = password_hash($newPassword, PASSWORD_DEFAULT);
             
             // Update password in database
-            $update = $conn->prepare("UPDATE signup SET password = ? WHERE email = ?");
+            $update = $conn->prepare("UPDATE customer SET password = ? WHERE email = ?");
             $update->bind_param("ss", $hashed_password, $email);
             
             if ($update->execute()) {

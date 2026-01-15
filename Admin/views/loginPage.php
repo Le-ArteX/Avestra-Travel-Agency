@@ -1,4 +1,5 @@
 <?php
+session_start();
 include '../controller/loginFormDataHandler.php';
 ?>
 <!DOCTYPE html>

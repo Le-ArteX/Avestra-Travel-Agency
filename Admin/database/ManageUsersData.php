@@ -11,7 +11,7 @@ $role_filter = $_POST['role_filter'] ?? '';
 $status_filter = $_POST['status_filter'] ?? '';
 
 // Pagination setup
-$items_per_page = 10;
+$items_per_page = 5;
 $current_page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
 $offset = ($current_page - 1) * $items_per_page;
 
@@ -36,7 +36,7 @@ if (!empty($role_filter)) {
 
 if (!empty($status_filter)) {
     // Only filter by status if column exists
-    $check_column = $conn->query("SHOW COLUMNS FROM signup LIKE 'status'");
+    $check_column = $conn->query("SHOW COLUMNS FROM customer LIKE 'status'");
     if ($check_column->num_rows > 0) {
         $where_conditions[] = "status = ?";
         $params[] = $status_filter;
@@ -46,50 +46,95 @@ if (!empty($status_filter)) {
 
 $where_clause = !empty($where_conditions) ? "WHERE " . implode(" AND ", $where_conditions) : "";
 
-// Get total count of users
-$count_sql = "SELECT COUNT(*) as total FROM signup $where_clause";
+// Build admin WHERE clause (always exclude Pending, plus other filters)
+$admin_where = "status != 'Pending'";
+if (!empty($where_conditions)) {
+    $admin_where .= " AND " . implode(" AND ", $where_conditions);
+}
+
+// Get total count of users (customers + admins) - exclude Pending admins
+$customer_count = 0;
+$admin_count = 0;
+
+// Count customers
 if (!empty($params)) {
-    $count_stmt = $conn->prepare($count_sql);
+    $count_stmt = $conn->prepare("SELECT COUNT(*) as total FROM customer $where_clause");
     $count_stmt->bind_param($types, ...$params);
     $count_stmt->execute();
-    $count_result = $count_stmt->get_result();
+    $result = $count_stmt->get_result();
+    $row = $result->fetch_assoc();
+    $customer_count = intval($row['total'] ?? 0);
+    $count_stmt->close();
 } else {
-    $count_result = $conn->query($count_sql);
+    $result = $conn->query("SELECT COUNT(*) as total FROM customer");
+    $row = $result->fetch_assoc();
+    $customer_count = intval($row['total'] ?? 0);
 }
-$count_row = $count_result->fetch_assoc();
-$total_users = $count_row['total'];
-$total_pages = max(1, ceil($total_users / $items_per_page));
 
-// Fetch users from signup table with pagination
-// Check if status column exists
-$check_status = $conn->query("SHOW COLUMNS FROM signup LIKE 'status'");
-$has_status = ($check_status->num_rows > 0);
-
-if ($has_status) {
-    $sql = "SELECT username, email, role, status, Date as created_at FROM signup $where_clause ORDER BY Date DESC LIMIT $items_per_page OFFSET $offset";
-} else {
-    $sql = "SELECT username, email, role, 'Active' as status, Date as created_at FROM signup $where_clause ORDER BY Date DESC LIMIT $items_per_page OFFSET $offset";
+// Count admins (excluding Pending)
+$admin_where_simple = "status != 'Pending'";
+if (!empty($where_clause)) {
+    $admin_where_simple .= " AND " . ltrim(str_replace("WHERE ", "", $where_clause));
 }
 
 if (!empty($params)) {
+    $count_stmt = $conn->prepare("SELECT COUNT(*) as total FROM admin WHERE $admin_where_simple");
+    $count_stmt->bind_param($types, ...$params);
+    $count_stmt->execute();
+    $result = $count_stmt->get_result();
+    $row = $result->fetch_assoc();
+    $admin_count = intval($row['total'] ?? 0);
+    $count_stmt->close();
+} else {
+    $result = $conn->query("SELECT COUNT(*) as total FROM admin WHERE $admin_where_simple");
+    $row = $result->fetch_assoc();
+    $admin_count = intval($row['total'] ?? 0);
+}
+
+$total_users = $customer_count + $admin_count;
+$total_pages = ($total_users > 0) ? ceil($total_users / $items_per_page) : 0;
+
+// Ensure valid pagination values
+$total_pages = ($total_users > 0) ? max(1, (int)ceil($total_users / $items_per_page)) : 1;
+$current_page = max(1, min($current_page, $total_pages));
+$offset = ($current_page - 1) * $items_per_page;
+
+// Fetch users from both customer and admin tables with pagination using UNION - exclude Pending admins
+$sql = "SELECT username, email, role, status, date as created_at FROM customer $where_clause
+        UNION ALL
+        SELECT username, email, role, status, date as created_at FROM admin WHERE $admin_where
+        ORDER BY created_at DESC LIMIT $items_per_page OFFSET $offset";
+
+
+if (!empty($params)) {
+    // For UNION queries, we need to bind params twice (once for each SELECT)
+    $all_params = array_merge($params, $params);
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param($types, ...$params);
+    $stmt->bind_param($types . $types, ...$all_params);
     $stmt->execute();
     $result = $stmt->get_result();
 } else {
     $result = $conn->query($sql);
 }
 
+
+// Fetch all users into array
 $users = [];
-if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
         $users[] = $row;
     }
 }
 
-// Calculate showing range
-$showing_from = ($total_users == 0) ? 0 : ($offset + 1);
-$showing_to = min($offset + $items_per_page, $total_users);
+// Calculate pagination display values
+if ($total_users > 0) {
+    $showing_from = ($offset) + 1;
+    $showing_to = $offset + count($users);
+} else {
+    $showing_from = 0;
+    $showing_to = 0;
+}
 
-$conn->close();
-?>
+// Debug - uncomment to see values
+echo "<!-- DEBUG: offset=$offset, current_page=$current_page, total_users=$total_users, items_per_page=$items_per_page, count(users)=" . count($users) . ", showing_from=$showing_from, showing_to=$showing_to, total_pages=$total_pages -->";
+

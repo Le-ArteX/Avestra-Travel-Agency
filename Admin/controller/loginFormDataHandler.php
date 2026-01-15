@@ -1,5 +1,8 @@
 <?php
-session_start();
+// Only start session if not already active
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $form_data = $_SESSION['login_form_data'] ?? [];
 $form_errors = $_SESSION['login_form_errors'] ?? [];

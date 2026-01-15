@@ -13,6 +13,7 @@
     <?php
     session_start();
     include('../database/ManageUsersData.php');
+    include('../database/AdminRequestsData.php');
     ?>
     <div class="admin-container">
 
@@ -61,6 +62,42 @@
                         </div>
                     <?php endif; ?>
 
+                    <!-- Admin Requests Section -->
+                    <?php if (!empty($pending_requests)): ?>
+                        <div style="margin-bottom: 32px; padding: 20px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid #ff9800;">
+                            <h3 style="margin-top: 0; color: #ff9800;">Pending Admin Requests (<?php echo count($pending_requests); ?>)</h3>
+                            <div class="user-table-container">
+                                <table class="user-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Requested Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($pending_requests as $request): ?>
+                                            <tr>
+                                                <td><?php echo htmlspecialchars($request['username']); ?></td>
+                                                <td><?php echo htmlspecialchars($request['email']); ?></td>
+                                                <td><?php echo htmlspecialchars($request['phone_number'] ?? 'N/A'); ?></td>
+                                                <td><?php echo date('Y-m-d', strtotime($request['requested_date'])); ?></td>
+                                                <td>
+                                                    <div class="action-buttons">
+                                                        <button class="edit-btn" type="button" onclick="approveAdminRequest(<?php echo $request['id']; ?>, '<?php echo htmlspecialchars($request['username']); ?>')">Approve</button>
+                                                        <button class="delete-btn" type="button" onclick="rejectAdminRequest(<?php echo $request['id']; ?>, '<?php echo htmlspecialchars($request['username']); ?>')">Reject</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
 
                     <form method="POST" id="filterForm">
                         <div class="user-actions">
@@ -76,8 +113,6 @@
                                 <option value="">All Roles</option>
                                 <option value="Admin" <?php echo ($role_filter === 'Admin') ? 'selected' : ''; ?>>Admin
                                 </option>
-                                <option value="Manager" <?php echo ($role_filter === 'Manager') ? 'selected' : ''; ?>>
-                                    Manager</option>
                                 <option value="Customer" <?php echo ($role_filter === 'Customer') ? 'selected' : ''; ?>>
                                     Customer</option>
                             </select>
@@ -106,9 +141,6 @@
                         <table class="user-table">
                             <thead>
                                 <tr>
-                                    <th style="width:40px;">
-                                        <input type="checkbox" />
-                                    </th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Role</th>
@@ -122,7 +154,6 @@
                                 <?php if (!empty($users)): ?>
                                     <?php foreach ($users as $user): ?>
                                         <tr>
-                                            <td><input type="checkbox" /></td>
                                             <td><?php echo htmlspecialchars($user['username']); ?></td>
                                             <td><?php echo htmlspecialchars($user['email']); ?></td>
                                             <td><?php echo htmlspecialchars($user['role'] ?? 'Customer'); ?></td>
@@ -150,9 +181,12 @@
                                                     <?php if ($status === 'Active'): ?>
                                                         <button class="block-btn" type="button"
                                                             onclick="blockUser('<?php echo htmlspecialchars($user['email']); ?>')">Block</button>
-                                                    <?php else: ?>
+                                                    <?php elseif ($status === 'Blocked'): ?>
                                                         <button class="unblock-btn" type="button"
                                                             onclick="unblockUser('<?php echo htmlspecialchars($user['email']); ?>')">Unblock</button>
+                                                    <?php else: ?>
+                                                        <button class="unblock-btn" type="button"
+                                                            onclick="unblockUser('<?php echo htmlspecialchars($user['email']); ?>')">Activate</button>
                                                     <?php endif; ?>
                                                     <button class="delete-btn" type="button"
                                                         onclick="deleteUser('<?php echo htmlspecialchars($user['email']); ?>', '<?php echo htmlspecialchars($user['username']); ?>')">Delete</button>
@@ -226,19 +260,6 @@
                     <input class="user-search form-input" type="email" name="email" id="modalEmail" required>
                 </div>
 
-                <div class="form-group" id="passwordField">
-                    <label class="form-label">Password</label>
-                    <input class="user-search form-input" type="password" name="password" id="modalPassword">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Role</label>
-                    <select class="user-search form-input" name="role" id="modalRole">
-                        <option value="Customer">Customer</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Manager">Manager</option>
-                    </select>
-                </div>
 
                 <div class="form-group">
                     <label class="form-label">Status</label>

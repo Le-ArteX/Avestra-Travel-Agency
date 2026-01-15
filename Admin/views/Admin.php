@@ -1,5 +1,9 @@
 <?php
 session_start();
+include('../database/dbconnection.php');
+
+// Get message_option from session (default is enabled)
+$message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -64,6 +68,66 @@ session_start();
                     </div>
                 </div>
             </section>
+
+            <!-- Recent Contact Messages Section -->
+            <?php if ($message_option === 'enabled'): ?>
+            <section class="admin-section">
+                <div class="admin-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; padding: 20px 20px 0;">
+                        <div>
+                            <h3 style="margin:0; font-size: 24px; font-weight: 600;">📩 Recent Contact Messages</h3>
+                            <p style="margin: 5px 0 0; opacity: 0.9; font-size: 14px;">Latest messages from customers</p>
+                        </div>
+                        <a href="ContactMessages.php" style="background: rgba(255,255,255,0.2); padding:10px 20px; text-decoration:none; color: white; border-radius: 25px; font-weight: 500; transition: all 0.3s; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">View All →</a>
+                    </div>
+                    
+                    <?php
+                    // Get recent messages
+                    $sql = "SELECT id, name, email, message, date FROM contact_messages ORDER BY date DESC LIMIT 4";
+                    $result = $conn->query($sql);
+                    $recent_messages = [];
+                    while ($row = $result->fetch_assoc()) {
+                        $recent_messages[] = $row;
+                    }
+                    ?>
+                    
+                    <div style="padding: 0 20px 20px;">
+                        <?php if (!empty($recent_messages)): ?>
+                            <?php foreach ($recent_messages as $index => $msg): ?>
+                                <div style="background: rgba(255,255,255,0.95); border-radius: 12px; padding: 18px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)'">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                                        <div style="flex: 1;">
+                                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                                                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 16px;">
+                                                    <?php echo strtoupper(substr($msg['name'], 0, 1)); ?>
+                                                </div>
+                                                <div>
+                                                    <h4 style="margin: 0; color: #2d3748; font-size: 16px; font-weight: 600;"><?php echo htmlspecialchars($msg['name']); ?></h4>
+                                                    <p style="margin: 2px 0 0; color: #718096; font-size: 13px;">✉️ <?php echo htmlspecialchars($msg['email']); ?></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500;">
+                                                🕐 <?php echo date('M d, h:i A', strtotime($msg['date'])); ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <p style="margin: 0; color: #4a5568; font-size: 14px; line-height: 1.6; padding-left: 50px;">
+                                        💬 <?php echo htmlspecialchars(substr($msg['message'], 0, 80)) . (strlen($msg['message']) > 80 ? '...' : ''); ?>
+                                    </p>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div style="background: rgba(255,255,255,0.95); border-radius: 12px; padding: 40px; text-align: center;">
+                                <div style="font-size: 48px; margin-bottom: 15px;">📭</div>
+                                <p style="margin: 0; color: #4a5568; font-size: 16px;">No messages yet</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </section>
+            <?php endif; ?>
         </main>
     </div>
 
@@ -74,4 +138,5 @@ session_start();
         });
     </script>
 </body>
+</html>
 </html>

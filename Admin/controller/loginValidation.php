@@ -43,30 +43,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // If no errors, process login
         if (empty($email_error) && empty($password_error) && empty($general_error)) {
-            // Check if user exists
-            $check_user = $conn->prepare("SELECT username, email, password, role, status, phoneNumber, Date FROM signup WHERE email = ?");
-            $check_user->bind_param("s", $email);
-            $check_user->execute();
-            $result = $check_user->get_result();
+            // First check if user is admin
+            $check_admin = $conn->prepare("SELECT username, email, password, role, status, phoneNumber, date FROM admin WHERE email = ?");
+            $check_admin->bind_param("s", $email);
+            $check_admin->execute();
+            $admin_result = $check_admin->get_result();
             
-            if ($result->num_rows > 0) {
-                $user = $result->fetch_assoc();
+            if ($admin_result->num_rows > 0) {
+                // User found in admin table
+                $user = $admin_result->fetch_assoc();
                 
                 // Verify password
                 if (password_verify($password, $user['password'])) {
+                    // Check if user is Active (not Blocked or Inactive)
+                    if ($user['status'] !== 'Active') {
+                        $_SESSION['login_error_message'] = "Your account is " . strtolower($user['status']) . ". Please contact administrator.";
+                        header("Location: ../views/loginPage.php");
+                        exit();
+                    }
+                    
                     // Set session variables (admin_ prefix for MyProfile compatibility)
                     $_SESSION['admin_name'] = $user['username'];
                     $_SESSION['admin_email'] = $user['email'];
                     $_SESSION['admin_role'] = $user['role'];
                     $_SESSION['admin_status'] = $user['status'];
                     $_SESSION['admin_phone'] = $user['phoneNumber'];
-                    $_SESSION['admin_date'] = $user['Date'];
+                    $_SESSION['admin_date'] = $user['date'];
                     
                     // Also set non-prefixed versions for backward compatibility
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
                     
+                    // Remember me: set/clear cookies for 30 days
+                    if (isset($_POST['remember-me'])) {
+                        $cookie_time = time() + (30 * 24 * 60 * 60); // 30 days
+                        setcookie('remember_email', $email, $cookie_time, '/');
+                        setcookie('remember_password', $password, $cookie_time, '/');
+                    } else {
+                        // Clear cookies if not selected
+                        setcookie('remember_email', '', time() - 3600, '/');
+                        setcookie('remember_password', '', time() - 3600, '/');
+                    }
+                    
+                    // Clear form data
+                    unset($_SESSION['login_form_data']);
+                    unset($_SESSION['login_form_errors']);
+                    
+                    // Redirect to admin dashboard
+                    header("Location: ../views/Admin.php");
+                    exit();
+                } else {
+                    $_SESSION['login_error_message'] = "Invalid email or password.";
+                    header("Location: ../views/loginPage.php");
+                    exit();
+                }
+            } else {
+                // Not found in admin table, check customer table
+                $check_user = $conn->prepare("SELECT username, email, password, role, status, phoneNumber, date FROM customer WHERE email = ?");
+                $check_user->bind_param("s", $email);
+                $check_user->execute();
+                $result = $check_user->get_result();
+                
+                if ($result->num_rows > 0) {
+                    $user = $result->fetch_assoc();
+                    
+                    // Verify password
+                    if (password_verify($password, $user['password'])) {
+                        // Check if user is Active (not Blocked or Inactive)
+                        if ($user['status'] !== 'Active') {
+                            $_SESSION['login_error_message'] = "Your account is " . strtolower($user['status']) . ". Please contact administrator.";
+                            header("Location: ../views/loginPage.php");
+                            exit();
+                        }
+                        
+                        // Set session variables for customer
+                        // First, clear any admin session data
+                        unset($_SESSION['admin_email']);
+                        unset($_SESSION['admin_username']);
+                        
+                        $_SESSION['username'] = $user['username'];
+                        $_SESSION['email'] = $user['email'];
+                        $_SESSION['role'] = $user['role'];
+                        $_SESSION['phone'] = $user['phoneNumber'];
+                        
                         // Remember me: set/clear cookies for 30 days
                         if (isset($_POST['remember-me'])) {
                             $cookie_time = time() + (30 * 24 * 60 * 60); // 30 days
@@ -77,29 +137,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             setcookie('remember_email', '', time() - 3600, '/');
                             setcookie('remember_password', '', time() - 3600, '/');
                         }
-                    
-                    // Clear form data
-                    unset($_SESSION['login_form_data']);
-                    unset($_SESSION['login_form_errors']);
-                    
-                    // Redirect to appropriate dashboard
-                    if ($user['role'] === 'admin') {
-                        header("Location: ../views/Admin.php");
+                        
+                        // Clear form data
+                        unset($_SESSION['login_form_data']);
+                        unset($_SESSION['login_form_errors']);
+                        
+                        // Redirect to customer dashboard
+                        header("Location: ../../User/views/homepageUser.php");
+                        exit();
                     } else {
-                    	header("Location: ../../User/views/homepageUser.php");
+                        $_SESSION['login_error_message'] = "Invalid email or password.";
+                        header("Location: ../views/loginPage.php");
+                        exit();
                     }
-                    exit();
                 } else {
                     $_SESSION['login_error_message'] = "Invalid email or password.";
                     header("Location: ../views/loginPage.php");
                     exit();
                 }
-            } else {
-                $_SESSION['login_error_message'] = "Invalid email or password.";
-                header("Location: ../views/loginPage.php");
-                exit();
+                $check_user->close();
             }
-            $check_user->close();
+            $check_admin->close();
         } else {
             // Redirect back to login page with validation errors
             header("Location: ../views/loginPage.php");
