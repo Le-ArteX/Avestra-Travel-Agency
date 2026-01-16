@@ -1,7 +1,6 @@
 <?php
 session_start();
 include('../database/ToursData.php');
-$activeToursCount = getActiveToursCount($tours);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,11 +16,28 @@ $activeToursCount = getActiveToursCount($tours);
 
 
   <link rel="icon" href="../images/logo.png" type="image/png" />
-  
 
+  <!-- ManageTours JS -->
+  <script src="../js/ManageTours.js"></script>
 </head>
 
 <body>
+  <!-- Custom Stylish Message -->
+  <div id="customMessage" style="display:none;position:fixed;top:32px;right:32px;z-index:99999;min-width:320px;max-width:420px;">
+    <div id="customMessageBox">
+      <span id="customMessageText"></span>
+      <button onclick="document.getElementById('customMessage').style.display='none'">Close</button>
+    </div>
+  </div>
+
+  <!-- Custom Confirm Modal -->
+  <div id="confirmModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:10000;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.18);padding:32px 28px;min-width:320px;max-width:90vw;text-align:center;">
+      <div id="confirmModalMessage"></div>
+      <button onclick="handleConfirmModalYes()">Yes</button>
+      <button onclick="hideConfirmModal()">No</button>
+    </div>
+  </div>
   <div class="admin-container">
 
     <!-- Sidebar -->
@@ -51,16 +67,16 @@ $activeToursCount = getActiveToursCount($tours);
 
     <!-- Main -->
     <main class="main-content">
-      <?php
-      if (isset($_SESSION['tour_success'])) {
+        <?php
+        if (isset($_SESSION['tour_success'])) {
           echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['tour_success']) . '</div>';
           unset($_SESSION['tour_success']);
-      }
-      if (isset($_SESSION['tour_error'])) {
+        }
+        if (isset($_SESSION['tour_error'])) {
           echo '<div class="alert alert-error">' . htmlspecialchars($_SESSION['tour_error']) . '</div>';
           unset($_SESSION['tour_error']);
-      }
-      ?>
+        }
+        ?>
       <header class="admin-header">
         <h1><i class="fas fa-map-location-dot" style="margin-right: 0.5rem;"></i>Manage Tours</h1>
         <p style="margin: 0.5rem 0 0 0; opacity: 0.95; font-size: 1rem;">Explore, add, and manage all your tour packages with ease</p>
@@ -80,40 +96,55 @@ $activeToursCount = getActiveToursCount($tours);
           <!-- Table -->
           <div class="tour-table-container">
             <div class="tour-cards-grid">
-              <?php foreach ($tours as $tour): ?>
-                <?php
-                  $isActive = isset($tour['status']) && strcasecmp($tour['status'], 'Active') === 0;
-                  $statusClass = $isActive ? 'active' : 'inactive';
-                  $toggleIcon = $isActive ? 'fa-pause' : 'fa-play';
-                  $toggleText = $isActive ? 'Make Inactive' : 'Make Active';
-                ?>
-                <div class="tour-card" data-tour-id="<?php echo $tour['id']; ?>">
-                  <div class="tour-card-header">
-                    <h3><i class="fas fa-tag"></i> <?php echo htmlspecialchars($tour['name']); ?></h3>
-                    <span class="status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($tour['status']); ?></span>
-                  </div>
-                  <div class="tour-card-body">
-                    <div class="tour-info">
-                      <p><i class="fas fa-location-dot"></i> <strong>Destination:</strong> <?php echo htmlspecialchars($tour['destination']); ?></p>
-                      <p><i class="fas fa-calendar-days"></i> <strong>Duration:</strong> <?php echo htmlspecialchars($tour['duration']); ?></p>
-                      <p><i class="fas fa-bangladeshi-taka-sign"></i> <strong>Price:</strong> ৳<?php echo number_format($tour['price']); ?></p>
+              <?php if (!empty($tours)): ?>
+                <?php $hasValidTour = false; ?>
+                <?php foreach ($tours as $tour): ?>
+                  <?php if (!empty($tour['id']) && is_numeric($tour['id'])): ?>
+                    <?php
+                      $hasValidTour = true;
+                      $isActive = isset($tour['status']) && strcasecmp($tour['status'], 'Active') === 0;
+                      $statusClass = $isActive ? 'active' : 'inactive';
+                      $toggleIcon = $isActive ? 'fa-pause' : 'fa-play';
+                      $toggleText = $isActive ? 'Make Inactive' : 'Make Active';
+                    ?>
+                    <div class="tour-card" data-tour-id="<?php echo $tour['id']; ?>">
+                      <div class="tour-card-header">
+                        <h3><i class="fas fa-tag"></i> <?php echo htmlspecialchars($tour['name']); ?></h3>
+                        <span class="status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($tour['status']); ?></span>
+                      </div>
+                      <div class="tour-card-body">
+                        <div class="tour-info">
+                          <p><i class="fas fa-location-dot"></i> <strong>Destination:</strong> <?php echo htmlspecialchars($tour['destination']); ?></p>
+                          <p><i class="fas fa-calendar-days"></i> <strong>Duration:</strong> <?php echo htmlspecialchars($tour['duration']); ?></p>
+                          <p><i class="fas fa-bangladeshi-taka-sign"></i> <strong>Price:</strong> ৳<?php echo number_format($tour['price']); ?></p>
+                        </div>
+                      </div>
+                      <div class="tour-card-footer">
+                        <a class="edit-btn" href="#tourModal" 
+                           data-id="<?php echo $tour['id']; ?>" 
+                           data-name="<?php echo htmlspecialchars($tour['name']); ?>" 
+                           data-destination="<?php echo htmlspecialchars($tour['destination']); ?>" 
+                           data-duration="<?php echo htmlspecialchars($tour['duration']); ?>" 
+                           data-price="<?php echo $tour['price']; ?>" 
+                           data-status="<?php echo htmlspecialchars($tour['status']); ?>">
+                          <i class="fas fa-pen-to-square"></i> Edit
+                        </a>
+                        <a class="toggle-btn" href="#" onclick="toggleTour(<?php echo $tour['id']; ?>); return false;"><i class="fas <?php echo $toggleIcon; ?>"></i> <?php echo $toggleText; ?></a>
+                        <?php if ($statusClass === 'inactive'): ?>
+                          <a class="delete-btn" href="#" onclick="deleteTour(<?php echo $tour['id']; ?>, '<?php echo htmlspecialchars($tour['name']); ?>'); return false;"><i class="fas fa-trash"></i> Delete</a>
+                        <?php else: ?>
+                          <a class="delete-btn" href="#" style="pointer-events:none;opacity:0.5;" title="Only inactive tours can be deleted"><i class="fas fa-trash"></i> Delete</a>
+                        <?php endif; ?>
+                      </div>
                     </div>
-                  </div>
-                  <div class="tour-card-footer">
-                    <a class="edit-btn" href="#tourModal" 
-                       data-id="<?php echo $tour['id']; ?>" 
-                       data-name="<?php echo htmlspecialchars($tour['name']); ?>" 
-                       data-destination="<?php echo htmlspecialchars($tour['destination']); ?>" 
-                       data-duration="<?php echo htmlspecialchars($tour['duration']); ?>" 
-                       data-price="<?php echo $tour['price']; ?>" 
-                       data-status="<?php echo htmlspecialchars($tour['status']); ?>">
-                      <i class="fas fa-pen-to-square"></i> Edit
-                    </a>
-                    <a class="toggle-btn" href="#" onclick="toggleTour(<?php echo $tour['id']; ?>); return false;"><i class="fas <?php echo $toggleIcon; ?>"></i> <?php echo $toggleText; ?></a>
-                    <a class="delete-btn" href="#" onclick="deleteTour(<?php echo $tour['id']; ?>, '<?php echo htmlspecialchars($tour['name']); ?>'); return false;"><i class="fas fa-trash"></i> Delete</a>
-                  </div>
-                </div>
-              <?php endforeach; ?>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+                <?php if (!$hasValidTour): ?>
+                  <div class="no-tours-message" style="text-align:center;padding:48px 0;color:#888;font-size:1.2em;">No tours available.</div>
+                <?php endif; ?>
+              <?php else: ?>
+                <div class="no-tours-message" style="text-align:center;padding:48px 0;color:#888;font-size:1.2em;">No tours available.</div>
+              <?php endif; ?>
             </div>
           </div>
 
@@ -123,7 +154,7 @@ $activeToursCount = getActiveToursCount($tours);
 
   </div>
 
-  <!-- ===== Pure HTML/CSS Modal using :target ===== -->
+  <!-- Modal using :target -->
   <div id="tourModal" class="modal-overlay">
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-header">
@@ -174,95 +205,5 @@ $activeToursCount = getActiveToursCount($tours);
       </div>
     </div>
   </div>
-
-  <script>
-    // Reset form for adding new tour
-    function resetForm() {
-      document.getElementById('tourForm').reset();
-      document.getElementById('formAction').value = 'add';
-      document.getElementById('tourId').value = '';
-      document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> Add Tour';
-      window.location.hash = '';
-    }
-
-    // Edit tour - populate form with existing data
-    document.querySelectorAll('.edit-btn').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        const id = this.dataset.id;
-        const name = this.dataset.name;
-        const destination = this.dataset.destination;
-        const duration = this.dataset.duration;
-        const price = this.dataset.price;
-        const status = this.dataset.status;
-        
-        document.getElementById('formAction').value = 'edit';
-        document.getElementById('tourId').value = id;
-        document.getElementById('tourName').value = name;
-        document.getElementById('tourDestination').value = destination;
-        document.getElementById('tourDuration').value = duration;
-        document.getElementById('tourPrice').value = price;
-        document.getElementById('tourStatus').value = status;
-        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-pen-to-square"></i> Edit Tour';
-      });
-    });
-
-    // Toggle tour status
-    function toggleTour(id) {
-      if (confirm('Are you sure you want to change the status of this tour?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '../controller/ManageToursController.php';
-        
-        const actionInput = document.createElement('input');
-        actionInput.type = 'hidden';
-        actionInput.name = 'action';
-        actionInput.value = 'toggle';
-        
-        const idInput = document.createElement('input');
-        idInput.type = 'hidden';
-        idInput.name = 'id';
-        idInput.value = id;
-        
-        form.appendChild(actionInput);
-        form.appendChild(idInput);
-        document.body.appendChild(form);
-        form.submit();
-      }
-    }
-
-    // Delete tour
-    function deleteTour(id, name) {
-      if (confirm('Are you sure you want to delete "' + name + '"? This action cannot be undone.')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '../controller/ManageToursController.php';
-        
-        const actionInput = document.createElement('input');
-        actionInput.type = 'hidden';
-        actionInput.name = 'action';
-        actionInput.value = 'delete';
-        
-        const idInput = document.createElement('input');
-        idInput.type = 'hidden';
-        idInput.name = 'id';
-        idInput.value = id;
-        
-        form.appendChild(actionInput);
-        form.appendChild(idInput);
-        document.body.appendChild(form);
-        form.submit();
-      }
-    }
-
-    // Reset form when clicking "Add Tour" button
-    document.querySelector('.add-tour-btn').addEventListener('click', function() {
-      resetForm();
-    });
-
-    // Close modal and reset form
-    document.querySelector('.modal-close').addEventListener('click', function() {
-      resetForm();
-    });
-  </script>
 </body>
 </html>

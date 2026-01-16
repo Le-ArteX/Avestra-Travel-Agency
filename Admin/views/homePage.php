@@ -96,9 +96,10 @@ $activeToursCount = getActiveToursCount($tours);
                 <p>Find and reserve the best hotels at competitive prices for your stay.</p>
             </div>
             <div class="box">
-                <img src="../images/transport.png" alt="Book Transport Icon">
-                <h3>Book Transport</h3>
-                <p>Arrange for convenient transport options to get you to your destination.</p>
+                <img src="../images/tour.png" alt="Book Tour Icon">
+                <h3>Book Tours</h3>
+                <p>Explore guided tours and experiences tailored to your interests.</p>
+                <p class="tours-count-box">Now: <?php echo $activeToursCount; ?> tours available</p>
             </div>
         </div>
     </section>
@@ -156,7 +157,6 @@ $activeToursCount = getActiveToursCount($tours);
                 <img src="../images/suitcase-lg.svg" alt="Tour" class="service-icon">
                 <h3>Tour</h3>
                 <p>Browse guided tours and experiences tailored to your interests, from city highlights to offbeat adventures.</p>
-                <p style="margin:6px 0 0; font-weight: 700; color: #2563eb;">Now: <?php echo $activeToursCount; ?> tours available</p>
                 <a href="BookTour.php" class="button_1">Explore Tours</a>
             </div>
         </div>
