@@ -1,7 +1,17 @@
 <?php
 session_start();
 include('../database/MaintenanceCheck.php');
+
 include('../database/ToursData.php');
+include('../database/HotelsData.php');
+
+// Helper: count active hotels
+function getActiveHotelsCount(array $hotels): int {
+    return count(array_filter($hotels, function ($hotel) {
+        return isset($hotel['status']) && strcasecmp($hotel['status'], 'Active') === 0;
+    }));
+}
+$activeHotelsCount = getActiveHotelsCount($hotels);
 
 // Check if maintenance mode is enabled - allow admin bypass
 checkMaintenanceMode(true);
@@ -94,12 +104,13 @@ $activeToursCount = getActiveToursCount($tours);
                 <img src="../images/hotel.png" alt="Book Hotel Icon">
                 <h3>Book Hotel</h3>
                 <p>Find and reserve the best hotels at competitive prices for your stay.</p>
+                <p class="hotels-count-box"><?php echo $activeHotelsCount; ?> hotels available</p>
             </div>
             <div class="box">
                 <img src="../images/tour.png" alt="Book Tour Icon">
                 <h3>Book Tours</h3>
                 <p>Explore guided tours and experiences tailored to your interests.</p>
-                <p class="tours-count-box">Now: <?php echo $activeToursCount; ?> tours available</p>
+                <p class="tours-count-box"><?php echo $activeToursCount; ?> tours available</p>
             </div>
         </div>
     </section>
