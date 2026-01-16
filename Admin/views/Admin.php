@@ -1,6 +1,9 @@
 <?php
 session_start();
 include('../database/dbconnection.php');
+include('../database/ToursData.php');
+
+$activeToursCount = getActiveToursCount($tours);
 
 // Get message_option from session (default is enabled)
 $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
@@ -58,8 +61,8 @@ $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
                             <span class="stat-label">Payments</span>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-number">8</span>
-                            <span class="stat-label">Tours</span>
+                            <span class="stat-number"><?php echo $activeToursCount; ?></span>
+                            <span class="stat-label">Active Tours</span>
                         </div>
                         <div class="stat-box">
                             <span class="stat-number">3</span>

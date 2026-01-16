@@ -1,9 +1,11 @@
 <?php
 session_start();
 include('../database/MaintenanceCheck.php');
+include('../database/ToursData.php');
 
 // Check if maintenance mode is enabled - allow admin bypass
 checkMaintenanceMode(true);
+$activeToursCount = getActiveToursCount($tours);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -154,6 +156,7 @@ checkMaintenanceMode(true);
                 <img src="../images/suitcase-lg.svg" alt="Tour" class="service-icon">
                 <h3>Tour</h3>
                 <p>Browse guided tours and experiences tailored to your interests, from city highlights to offbeat adventures.</p>
+                <p style="margin:6px 0 0; font-weight: 700; color: #2563eb;">Now: <?php echo $activeToursCount; ?> tours available</p>
                 <a href="BookTour.php" class="button_1">Explore Tours</a>
             </div>
         </div>
