@@ -1,9 +1,28 @@
 <?php
 session_start();
 include('../database/dbconnection.php');
-include('../database/ToursData.php');
 
-$activeToursCount = getActiveToursCount($tours);
+include('../database/ToursData.php');
+// Ensure $activeToursCount is set after $tours is available
+$activeToursCount = isset($tours) ? getActiveToursCount($tours) : 0;
+
+// Hotels data
+include('../database/HotelsData.php');
+
+// Helper: count active hotels
+function getActiveHotelsCount(array $hotels): int {
+    return count(array_filter($hotels, function ($hotel) {
+        return isset($hotel['status']) && strcasecmp($hotel['status'], 'Active') === 0;
+    }));
+}
+
+// Helper: count available hotels (all hotels)
+function getAvailableHotelsCount(array $hotels): int {
+    return count($hotels);
+}
+
+$activeHotelsCount = getActiveHotelsCount($hotels);
+$availableHotelsCount = getAvailableHotelsCount($hotels);
 
 // Get message_option from session (default is enabled)
 $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
@@ -65,8 +84,8 @@ $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
                             <span class="stat-label">Active Tours</span>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-number">3</span>
-                            <span class="stat-label">Hotels</span>
+                            <span class="stat-number"><?php echo $activeHotelsCount; ?></span>
+                            <span class="stat-label">Active Hotels</span>
                         </div>
                     </div>
                 </div>

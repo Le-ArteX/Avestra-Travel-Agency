@@ -99,28 +99,24 @@ include('../database/HotelsData.php');
                 <div class="hotel-table-container">
                     <div class="hotel-cards-grid" id="hotelGrid">
 
-                        <?php if (!empty($hotels)): ?>
-                            <?php foreach ($hotels as $hotel): ?>
-                                <?php
-                                    if (empty($hotel['id']) || !is_numeric($hotel['id'])) continue;
 
-                                    $isActive = isset($hotel['status']) && strcasecmp($hotel['status'], 'Active') === 0;
-                                    $statusClass = $isActive ? 'active' : 'inactive';
-
-                                    $rating = (int)($hotel['rating'] ?? 0);
-                                    $rating = max(0, min(5, $rating));
-                                ?>
-
+                        <?php
+                        if (!empty($hotels)) {
+                            foreach ($hotels as $hotel) {
+                                if (empty($hotel['id']) || !is_numeric($hotel['id'])) continue;
+                                $isActive = isset($hotel['status']) && strcasecmp($hotel['status'], 'Active') === 0;
+                                $statusClass = $isActive ? 'active' : 'inactive';
+                                $rating = (int)($hotel['rating'] ?? 0);
+                                $rating = max(0, min(5, $rating));
+                        ?>
                                 <div class="hotel-card"
                                      data-name="<?= htmlspecialchars($hotel['name']) ?>"
                                      data-location="<?= htmlspecialchars($hotel['location']) ?>"
                                      data-status="<?= htmlspecialchars($hotel['status']) ?>">
-
                                     <div class="hotel-card-header">
                                         <h3><i class="fa-solid fa-hotel"></i> <?= htmlspecialchars($hotel['name']) ?></h3>
                                         <span class="status <?= $statusClass ?>"><?= htmlspecialchars($hotel['status']) ?></span>
                                     </div>
-
                                     <div class="hotel-card-body">
                                         <div class="hotel-info">
                                             <p>
@@ -128,7 +124,6 @@ include('../database/HotelsData.php');
                                                 <strong>Location:</strong>
                                                 <?= htmlspecialchars($hotel['location']) ?>
                                             </p>
-
                                             <p>
                                                 <i class="fa-solid fa-star"></i>
                                                 <strong>Rating:</strong>
@@ -136,7 +131,6 @@ include('../database/HotelsData.php');
                                                     <?php for ($i=1; $i<=5; $i++) echo ($i <= $rating) ? '★' : '☆'; ?>
                                                 </span>
                                             </p>
-
                                             <p>
                                                 <i class="fa-solid fa-bed"></i>
                                                 <strong>Rooms:</strong>
@@ -144,10 +138,7 @@ include('../database/HotelsData.php');
                                             </p>
                                         </div>
                                     </div>
-
                                     <div class="hotel-card-footer">
-
-                                        <!-- Edit (open modal and fill by JS) -->
                                         <a class="edit-btn" href="#hotelModal"
                                            data-id="<?= (int)$hotel['id'] ?>"
                                            data-name="<?= htmlspecialchars($hotel['name']) ?>"
@@ -157,8 +148,6 @@ include('../database/HotelsData.php');
                                            data-status="<?= htmlspecialchars($hotel['status']) ?>">
                                             <i class="fa-regular fa-pen-to-square"></i> Edit
                                         </a>
-
-                                        <!-- Toggle (normal POST) -->
                                         <form action="../controller/ManageHotelsController.php" method="POST" class="inline-form toggleForm">
                                             <input type="hidden" name="action" value="toggle">
                                             <input type="hidden" name="id" value="<?= (int)$hotel['id'] ?>">
@@ -169,7 +158,6 @@ include('../database/HotelsData.php');
                                                 <?= $isActive ? 'Make Inactive' : 'Make Active' ?>
                                             </button>
                                         </form>
-
                                         <!-- Delete (only inactive) -->
                                         <?php if (!$isActive): ?>
                                             <form action="../controller/ManageHotelsController.php" method="POST" class="inline-form deleteForm">
@@ -186,14 +174,14 @@ include('../database/HotelsData.php');
                                                 <i class="fa-solid fa-trash"></i> Delete
                                             </a>
                                         <?php endif; ?>
-
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
-
-                        <?php else: ?>
-                            <div class="no-hotels-message">No hotels available.</div>
-                        <?php endif; ?>
+                        <?php
+                            }
+                        } else {
+                            echo '<div class="no-hotels-message">No hotels available.</div>';
+                        }
+                        ?>
 
                     </div>
                 </div>

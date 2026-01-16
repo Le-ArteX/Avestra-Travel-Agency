@@ -1,27 +1,21 @@
 <?php
-function validateHotelForm(array $post): array {
+// HotelValidation.php - Validation for hotel form
+function validateHotelForm($name, $location, $rating, $rooms, $status) {
     $errors = [];
-
-    $name     = trim($post['name'] ?? '');
-    $location = trim($post['location'] ?? '');
-    $rating   = (string)($post['rating'] ?? '');
-    $rooms    = (string)($post['rooms'] ?? '');
-    $status   = (string)($post['status'] ?? '');
-
-    if ($name === '') $errors[] = "Hotel name is required.";
-    if ($location === '') $errors[] = "Location is required.";
-
-    if (!in_array($rating, ['1','2','3','4','5'], true)) {
-        $errors[] = "Please select a rating (1–5 stars).";
+    if (empty($name)) {
+        $errors[] = 'Hotel name is required.';
     }
-
-    if (!ctype_digit($rooms) || (int)$rooms <= 0) {
-        $errors[] = "Rooms must be a positive number.";
+    if (empty($location)) {
+        $errors[] = 'Location is required.';
     }
-
-    if (!in_array($status, ['Active','Inactive'], true)) {
-        $errors[] = "Invalid status selected.";
+    if (!is_numeric($rating) || $rating < 1 || $rating > 5) {
+        $errors[] = 'Rating must be between 1 and 5.';
     }
-
+    if (!is_numeric($rooms) || $rooms < 1) {
+        $errors[] = 'Rooms must be a positive number.';
+    }
+    if ($status !== 'Active' && $status !== 'Inactive') {
+        $errors[] = 'Status must be Active or Inactive.';
+    }
     return $errors;
 }
