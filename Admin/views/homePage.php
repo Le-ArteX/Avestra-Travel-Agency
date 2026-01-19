@@ -143,19 +143,19 @@ $activeToursCount = getActiveToursCount($tours);
                 <img src="../images/ticket-detailed-fill.svg" alt="Tickets" class="service-icon">
                 <h3>Tickets</h3>
                 <p>Book flights, trains, and buses in minutes. Compare routes and prices across trusted carriers.</p>
-                <a href="BookTickets.php" class="button_1">Start Booking</a>
+                <a href="loginPage.php" class="button_1">Start Booking</a>
             </div>
             <div id="services-section-hotel" class="service-card">
                 <img src="../images/house-add.svg" alt="Hotel" class="service-icon">
                 <h3>Hotel</h3>
                 <p>Find the right stay — from boutique stays to luxury resorts — with honest reviews and great deals.</p>
-                <a href="BookHotel.php" class="button_1">Find Hotels</a>
+                <a href="loginPage.php" class="button_1">Find Hotels</a>
             </div>
             <div id="services-section-tour" class="service-card">
                 <img src="../images/suitcase-lg.svg" alt="Tour" class="service-icon">
                 <h3>Tour</h3>
                 <p>Browse guided tours and experiences tailored to your interests, from city highlights to offbeat adventures.</p>
-                <a href="BookTour.php" class="button_1">Explore Tours</a>
+                <a href="loginPage.php" class="button_1">Explore Tours</a>
             </div>
         </div>
     </section>
