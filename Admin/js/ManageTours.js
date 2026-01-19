@@ -103,15 +103,15 @@ function toggleTour(id) {
   showConfirmModal('Are you sure you want to change the status of this tour?', submitToggleTour, [id]);
 }
 
-
-function submitToggleTour(id) {
+// Override submitDeleteTour to use form submission
+function submitDeleteTour(id) {
   const form = document.createElement('form');
   form.method = 'POST';
   form.action = '../controller/ManageToursController.php';
   const actionInput = document.createElement('input');
   actionInput.type = 'hidden';
   actionInput.name = 'action';
-  actionInput.value = 'toggle';
+  actionInput.value = 'delete';
   const idInput = document.createElement('input');
   idInput.type = 'hidden';
   idInput.name = 'id';
@@ -122,14 +122,15 @@ function submitToggleTour(id) {
   form.submit();
 }
 
-function submitDeleteTour(id) {
+// Override submitToggleTour to use form submission
+function submitToggleTour(id) {
   const form = document.createElement('form');
   form.method = 'POST';
   form.action = '../controller/ManageToursController.php';
   const actionInput = document.createElement('input');
   actionInput.type = 'hidden';
   actionInput.name = 'action';
-  actionInput.value = 'delete';
+  actionInput.value = 'toggle';
   const idInput = document.createElement('input');
   idInput.type = 'hidden';
   idInput.name = 'id';

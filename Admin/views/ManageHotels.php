@@ -97,7 +97,7 @@ include('../database/HotelsData.php');
                     </div>
 
                     <div class="hotel-table-container">
-                        <div class="hotel-cards-grid" id="hotelGrid">
+                        <div class="hotel-cards-container" id="hotelGrid">
 
 
                             <?php
@@ -140,7 +140,7 @@ include('../database/HotelsData.php');
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="hotel-card-footer">
+                                        <div class="hotel-card-footer hotel-actions">
                                             <a class="edit-btn" href="#hotelModal" data-id="<?= (int) $hotel['id'] ?>"
                                                 data-name="<?= htmlspecialchars($hotel['name']) ?>"
                                                 data-location="<?= htmlspecialchars($hotel['location']) ?>"
@@ -155,7 +155,7 @@ include('../database/HotelsData.php');
                                                 <input type="hidden" name="id" value="<?= (int) $hotel['id'] ?>">
                                                 <input type="hidden" name="current_status"
                                                     value="<?= htmlspecialchars($hotel['status']) ?>">
-                                                <button type="submit" class="toggle-btn btn-like-link"
+                                                <button type="submit" class="toggle-btn"
                                                     data-confirm="Change hotel status?">
                                                     <i class="fa-solid fa-arrows-rotate"></i>
                                                     <?= $isActive ? 'Make Inactive' : 'Make Active' ?>
@@ -169,7 +169,7 @@ include('../database/HotelsData.php');
                                                     <input type="hidden" name="id" value="<?= (int) $hotel['id'] ?>">
                                                     <input type="hidden" name="status"
                                                         value="<?= htmlspecialchars($hotel['status']) ?>">
-                                                    <button type="submit" class="delete-btn btn-like-link"
+                                                    <button type="submit" class="delete-btn"
                                                         data-confirm="Delete this hotel? This cannot be undone.">
                                                         <i class="fa-solid fa-trash"></i> Delete
                                                     </button>

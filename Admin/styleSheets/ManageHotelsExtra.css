@@ -52,6 +52,7 @@ html, body{
 
 /* Actions */
 .hotel-actions{
+  display:flex;
   gap: 10px;
   align-items:center;
   flex-wrap: wrap;
@@ -63,6 +64,7 @@ html, body{
 
   height: 25 px;
   border: 1px solid var(--line);
+  border-radius: 10px;
   padding: 8px 12px;
   font-size: 0.95rem;
   font-weight: 650;
@@ -127,12 +129,14 @@ html, body{
   min-width: 0 !important;
   max-width: 220px !important;
   padding: 4px 10px !important;
+  font-size: 0.89rem !important;
   border-radius: 7px !important;
 }
 
 .form-group.full input,
 .form-group.full select {
   max-width:80% !important;
+}
 
 .save-btn,
 .cancel-btn {
@@ -230,6 +234,7 @@ html, body{
 .status.active{ background: rgba(16,185,129,0.18); color:#ecfdf5; }
 .status.active::before{ content:""; width:8px; height:8px; border-radius:50%; background:#34d399; box-shadow:0 0 0 3px rgba(52,211,153,0.18); }
 .status.inactive{ background: rgba(239,68,68,0.15); color:#fff1f2; }
+.status.inactive::before{ content:""; width:8px; height:8px; border-radius:50%; background:#fb7185; box-shadow:0 0 0 3px rgba(251,113,133,0.16); }
 
 /* Footer actions */
 .hotel-card-footer{
@@ -245,6 +250,7 @@ html, body{
 
 .edit-btn, .toggle-btn, .delete-btn, .btn-like-link{
   flex:1;
+  min-width: 120px;
   text-align:center;
   padding: 9px 10px;
   border-radius: 10px;
@@ -285,6 +291,7 @@ html, body{
   background: rgba(2,6,23,0.52);
   backdrop-filter: blur(8px);
   display:none;
+  align-items:center;
   justify-content:center;
   padding: 16px;
   z-index: 9999;
@@ -406,6 +413,7 @@ html, body{
   cursor:pointer;
   transition: transform .15s ease, color .15s ease;
   line-height: 1;
+}
 .star-rating label:hover,
 .star-rating label:hover ~ label{
   color:#facc15;
@@ -431,6 +439,7 @@ html, body{
 }
 .confirm-box{
   width: min(420px, 100%);
+  background:#fff;
   border-radius: 16px;
   box-shadow: 0 18px 60px rgba(15,23,42,0.25);
   padding: 16px;
