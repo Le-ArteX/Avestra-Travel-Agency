@@ -1,4 +1,64 @@
-/* General Styles */
+/* Custom Confirm Modal Styles */
+.custom-confirm-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(34,48,74,0.25);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.custom-confirm-dialog {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(34,48,74,0.18);
+    padding: 32px 32px 24px 32px;
+    min-width: 320px;
+    max-width: 90vw;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.custom-confirm-text {
+    font-size: 1.18em;
+    color: #22304a;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+.custom-confirm-actions {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+}
+/* Custom Toast Notification Styles */
+.custom-toast {
+    position: fixed;
+    top: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    min-width: 260px;
+    max-width: 90vw;
+    padding: 16px 32px;
+    font-size: 1.1em;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(34,48,74,0.12);
+    text-align: center;
+    opacity: 0.97;
+    transition: opacity 0.5s;
+}
+.toast.success.custom-toast {
+    background: #0ecb81;
+    color: #fff;
+}
+.toast.error.custom-toast {
+    background: #f87171;
+    color: #fff;
+}
 html, body {
     margin: 0;
     padding: 0;
@@ -19,7 +79,7 @@ html, body {
 .sidebar {
     width: 240px;
     height: 100vh;
-    background: linear-gradient(135deg, #22304a 80%, #2e3e5c 100%);
+    background: #22304a; /* Solid color, no gradient */
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -107,51 +167,6 @@ html, body {
     margin-bottom: 32px;
 }
 
-.payment-form .payment-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 16px;
-    gap: 16px;
-}
-
-.payment-row label {
-    min-width: 160px;
-    font-weight: 600;
-}
-
-.payment-row input,
-.payment-row select {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid #dbe6f3;
-    border-radius: 8px;
-    font-size: 1em;
-    background: #f9fbfd;
-    transition: border-color 0.2s;
-}
-
-.payment-row input:focus,
-.payment-row select:focus {
-    border-color: #4fc3f7;
-    outline: none;
-}
-
-.save-payment-btn {
-    background: #4fc3f7;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 32px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.save-payment-btn:hover {
-    background: #22304a;
-    color: #4fc3f7;
-}
-
 .payment-table {
     width: 100%;
     border-collapse: collapse;
@@ -174,17 +189,58 @@ html, body {
     background: #f9fbfd;
 }
 
-.action-btn {
-    background: #4fc3f7;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: background 0.2s;
+.payment-action-group {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-start;
 }
 
-.action-btn:hover {
-    background: #22304a;
-    color: #4fc3f7;
+.mini-btn {
+    display: inline-block;
+    min-width: 90px;         /* Reduced from 110px */
+    padding: 6px 0;          /* Reduced from 10px 0 */
+    font-size: 0.95em;       /* Slightly smaller font */
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.12s;
+    box-shadow: 0 2px 8px rgba(34,48,74,0.10);
+    outline: none;
+    text-align: center;
+    margin: 0;
+}
+
+.mini-btn:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(34,48,74,0.10);
+}
+.mini-btn.accept {
+    background: #0ecb81;
+    color: #fff;
+    border: 2px solid #0ecb81;
+    text-shadow: 0 2px 8px rgba(34,48,74,0.10);
+}
+.mini-btn.accept:hover {
+    background: #099e63;
+    border-color: #099e63;
+    color: #fff;
+}
+.mini-btn.reject {
+    background: #f87171;
+    color: #fff;
+    border: 2px solid #f87171;
+    text-shadow: 0 2px 8px rgba(34,48,74,0.10);
+}
+.mini-btn.reject:hover {
+    background: #d32f2f;
+    border-color: #d32f2f;
+    color: #fff;
+}
+.mini-btn:disabled, .mini-btn[aria-disabled="true"] {
+    opacity: 0.6;
+    cursor: not-allowed;
 }

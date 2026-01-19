@@ -13,7 +13,7 @@ function getActiveHotelsCount(array $hotels): int {
 }
 $activeHotelsCount = getActiveHotelsCount($hotels);
 
-// Check if maintenance mode is enabled - allow admin bypass
+
 checkMaintenanceMode(true);
 $activeToursCount = getActiveToursCount($tours);
 ?>
@@ -93,57 +93,44 @@ $activeToursCount = getActiveToursCount($tours);
             <p>Travel today, treasure forever.</p>
         </div>
     </section>
-    <section id="boxes">
-        <div class="container">
-            <div class="box">
-                <img src="../images/ticket.png" alt="Book Tickets Icon">
-                <h3>Book Tickets</h3>
-                <p>Easily book your flight, train, or bus tickets with our user-friendly platform.</p>
-            </div>
-            <div class="box">
-                <img src="../images/hotel.png" alt="Book Hotel Icon">
-                <h3>Book Hotel</h3>
-                <p>Find and reserve the best hotels at competitive prices for your stay.</p>
-                <p class="hotels-count-box"><?php echo $activeHotelsCount; ?> hotels available</p>
-            </div>
-            <div class="box">
-                <img src="../images/tour.png" alt="Book Tour Icon">
-                <h3>Book Tours</h3>
-                <p>Explore guided tours and experiences tailored to your interests.</p>
-                <p class="tours-count-box"><?php echo $activeToursCount; ?> tours available</p>
-            </div>
-        </div>
-    </section>
-    <section id="travel-cards">
+     <section id="travel-cards">
         <div class="container">
             <h2>Discover Amazing Destinations</h2>
             <div class="travel-card-grid">
                 <div class="travel-card">
-                    <img src="../images/maldives.jpg" alt="Maldives Beach">
+                    <a href="https://www.youtube.com/watch?v=JxCDg3qZBOE" target="_main">
+                    <img src="../images/coxs.png" alt="Cox's Bazar">
+                    </a>
                     <div class="travel-card-overlay">
-                        <h3>Maldives</h3>
-                        <p>Crystal clear waters and white sandy beaches.</p>
+                        <h3>Cox's Bazar</h3>
+                        <p>The world's longest natural sandy sea beach.</p>
                     </div>
                 </div>
                 <div class="travel-card">
-                    <img src="../images/paris.jpg" alt="Eiffel Tower, Paris">
+                    <a href="https://www.youtube.com/watch?v=-Thd47J4o6g" target="_main">
+                    <img src="../images/sajek.png" alt="Sajek Valley">
+                    </a>
                     <div class="travel-card-overlay">
-                        <h3>Paris</h3>
-                        <p>The city of lights and romance.</p>
+                        <h3>Sajek Valley</h3>
+                        <p>This place is referred to as the "Queen of Hills" it is known for its greenery and dense forests.</p>
                     </div>
                 </div>
                 <div class="travel-card">
-                    <img src="../images/bali.jpg" alt="Bali Rice Terraces">
+                    <a href="https://www.youtube.com/watch?v=YORirX6i0rQ" target="_main">
+                    <img src="../images/bandarban.png" alt="Bandarban">
+                    </a>
                     <div class="travel-card-overlay">
-                        <h3>Bali</h3>
-                        <p>Experience lush landscapes and vibrant culture.</p>
+                        <h3>Bandarban</h3>
+                        <p>This place features lush green hills, exotic waterfalls, serene lakes, and misty viewpoints.</p>
                     </div>
                 </div>
                 <div class="travel-card">
-                    <img src="../images/newyork.jpg" alt="New York Skyline">
+                    <a href="https://www.youtube.com/watch?v=3oILOKS7M2w" target="_main">
+                    <img src="../images/tanguar.png" alt="Tanguar Haor">
+                    </a>
                     <div class="travel-card-overlay">
-                        <h3>New York</h3>
-                        <p>The city that never sleeps.</p>
+                        <h3>Tanguar Haor</h3>
+                        <p>A seasonal wetland paradise for migratory birds, famous for its dramatic seasonal changes.</p>
                     </div>
                 </div>
             </div>
