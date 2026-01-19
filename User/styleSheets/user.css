@@ -1,0 +1,120 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 30px 12px 30px 12px;
+    border-bottom: 1px solid #ddd;
+    background-color: #c2eff5;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: scale(1.6); /* Increases size by 20% */
+    transform-origin: center; /* Scales from center */
+    padding-left: 60px;
+}
+
+.nav-left img {
+    width: 40px;
+}
+
+.nav-left span {
+    font-size: 20px;
+    font-weight: bold;
+    color: #00ADB5;
+}
+
+.nav-right {
+    display: flex;
+    gap: 15px;
+    box-shadow: 0 4px 24px #ffffff;
+    background-color: #ffffff;
+    border-radius: 5px;
+    padding: 8px;
+
+}
+
+.nav-right a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+.nav-right a:hover {
+    background: #00ADB5;
+    color: white;
+}
+
+.logout {
+    background: #e53935;
+    color: white !important;
+}
+
+/* LAYOUT */
+.container {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px 20px;
+    box-shadow: 0 4px 24px #00ADB5;
+    border-radius: 20px;
+}
+
+/* FLEX GRID */
+.flex-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    flex: 1;
+    min-width: 280px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+h2, h3 {
+    margin-top: 0;
+    color: #00ADB5;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #00ADB5;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00ADB5;
+}
