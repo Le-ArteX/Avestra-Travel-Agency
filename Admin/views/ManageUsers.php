@@ -30,7 +30,7 @@
                 <ul class="sidebar-menu">
                     <li><a href="Admin.php">Dashboard</a></li>
                     <li><a href="ManageUsers.php" class="active">Manage Users</a></li>
-                    <li><a href="ManageBookings.php">Bookings</a></li>
+                     <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
                     <li><a href="Reports.php">Reports</a></li>

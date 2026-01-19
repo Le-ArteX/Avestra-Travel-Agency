@@ -47,7 +47,7 @@ include('../database/HotelsData.php');
             <ul class="sidebar-menu">
                 <li><a href="Admin.php">Dashboard</a></li>
                 <li><a href="ManageUsers.php">Manage Users</a></li>
-                <li><a href="ManageBookings.php">Bookings</a></li>
+                 <li><a href="ManageTickets.php">Tickets</a></li>
                 <li><a class="active" href="ManageHotels.php">Hotels</a></li>
                 <li><a href="ManageTours.php">Tours</a></li>
                 <li><a href="Reports.php">Reports</a></li>

@@ -67,7 +67,6 @@ $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
                 <ul class="sidebar-menu">
                     <li><a href="Admin.php" class="active">Dashboard</a></li>
                     <li><a href="ManageUsers.php">Manage Users</a></li>
-                    <li><a href="ManageBookings.php">Bookings</a></li>
                     <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>

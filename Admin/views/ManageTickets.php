@@ -59,10 +59,9 @@ if ($result) {
         <ul class="sidebar-menu">
           <li><a href="Admin.php">Dashboard</a></li>
           <li><a href="ManageUsers.php">Manage Users</a></li>
-          <li><a href="ManageBooking.php">Bookings</a></li>
+          <li><a href="ManageTickets.php" class="active">Tickets</a></li>
           <li><a href="ManageHotels.php">Hotels</a></li>
           <li><a href="ManageTours.php">Tours</a></li>
-          <li><a href="ManageTickets.php" class="active">Tickets</a></li>
           <li><a href="Reports.php">Reports</a></li>
           <li><a href="Payments.php">Payments</a></li>
           <li><a href="Settings.php">Settings</a></li>
