@@ -49,7 +49,8 @@
                 <div class="admin-card">
 
                
-                    <?php if (!empty($success_message)): ?>
+                    <?php // Remove SMS success message display from ManageUsers page
+                    if (!empty($success_message) && $success_message !== 'SMS sent successfully!'): ?>
                         <div
                             style="padding:12px; background:#d0f8e8; color:#2e7d32; border-radius:8px; margin-bottom:16px;">
                             <?php echo htmlspecialchars($success_message); ?>

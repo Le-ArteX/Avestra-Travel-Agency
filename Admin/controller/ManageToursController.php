@@ -82,5 +82,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             break;
             
+        case 'delete':
+            // Delete tour
+            $id = intval($_POST['id'] ?? 0);
+            if ($id <= 0) {
+                $response['message'] = 'Invalid tour ID';
+            } else {
+                $sql = "DELETE FROM tours WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("i", $id);
+                if ($stmt->execute()) {
+                    $response['success'] = true;
+                    $response['message'] = 'Tour deleted successfully!';
+                } else {
+                    $response['message'] = 'Error deleting tour: ' . $conn->error;
+                }
+                $stmt->close();
+            }
+            break;
+            
     }
 }
+
+// At the end of the file, output JSON for AJAX
+header('Content-Type: application/json');
+echo json_encode($response);
+exit;

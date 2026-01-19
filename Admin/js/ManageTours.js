@@ -103,42 +103,46 @@ function toggleTour(id) {
   showConfirmModal('Are you sure you want to change the status of this tour?', submitToggleTour, [id]);
 }
 
-// Override submitDeleteTour to use form submission
+// AJAX for Delete Tour (no page redirect, just show message)
 function submitDeleteTour(id) {
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = '../controller/ManageToursController.php';
-  const actionInput = document.createElement('input');
-  actionInput.type = 'hidden';
-  actionInput.name = 'action';
-  actionInput.value = 'delete';
-  const idInput = document.createElement('input');
-  idInput.type = 'hidden';
-  idInput.name = 'id';
-  idInput.value = id;
-  form.appendChild(actionInput);
-  form.appendChild(idInput);
-  document.body.appendChild(form);
-  form.submit();
+  const formData = new FormData();
+  formData.append('action', 'delete');
+  formData.append('id', id);
+  fetch('../controller/ManageToursController.php', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showCustomMessage(data.message, 'success');
+      setTimeout(() => window.location.reload(), 1200);
+    } else {
+      showCustomMessage(data.message || 'Error deleting tour', 'error');
+    }
+  })
+  .catch(() => showCustomMessage('Network error', 'error'));
 }
 
-// Override submitToggleTour to use form submission
+// AJAX for Toggle Status (no page redirect, just show message)
 function submitToggleTour(id) {
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = '../controller/ManageToursController.php';
-  const actionInput = document.createElement('input');
-  actionInput.type = 'hidden';
-  actionInput.name = 'action';
-  actionInput.value = 'toggle';
-  const idInput = document.createElement('input');
-  idInput.type = 'hidden';
-  idInput.name = 'id';
-  idInput.value = id;
-  form.appendChild(actionInput);
-  form.appendChild(idInput);
-  document.body.appendChild(form);
-  form.submit();
+  const formData = new FormData();
+  formData.append('action', 'toggle');
+  formData.append('id', id);
+  fetch('../controller/ManageToursController.php', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showCustomMessage(data.message, 'success');
+      setTimeout(() => window.location.reload(), 1200);
+    } else {
+      showCustomMessage(data.message || 'Error updating status', 'error');
+    }
+  })
+  .catch(() => showCustomMessage('Network error', 'error'));
 }
 
 // Expose functions to global scope for inline event handlers

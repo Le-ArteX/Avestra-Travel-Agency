@@ -42,15 +42,15 @@
             </header>
 
             <section class="admin-section">
+                <?php // Only show success message if it's not the user update message
+                if (!empty($success_message) && $success_message !== 'User updated successfully!'): ?>
+                    <div style="padding:12px; background:#d0f8e8; color:#2e7d32; border-radius:8px; margin-bottom:16px;">
+                        <?php echo htmlspecialchars($success_message); ?>
+                    </div>
+                <?php endif; ?>
                 <?php if (!empty($error_message)): ?>
                     <div style="padding:12px; background:#ffe0e0; color:#c62828; border-radius:8px; margin-bottom:16px;">
                         <?php echo htmlspecialchars($error_message); ?>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if (!empty($success_message)): ?>
-                    <div style="padding:12px; background:#d0f8e8; color:#2e7d32; border-radius:8px; margin-bottom:16px;">
-                        <?php echo htmlspecialchars($success_message); ?>
                     </div>
                 <?php endif; ?>
                 
