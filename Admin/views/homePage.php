@@ -1,3 +1,22 @@
+<?php
+session_start();
+include('../database/MaintenanceCheck.php');
+
+include('../database/ToursData.php');
+include('../database/HotelsData.php');
+
+// Helper: count active hotels
+function getActiveHotelsCount(array $hotels): int {
+    return count(array_filter($hotels, function ($hotel) {
+        return isset($hotel['status']) && strcasecmp($hotel['status'], 'Active') === 0;
+    }));
+}
+$activeHotelsCount = getActiveHotelsCount($hotels);
+
+
+checkMaintenanceMode(true);
+$activeToursCount = getActiveToursCount($tours);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,9 +26,39 @@
     <title>Avestra Travel Agency : Book Tickets, Hotel, Transport</title>
     <link rel="stylesheet" href="../styleSheets/homePage.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
+    <style>
+        .alert {
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 1100px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
 </head>
 
 <body>
+    <?php
+    if (isset($_SESSION['contact_success'])) {
+        echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['contact_success']) . '</div>';
+        unset($_SESSION['contact_success']);
+    }
+    if (isset($_SESSION['contact_error'])) {
+        echo '<div class="alert alert-error">' . htmlspecialchars($_SESSION['contact_error']) . '</div>';
+        unset($_SESSION['contact_error']);
+    }
+    ?>
     <header>
         <button id="mode-toggle">🌙</button>
         <div class="container">
@@ -44,55 +93,44 @@
             <p>Travel today, treasure forever.</p>
         </div>
     </section>
-    <section id="boxes">
-        <div class="container">
-            <div class="box">
-                <img src="../images/ticket.png" alt="Book Tickets Icon">
-                <h3>Book Tickets</h3>
-                <p>Easily book your flight, train, or bus tickets with our user-friendly platform.</p>
-            </div>
-            <div class="box">
-                <img src="../images/hotel.png" alt="Book Hotel Icon">
-                <h3>Book Hotel</h3>
-                <p>Find and reserve the best hotels at competitive prices for your stay.</p>
-            </div>
-            <div class="box">
-                <img src="../images/transport.png" alt="Book Transport Icon">
-                <h3>Book Transport</h3>
-                <p>Arrange for convenient transport options to get you to your destination.</p>
-            </div>
-        </div>
-    </section>
-    <section id="travel-cards">
+     <section id="travel-cards">
         <div class="container">
             <h2>Discover Amazing Destinations</h2>
             <div class="travel-card-grid">
                 <div class="travel-card">
-                    <img src="../images/maldives.jpg" alt="Maldives Beach">
+                    <a href="https://www.youtube.com/watch?v=JxCDg3qZBOE" target="_main">
+                    <img src="../images/coxs.png" alt="Cox's Bazar">
+                    </a>
                     <div class="travel-card-overlay">
-                        <h3>Maldives</h3>
-                        <p>Crystal clear waters and white sandy beaches.</p>
+                        <h3>Cox's Bazar</h3>
+                        <p>The world's longest natural sandy sea beach.</p>
                     </div>
                 </div>
                 <div class="travel-card">
-                    <img src="../images/paris.jpg" alt="Eiffel Tower, Paris">
+                    <a href="https://www.youtube.com/watch?v=-Thd47J4o6g" target="_main">
+                    <img src="../images/sajek.png" alt="Sajek Valley">
+                    </a>
                     <div class="travel-card-overlay">
-                        <h3>Paris</h3>
-                        <p>The city of lights and romance.</p>
+                        <h3>Sajek Valley</h3>
+                        <p>This place is referred to as the "Queen of Hills" it is known for its greenery and dense forests.</p>
                     </div>
                 </div>
                 <div class="travel-card">
-                    <img src="../images/bali.jpg" alt="Bali Rice Terraces">
+                    <a href="https://www.youtube.com/watch?v=YORirX6i0rQ" target="_main">
+                    <img src="../images/bandarban.png" alt="Bandarban">
+                    </a>
                     <div class="travel-card-overlay">
-                        <h3>Bali</h3>
-                        <p>Experience lush landscapes and vibrant culture.</p>
+                        <h3>Bandarban</h3>
+                        <p>This place features lush green hills, exotic waterfalls, serene lakes, and misty viewpoints.</p>
                     </div>
                 </div>
                 <div class="travel-card">
-                    <img src="../images/newyork.jpg" alt="New York Skyline">
+                    <a href="https://www.youtube.com/watch?v=3oILOKS7M2w" target="_main">
+                    <img src="../images/tanguar.png" alt="Tanguar Haor">
+                    </a>
                     <div class="travel-card-overlay">
-                        <h3>New York</h3>
-                        <p>The city that never sleeps.</p>
+                        <h3>Tanguar Haor</h3>
+                        <p>A seasonal wetland paradise for migratory birds, famous for its dramatic seasonal changes.</p>
                     </div>
                 </div>
             </div>
@@ -105,19 +143,19 @@
                 <img src="../images/ticket-detailed-fill.svg" alt="Tickets" class="service-icon">
                 <h3>Tickets</h3>
                 <p>Book flights, trains, and buses in minutes. Compare routes and prices across trusted carriers.</p>
-                <a href="BookTickets.php" class="button_1">Start Booking</a>
+                <a href="loginPage.php" class="button_1">Start Booking</a>
             </div>
             <div id="services-section-hotel" class="service-card">
                 <img src="../images/house-add.svg" alt="Hotel" class="service-icon">
                 <h3>Hotel</h3>
                 <p>Find the right stay — from boutique stays to luxury resorts — with honest reviews and great deals.</p>
-                <a href="BookHotel.php" class="button_1">Find Hotels</a>
+                <a href="loginPage.php" class="button_1">Find Hotels</a>
             </div>
             <div id="services-section-tour" class="service-card">
                 <img src="../images/suitcase-lg.svg" alt="Tour" class="service-icon">
                 <h3>Tour</h3>
                 <p>Browse guided tours and experiences tailored to your interests, from city highlights to offbeat adventures.</p>
-                <a href="BookTour.php" class="button_1">Explore Tours</a>
+                <a href="loginPage.php" class="button_1">Explore Tours</a>
             </div>
         </div>
     </section>
@@ -133,18 +171,21 @@
                     <li><strong>Visit:</strong> Kuril,khilkhet, Dhaka, Bangladesh</li>
                 </ul>
             </div>
-            <form class="contact-form">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your name" required>
+            <div>
+                <div id="contact-message" style="display:none; margin-bottom:15px;"></div>
+                <form class="contact-form" id="contactForm">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your name" required>
 
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
 
-                <label for="message">Message</label>
-                <textarea id="message" name="message" rows="4" placeholder="Tell us how we can help" required></textarea>
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Tell us how we can help" required></textarea>
 
-                <button type="submit" class="button_1">Send Message</button>
-            </form>
+                    <button type="submit" class="button_1">Send Message</button>
+                </form>
+            </div>
         </div>
     </section>
 
@@ -190,6 +231,52 @@
                     window.location.href = 'loader.php';
                 });
             }
+
+            // AJAX Contact Form
+            const contactForm = document.getElementById('contactForm');
+            const contactMessage = document.getElementById('contact-message');
+            
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(contactForm);
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                
+                // Disable button during submission
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+                
+                fetch('../controller/ContactFormHandler.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        contactMessage.className = 'alert alert-success';
+                        contactMessage.textContent = data.message;
+                        contactForm.reset();
+                    } else {
+                        contactMessage.className = 'alert alert-error';
+                        contactMessage.textContent = data.message;
+                    }
+                    contactMessage.style.display = 'block';
+                    
+                    // Hide message after 5 seconds
+                    setTimeout(() => {
+                        contactMessage.style.display = 'none';
+                    }, 5000);
+                })
+                .catch(error => {
+                    contactMessage.className = 'alert alert-error';
+                    contactMessage.textContent = 'Error sending message. Please try again.';
+                    contactMessage.style.display = 'block';
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Message';
+                });
+            });
         });
     </script>
 </body>

@@ -1,3 +1,6 @@
+<?php
+include '../controller/forgotPasswordFormDataHandler.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,20 +15,35 @@
 <body>
     <div class="forgot-container">
         <h2>Forgot Password</h2>
-        <form class="forgot-form" action="forgotPassword.php" method="post">
+        <?php include '../controller/ForgotPasswordMessageDisplay.php'; ?>
+        
+        <form class="forgot-form" action="../controller/forgotPasswordValidation.php" method="post">
             <div class="form-group">
-                <input type="email" id="email" name="email" placeholder=" " required autocomplete="email">
+                <input type="email" id="email" name="email" placeholder=" " autocomplete="email"
+                    title="Please enter your registered email address"
+                    value="<?php echo htmlspecialchars($email); ?>">
                 <label for="email">Enter your email address</label>
+                <?php if (!empty($email_error)): ?>
+                    <span class="error-message"><?php echo $email_error; ?></span>
+                <?php endif; ?>
             </div>
 
             <div class="form-group">
-                <input type="password" id="new-password" name="new-password" placeholder=" " required autocomplete="new-password">
+                <input type="password" id="new-password" name="new-password" placeholder=" " autocomplete="new-password"
+                    title="Password must be at least 6 characters long">
                 <label for="new-password">New Password</label>
+                <?php if (!empty($newPassword_error)): ?>
+                    <span class="error-message"><?php echo $newPassword_error; ?></span>
+                <?php endif; ?>
             </div>
 
             <div class="form-group">
-                <input type="password" id="confirm-password" name="confirm-password" placeholder=" " required autocomplete="new-password">
+                <input type="password" id="confirm-password" name="confirm-password" placeholder=" " autocomplete="new-password"
+                    title="Re-enter your new password. It must match the password above">
                 <label for="confirm-password">Confirm New Password</label>
+                <?php if (!empty($confirmPassword_error)): ?>
+                    <span class="error-message"><?php echo $confirmPassword_error; ?></span>
+                <?php endif; ?>
             </div>
 
             <button type="submit">Reset Password</button>

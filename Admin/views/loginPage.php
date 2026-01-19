@@ -1,3 +1,7 @@
+<?php
+session_start();
+include '../controller/loginFormDataHandler.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,20 +21,38 @@
             </a>
         </div>
         <h2>Login to Your Account</h2>
-        <form class="login-form" action="admin.php" method="post">
+        <?php include '../controller/LoginMessageDisplay.php'; ?>
+        <?php
+        // Clear session after displaying messages
+        unset($_SESSION['login_form_data']);
+        unset($_SESSION['login_form_errors']);
+        ?>
+        
+        <form class="login-form" action="../controller/loginValidation.php" method="post">
             <div class="form-group">
-                <input type="text" id="username" name="username" placeholder=" " required autocomplete="username">
-                <label for="username">Username or Email</label>
+                <input type="email" id="email" name="email" placeholder=" " 
+                    autocomplete="email"
+                    title="Please enter your registered email address"
+                    value="<?php echo htmlspecialchars($email); ?>">
+                <label for="email">Email</label>
+                <?php if (!empty($email_error)): ?>
+                    <span class="error-message"><?php echo $email_error; ?></span>
+                <?php endif; ?>
             </div>
 
             <div class="form-group">
-                <input type="password" id="password" name="password" placeholder=" " required
-                    autocomplete="current-password">
+                <input type="password" id="password" name="password" placeholder=" "
+                    autocomplete="current-password"
+                    title="Password must be at least 6 characters long"
+                    value="<?php echo htmlspecialchars($saved_password); ?>">
                 <label for="password">Password</label>
+                <?php if (!empty($password_error)): ?>
+                    <span class="error-message"><?php echo $password_error; ?></span>
+                <?php endif; ?>
             </div>
             <div class="login-form-row">
                 <div class="form-group">
-                    <input type="checkbox" id="remember-me" name="remember-me">
+                    <input type="checkbox" id="remember-me" name="remember-me" <?php echo $remember_checked ? 'checked' : ''; ?>>
                     <label for="remember-me" class="checkbox-label">Remember</label>
                 </div>
                 <div class="forgot-link">

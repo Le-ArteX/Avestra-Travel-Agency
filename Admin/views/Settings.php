@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION['admin_email'])) {
+    header('Location: loginPage.php');
+    exit();
+}
+
+include('../database/dbconnection.php');
+include('../database/SettingsData.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,10 +32,10 @@
                 <ul class="sidebar-menu">
                     <li><a href="Admin.php">Dashboard</a></li>
                     <li><a href="ManageUsers.php">Manage Users</a></li>
-                    <li><a href="ManageBookings.php">Bookings</a></li>
+                    <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
-                    <li><a href="Reports.php">Reports</a></li>
+
                     <li><a href="Payments.php">Payments</a></li>
                     <li><a href="Settings.php" class="active">Settings</a></li>
                     <li><a href="MyProfile.php">My Profile</a></li>
@@ -36,53 +48,47 @@
                 <h1>Settings</h1>
             </header>
             <section class="admin-section">
+                <?php if (isset($_SESSION['settings_updated'])): ?>
+                    <div class="alert-success">
+                        <?php echo htmlspecialchars($_SESSION['settings_updated']); unset($_SESSION['settings_updated']); ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['settings_error'])): ?>
+                    <div class="alert-error">
+                        <?php echo htmlspecialchars($_SESSION['settings_error']); unset($_SESSION['settings_error']); ?>
+                    </div>
+                <?php endif; ?>
+
                 <!-- General Settings -->
                 <div class="admin-card">
                     <h3>General Settings</h3>
-                    <form class="settings-form">
+                    <form class="settings-form" action="../controller/SettingsController.php" method="POST">
                         <div class="settings-row">
                             <label for="site-theme">Site Theme:</label>
-                            <select id="site-theme" name="site-theme">
-                                <option value="light">Light</option>
-                                <option value="dark">Dark</option>
+                            <select id="site-theme" name="site_theme">
+                                <option value="light" <?php echo $site_theme === 'light' ? 'selected' : ''; ?>>Light</option>
+                                
                             </select>
                         </div>
                         <div class="settings-row">
-                            <label for="email-notifications">Email Notifications:</label>
-                            <select id="email-notifications" name="email-notifications">
-                                <option value="enabled">Enabled</option>
-                                <option value="disabled">Disabled</option>
+                            <label for="message-option">Message Option:</label>
+                            <select id="message-option" name="message_option">
+                                <option value="enabled" <?php echo $message_option === 'enabled' ? 'selected' : ''; ?>>Enabled</option>
+                                <option value="disabled" <?php echo $message_option === 'disabled' ? 'selected' : ''; ?>>Disabled</option>
                             </select>
                         </div>
                         <div class="settings-row">
                             <label for="language">Language:</label>
                             <select id="language" name="language">
-                                <option value="en">English</option>
-                                <option value="es">Spanish</option>
-                                <option value="fr">French</option>
-                            </select>
-                        </div>
-                        <div class="settings-row">
-                            <label for="timezone">Timezone:</label>
-                            <select id="timezone" name="timezone">
-                                <option value="UTC">UTC</option>
-                                <option value="EST">EST</option>
-                                <option value="CST">CST</option>
-                                <option value="PST">PST</option>
-                            </select>
-                        </div>
-                        <div class="settings-row">
-                            <label for="privacy">Privacy Mode:</label>
-                            <select id="privacy" name="privacy">
-                                <option value="public">Public</option>
-                                <option value="private">Private</option>
+                                <option value="en" <?php echo $language === 'en' ? 'selected' : ''; ?>>English</option>
                             </select>
                         </div>
                         <div class="settings-row">
                             <label for="maintenance">Maintenance Mode:</label>
-                            <select id="maintenance" name="maintenance">
-                                <option value="off">Off</option>
-                                <option value="on">On</option>
+                            <select id="maintenance" name="maintenance_mode">
+                                <option value="off" <?php echo $maintenance_mode === 'off' ? 'selected' : ''; ?>>Off</option>
+                                <option value="on" <?php echo $maintenance_mode === 'on' ? 'selected' : ''; ?>>On</option>
                             </select>
                         </div>
                         <div class="settings-row">
@@ -94,14 +100,15 @@
                 <!-- Profile Settings -->
                 <div class="admin-card">
                     <h3>Profile Settings</h3>
-                    <form class="settings-form">
+                    <form class="settings-form" action="../controller/SettingsController.php" method="POST">
+                        <input type="hidden" name="form_type" value="profile">
                         <div class="settings-row">
                             <label for="profile-name">Name:</label>
-                            <input type="text" id="profile-name" name="profile-name" placeholder="Enter your name">
+                            <input type="text" id="profile-name" name="username" placeholder="Enter your name" value="<?php echo htmlspecialchars($current_username); ?>" required>
                         </div>
                         <div class="settings-row">
                             <label for="profile-email">Email:</label>
-                            <input type="email" id="profile-email" name="profile-email" placeholder="Enter your email">
+                            <input type="email" id="profile-email" name="email" placeholder="Enter your email" value="<?php echo htmlspecialchars($current_email); ?>" required>
                         </div>
                         <div class="settings-row">
                             <button type="submit" class="save-settings-btn">Update Profile</button>
@@ -112,18 +119,19 @@
                 <!-- Password Settings -->
                 <div class="admin-card">
                     <h3>Change Password</h3>
-                    <form class="settings-form">
+                    <form class="settings-form" action="../controller/SettingsController.php" method="POST">
+                        <input type="hidden" name="form_type" value="password">
                         <div class="settings-row">
                             <label for="current-password">Current Password:</label>
-                            <input type="password" id="current-password" name="current-password" placeholder="Enter current password">
+                            <input type="password" id="current-password" name="current_password" placeholder="Enter current password" required>
                         </div>
                         <div class="settings-row">
                             <label for="new-password">New Password:</label>
-                            <input type="password" id="new-password" name="new-password" placeholder="Enter new password">
+                            <input type="password" id="new-password" name="new_password" placeholder="Enter new password" required>
                         </div>
                         <div class="settings-row">
                             <label for="confirm-password">Confirm Password:</label>
-                            <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm new password">
+                            <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm new password" required>
                         </div>
                         <div class="settings-row">
                             <button type="submit" class="save-settings-btn">Change Password</button>
@@ -135,10 +143,6 @@
         </main>
     </div>
     <script src="../js/theme.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            applyStoredTheme();
-        });
-    </script>
+    <script src="../js/Settings.js"></script>
 </body>
 </html>

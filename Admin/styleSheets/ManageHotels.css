@@ -5,7 +5,8 @@ html, body {
     font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
     color: #22304a;
     height: 100%;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .admin-container {
@@ -27,7 +28,6 @@ html, body {
     border-top-right-radius: 18px;
     border-bottom-right-radius: 18px;
     z-index: 2;
-    transition: box-shadow 0.2s;
     overflow-y: auto;
     flex-shrink: 0;
 }
@@ -49,17 +49,12 @@ html, body {
     flex: 1;
 }
 
-.sidebar-menu li {
-    margin: 0;
-}
-
 .sidebar-menu a {
     display: block;
     color: #fff;
     text-decoration: none;
     padding: 14px 32px;
     font-size: 1.08em;
-    letter-spacing: 0.5px;
     transition: background 0.18s, padding-left 0.18s, color 0.18s, box-shadow 0.18s;
     border-left: 4px solid transparent;
     border-radius: 0 20px 20px 0;
@@ -78,23 +73,15 @@ html, body {
 .main-content {
     flex: 1;
     height: 100vh;
-    overflow-y: auto;
+    overflow-y: scroll !important;
     padding: 48px 48px 32px 48px;
     background: #fff;
     box-sizing: border-box;
 }
 
-.admin-header h1 {
-    margin-top: 0;
-    font-size: 2.2em;
-    font-weight: 700;
-    color: #22304a;
-    margin-bottom: 12px;
-    letter-spacing: 0.5px;
-}
-
 .admin-section {
-    margin-top: 32px;
+    margin-top: 24px;
+    max-height: 80vh;
 }
 
 .admin-card {
@@ -103,251 +90,52 @@ html, body {
     box-shadow: 0 4px 24px rgba(34, 48, 74, 0.10);
     padding: 32px;
     margin-bottom: 32px;
-    transition: box-shadow 0.2s;
 }
 
-.admin-card:hover {
-    box-shadow: 0 8px 32px rgba(34, 48, 74, 0.16);
+/* --- Hotel Cards Grid Side by Side --- */
+.hotel-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 24px;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
 }
-
-.hotel-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    gap: 16px;
-    flex-wrap: wrap;
+.hotel-card {
+  margin-bottom: 0;
+  width: 100%;
+  max-width: 480px;
 }
-
-.section-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    gap: 16px;
-    flex-wrap: wrap;
-}
-
-.hotel-search {
-    padding: 10px 16px;
-    border: 1px solid #dbe6f3;
-    border-radius: 8px;
-    font-size: 1em;
-    width: 220px;
-    transition: border-color 0.2s;
-}
-
-.hotel-search:focus {
-    border-color: #4fc3f7;
-    outline: none;
-}
-
-.section-search {
-    padding: 10px 16px;
-    border: 1px solid #dbe6f3;
-    border-radius: 8px;
-    font-size: 1em;
-    width: 220px;
-    transition: border-color 0.2s;
-}
-
-.section-search:focus {
-    border-color: #4fc3f7;
-    outline: none;
-}
-
-.add-hotel-btn {
-    background: #4fc3f7;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(79, 195, 247, 0.10);
-}
-
-.add-hotel-btn:hover {
-    background: #22304a;
-    color: #4fc3f7;
-}
-
-.add-section-btn {
-    background: #4fc3f7;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-size: 1em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(79, 195, 247, 0.10);
-}
-
-.add-section-btn:hover {
-    background: #22304a;
-    color: #4fc3f7;
-}
-
-.hotel-table-container {
-    overflow-x: auto;
-}
-
-.section-table-container {
-    overflow-x: auto;
-}
-
-.hotel-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-    background: #f4f6fb;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(34, 48, 74, 0.06);
-}
-
-.hotel-table th, .hotel-table td {
-    padding: 14px 16px;
-    text-align: left;
-    font-size: 1em;
-}
-
-.hotel-table th {
-    background: #e9f3fa;
-    color: #22304a;
-    font-weight: 700;
-    border-bottom: 2px solid #dbe6f3;
-}
-
-.hotel-table tr {
-    transition: background 0.18s;
-}
-
-.hotel-table tr:hover {
-    background: #e3f2fd;
-}
-
-.section-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-    background: #f4f6fb;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(34, 48, 74, 0.06);
-}
-
-.section-table th, .section-table td {
-    padding: 14px 16px;
-    text-align: left;
-    font-size: 1em;
-}
-
-.section-table th {
-    background: #e9f3fa;
-    color: #22304a;
-    font-weight: 700;
-    border-bottom: 2px solid #dbe6f3;
-}
-
-.section-table tr {
-    transition: background 0.18s;
-}
-
-.section-table tr:hover {
-    background: #e3f2fd;
-}
-
-.status {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 0.95em;
-    font-weight: 600;
-}
-
-.status.active {
-    background: #d0f8e8;
-    color: #2e7d32;
-}
-
-.status.inactive {
-    background: #ffe0e0;
-    color: #c62828;
-}
-
-.edit-btn, .delete-btn {
-    background: #fff;
-    border: 1px solid #4fc3f7;
-    color: #22304a;
-    border-radius: 8px;
-    padding: 6px 16px;
-    font-size: 0.98em;
-    font-weight: 600;
-    cursor: pointer;
-    margin-right: 6px;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-
-.edit-btn:hover {
-    background: #4fc3f7;
-    color: #fff;
-    border-color: #22304a;
-}
-
-.delete-btn:hover {
-    background: #c62828;
-    color: #fff;
-    border-color: #c62828;
-}
-
 @media (max-width: 900px) {
-    .admin-container {
-        flex-direction: column;
-    }
-    .sidebar {
-        width: 100%;
-        flex-direction: row;
-        height: auto;
-        box-shadow: none;
-        min-height: unset;
-        border-radius: 0 0 18px 18px;
-    }
-    .sidebar-menu {
-        display: flex;
-        flex-direction: row;
-        overflow-x: auto;
-    }
-    .sidebar-menu a {
-        padding: 12px 18px;
-        font-size: 1em;
-        border-left: none;
-        border-bottom: 4px solid transparent;
-        border-radius: 0 0 20px 20px;
-    }
-    .sidebar-menu a:hover,
-    .sidebar-menu a.active {
-        background: #1a2230;
-        border-bottom: 4px solid #4fc3f7;
-        color: #4fc3f7;
-        padding-bottom: 16px;
-    }
-    .main-content {
-        padding: 24px 12px;
-    }
-    .admin-card {
-        padding: 16px;
-    }
-    .section-table th, .section-table td {
-        padding: 10px 8px;
-        font-size: 0.95em;
-    }
-    .hotel-table th, .hotel-table td {
-        padding: 10px 8px;
-        font-size: 0.95em;
-    }
+  .admin-container { flex-direction: column; }
+  .sidebar {
+      width: 100%;
+      flex-direction: row;
+      height: auto;
+      box-shadow: none;
+      border-radius: 0 0 18px 18px;
+  }
+  .sidebar-menu { display: flex; overflow-x: auto; }
+  .sidebar-menu a {
+      padding: 12px 18px;
+      border-left: none;
+      border-bottom: 4px solid transparent;
+      border-radius: 0 0 20px 20px;
+  }
+  .sidebar-menu a:hover,
+  .sidebar-menu a.active {
+      border-bottom: 4px solid #4fc3f7;
+      padding-bottom: 16px;
+  }
+  .main-content { padding: 24px 12px; }
+  .admin-card { padding: 16px; }
+  .hotel-cards-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .hotel-card {
+    min-width: 90vw;
+    max-width: 98vw;
+  }
 }
