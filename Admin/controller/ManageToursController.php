@@ -2,109 +2,85 @@
 session_start();
 include('../database/dbconnection.php');
 
-// Initialize response
-$response = ['success' => false, 'message' => ''];
-
-// Handle different actions
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-    
-    switch ($action) {
-        case 'add':
-            // Add new tour
-            $name = trim($_POST['name'] ?? '');
-            $destination = trim($_POST['destination'] ?? '');
-            $duration = trim($_POST['duration'] ?? '');
-            $price = floatval($_POST['price'] ?? 0);
-            $status = $_POST['status'] ?? 'Active';
-            
-            if (empty($name) || empty($destination) || empty($duration) || $price <= 0) {
-                $response['message'] = 'All fields are required and price must be greater than 0';
-            } else {
-                $sql = "INSERT INTO tours (name, destination, duration, price, status) VALUES (?, ?, ?, ?, ?)";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sssds", $name, $destination, $duration, $price, $status);
-                
-                if ($stmt->execute()) {
-                    $response['success'] = true;
-                    $response['message'] = 'Tour added successfully!';
-                } else {
-                    $response['message'] = 'Error adding tour: ' . $conn->error;
-                }
-                $stmt->close();
-            }
-            break;
-            
-        case 'edit':
-            // Edit existing tour
-            $id = intval($_POST['id'] ?? 0);
-            $name = trim($_POST['name'] ?? '');
-            $destination = trim($_POST['destination'] ?? '');
-            $duration = trim($_POST['duration'] ?? '');
-            $price = floatval($_POST['price'] ?? 0);
-            $status = $_POST['status'] ?? 'Active';
-            
-            if ($id <= 0 || empty($name) || empty($destination) || empty($duration) || $price <= 0) {
-                $response['message'] = 'Invalid data provided';
-            } else {
-                $sql = "UPDATE tours SET name = ?, destination = ?, duration = ?, price = ?, status = ? WHERE id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sssdsi", $name, $destination, $duration, $price, $status, $id);
-                
-                if ($stmt->execute()) {
-                    $response['success'] = true;
-                    $response['message'] = 'Tour updated successfully!';
-                } else {
-                    $response['message'] = 'Error updating tour: ' . $conn->error;
-                }
-                $stmt->close();
-            }
-            break;
-            
-        case 'toggle':
-            // Toggle tour status
-            $id = intval($_POST['id'] ?? 0);
-            
-            if ($id <= 0) {
-                $response['message'] = 'Invalid tour ID';
-            } else {
-                $sql = "UPDATE tours SET status = IF(status = 'Active', 'Inactive', 'Active') WHERE id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("i", $id);
-                
-                if ($stmt->execute()) {
-                    $response['success'] = true;
-                    $response['message'] = 'Tour status updated!';
-                } else {
-                    $response['message'] = 'Error updating status: ' . $conn->error;
-                }
-                $stmt->close();
-            }
-            break;
-            
-        case 'delete':
-            // Delete tour
-            $id = intval($_POST['id'] ?? 0);
-            if ($id <= 0) {
-                $response['message'] = 'Invalid tour ID';
-            } else {
-                $sql = "DELETE FROM tours WHERE id = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("i", $id);
-                if ($stmt->execute()) {
-                    $response['success'] = true;
-                    $response['message'] = 'Tour deleted successfully!';
-                } else {
-                    $response['message'] = 'Error deleting tour: ' . $conn->error;
-                }
-                $stmt->close();
-            }
-            break;
-            
-    }
+function redirect_back($msg = '', $err = '') {
+  if ($msg) $_SESSION['tour_success'] = $msg;
+  if ($err) $_SESSION['tour_error'] = $err;
+  header("Location: ../views/ManageTours.php");
+  exit;
 }
 
-// At the end of the file, output JSON for AJAX
-header('Content-Type: application/json');
-echo json_encode($response);
-exit;
+function json_out($success, $message) {
+  header('Content-Type: application/json');
+  echo json_encode(['success' => $success, 'message' => $message]);
+  exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  redirect_back('', 'Invalid request');
+}
+
+$action = $_POST['action'] ?? '';
+
+if ($action === 'add') {
+  $name = trim($_POST['name'] ?? '');
+  $destination = trim($_POST['destination'] ?? '');
+  $duration = trim($_POST['duration'] ?? '');
+  $price = (float)($_POST['price'] ?? 0);
+  $status = $_POST['status'] ?? 'Active';
+
+  if ($name === '' || $destination === '' || $duration === '' || $price <= 0) {
+    redirect_back('', 'All fields are required and price must be greater than 0');
+  }
+
+  $stmt = $conn->prepare("INSERT INTO tours (name, destination, duration, price, status) VALUES (?, ?, ?, ?, ?)");
+  $stmt->bind_param("sssds", $name, $destination, $duration, $price, $status);
+
+  if ($stmt->execute()) redirect_back('Tour added successfully!');
+  redirect_back('', 'Error adding tour');
+}
+
+if ($action === 'edit') {
+  $id = (int)($_POST['id'] ?? 0);
+  $name = trim($_POST['name'] ?? '');
+  $destination = trim($_POST['destination'] ?? '');
+  $duration = trim($_POST['duration'] ?? '');
+  $price = (float)($_POST['price'] ?? 0);
+  $status = $_POST['status'] ?? 'Active';
+
+  if ($id <= 0 || $name === '' || $destination === '' || $duration === '' || $price <= 0) {
+    redirect_back('', 'Invalid data provided');
+  }
+
+  $stmt = $conn->prepare("UPDATE tours SET name=?, destination=?, duration=?, price=?, status=? WHERE id=?");
+  $stmt->bind_param("sssdsi", $name, $destination, $duration, $price, $status, $id);
+
+  if ($stmt->execute()) redirect_back('Tour updated successfully!');
+  redirect_back('', 'Error updating tour');
+}
+
+if ($action === 'toggle') {
+  $id = (int)($_POST['id'] ?? 0);
+  if ($id <= 0) json_out(false, 'Invalid tour ID');
+
+  $stmt = $conn->prepare("UPDATE tours SET status = IF(status='Active','Inactive','Active') WHERE id=?");
+  $stmt->bind_param("i", $id);
+
+  if ($stmt->execute()) json_out(true, 'Tour status updated!');
+  json_out(false, 'Error updating status');
+}
+
+if ($action === 'delete') {
+  $id = (int)($_POST['id'] ?? 0);
+  if ($id <= 0) json_out(false, 'Invalid tour ID');
+
+  // Only inactive tours can be deleted
+  $stmt = $conn->prepare("DELETE FROM tours WHERE id=? AND status='Inactive'");
+  $stmt->bind_param("i", $id);
+
+  if ($stmt->execute() && $stmt->affected_rows > 0) {
+    json_out(true, 'Tour deleted successfully!');
+  }
+  json_out(false, 'Only inactive tours can be deleted (or tour not found)');
+}
+
+redirect_back('', 'Invalid action');

@@ -3,9 +3,6 @@ session_start();
 include('../database/dbconnection.php');
 
 
-$activeToursCount = isset($tours) ? getActiveToursCount($tours) : 0;
-
-
 include('../database/HotelsData.php');
 
 
@@ -40,6 +37,11 @@ if ($result) {
     }
     $totalSeats = $acSeats + $nonAcSeats;
 }
+
+
+include('../database/ToursData.php');
+$totalToursCount = isset($tours) ? getTotalToursCount($tours) : 0;
+$activeToursCount = isset($tours) ? getActiveToursCount($tours) : 0;
 
 
 $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
@@ -103,6 +105,9 @@ $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
                         <div class="stat-box">
                             <span class="stat-number"><?php echo $activeToursCount; ?></span>
                             <span class="stat-label">Active Tours</span>
+                            <?php if ($activeToursCount == 0): ?>
+                                <div style="margin-top:10px; color:#888; font-size:0.98em;">No active tours available.</div>
+                            <?php endif; ?>
                         </div>
                         <div class="stat-box">
                             <span class="stat-number"><?php echo $activeHotelsCount; ?></span>

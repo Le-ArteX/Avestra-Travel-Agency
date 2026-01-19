@@ -35,7 +35,7 @@ include('../database/SettingsData.php');
                     <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
-                    <li><a href="Reports.php">Reports</a></li>
+
                     <li><a href="Payments.php">Payments</a></li>
                     <li><a href="Settings.php" class="active">Settings</a></li>
                     <li><a href="MyProfile.php">My Profile</a></li>

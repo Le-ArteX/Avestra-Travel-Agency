@@ -49,7 +49,6 @@ $tickets = getBusTickets($q, $status);
           <li><a href="ManageTickets.php">Tickets</a></li>
           <li><a href="ManageHotels.php">Hotels</a></li>
           <li><a href="ManageTours.php">Tours</a></li>
-          <li><a href="Reports.php">Reports</a></li>
           <li><a href="Payments.php">Payments</a></li>
           <li><a href="Settings.php">Settings</a></li>
           <li><a href="MyProfile.php">My Profile</a></li>
@@ -210,7 +209,7 @@ $tickets = getBusTickets($q, $status);
 
   <script src="../js/ManageTicket.js"></script>
   <script>
-    
+
     document.addEventListener('DOMContentLoaded', function() {
       var toast = document.querySelector('.toast');
       if (toast) {

@@ -1,50 +1,83 @@
 <?php
 session_start();
-include('../database/ToursData.php');
+  include(__DIR__ . '/../database/dbconnection.php');
+
+function esc($s) { return htmlspecialchars($s ?? '', ENT_QUOTES, 'UTF-8'); }
+
+// Fetch tours
+$tours = [];
+$res = $conn->query("SELECT * FROM tours ORDER BY id DESC");
+if ($res) {
+  while ($row = $res->fetch_assoc()) $tours[] = $row;
+}
+
+// Flash messages from controller
+$success = $_SESSION['tour_success'] ?? '';
+$error   = $_SESSION['tour_error'] ?? '';
+unset($_SESSION['tour_success'], $_SESSION['tour_error']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Manage Tours - Admin Panel</title>
+  <title>Manage Tours - Avestra Travel Agency</title>
 
-  <!-- Base styles -->
   <link rel="stylesheet" href="../styleSheets/ManageTours.css" />
-  <!-- Extra styles -->
-  <link rel="stylesheet" href="../styleSheets/ManageToursExtra.css" />
-
-
   <link rel="icon" href="../images/logo.png" type="image/png" />
-
-  <!-- ManageTours JS -->
-  <script src="../js/ManageTours.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 
 <body>
-  <!-- Custom Stylish Message -->
-  <div id="customMessage" style="display:none;position:fixed;top:32px;right:32px;z-index:99999;min-width:320px;max-width:420px;">
-    <div id="customMessageBox">
-      <span id="customMessageText"></span>
-      <button onclick="document.getElementById('customMessage').style.display='none'">Close</button>
+
+  <!-- ✅ Toast -->
+  <div id="customMessage"
+       style="display:none; position:fixed; top:32px; right:32px; z-index:99999; min-width:320px; max-width:420px;">
+    <div id="customMessageBox"
+         style="background:#4fc3f7; padding:14px 16px; border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.15); display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <span id="customMessageText" style="color:#fff; font-weight:900;"></span>
+      <button type="button"
+              onclick="document.getElementById('customMessage').style.display='none'"
+              style="border:none;background:rgba(255,255,255,.25);color:#fff;font-weight:900;padding:6px 10px;border-radius:10px;cursor:pointer;">
+        Close
+      </button>
     </div>
   </div>
 
-  <!-- Custom Confirm Modal -->
-  <div id="confirmModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:10000;align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.18);padding:32px 28px;min-width:320px;max-width:90vw;text-align:center;">
-      <div id="confirmModalMessage"></div>
-      <button onclick="handleConfirmModalYes()">Yes</button>
-      <button onclick="hideConfirmModal()">No</button>
+  <!-- ✅ Hidden alerts used by JS -->
+  <?php if ($success): ?>
+    <div class="alert-success" style="display:none;"><?= esc($success) ?></div>
+  <?php endif; ?>
+  <?php if ($error): ?>
+    <div class="alert-error" style="display:none;"><?= esc($error) ?></div>
+  <?php endif; ?>
+
+  <!-- ✅ Confirm Modal -->
+  <div id="confirmModal"
+       style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,.18); padding:26px 22px; min-width:320px; max-width:90vw; text-align:center;">
+      <div id="confirmModalMessage" style="font-weight:900; color:#22304a; margin-bottom:16px;"></div>
+      <div style="display:flex; gap:10px; justify-content:center;">
+        <button type="button"
+                onclick="handleConfirmModalYes()"
+                style="border:none; background:#22304a; color:#fff; font-weight:900; padding:10px 16px; border-radius:10px; cursor:pointer;">
+          Yes
+        </button>
+        <button type="button"
+                onclick="hideConfirmModal()"
+                style="border:1px solid #dbe6f3; background:#f3f6fb; color:#22304a; font-weight:900; padding:10px 16px; border-radius:10px; cursor:pointer;">
+          No
+        </button>
+      </div>
     </div>
   </div>
+
   <div class="admin-container">
-
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
       <div style="padding: 24px 32px;">
-        <div style="text-align:center; margin-bottom: 16px;">
-          <img src="../images/logo.png" alt="Avestra Logo" style="width:60px; height:auto;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <img src="../images/logo.png" alt="Avestra Logo" style="width: 60px; height: auto;">
         </div>
         <h2 class="sidebar-title">Admin Panel</h2>
       </div>
@@ -53,10 +86,9 @@ include('../database/ToursData.php');
         <ul class="sidebar-menu">
           <li><a href="Admin.php">Dashboard</a></li>
           <li><a href="ManageUsers.php">Manage Users</a></li>
-           <li><a href="ManageTickets.php">Tickets</a></li>
           <li><a href="ManageHotels.php">Hotels</a></li>
-          <li><a class="active" href="ManageTours.php">Tours</a></li>
-          <li><a href="Reports.php">Reports</a></li>
+          <li><a href="ManageTours.php" class="active">Tours</a></li>
+          <li><a href="ManageTickets.php">Tickets</a></li>
           <li><a href="Payments.php">Payments</a></li>
           <li><a href="Settings.php">Settings</a></li>
           <li><a href="MyProfile.php">My Profile</a></li>
@@ -65,145 +97,130 @@ include('../database/ToursData.php');
       </nav>
     </aside>
 
-    <!-- Main -->
+    <!-- MAIN -->
     <main class="main-content">
-        <?php
-        if (isset($_SESSION['tour_success'])) {
-          echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['tour_success']) . '</div>';
-          unset($_SESSION['tour_success']);
-        }
-        if (isset($_SESSION['tour_error'])) {
-          echo '<div class="alert alert-error">' . htmlspecialchars($_SESSION['tour_error']) . '</div>';
-          unset($_SESSION['tour_error']);
-        }
-        ?>
       <header class="admin-header">
-        <h1><i class="fas fa-map-location-dot" style="margin-right: 0.5rem;"></i>Manage Tours</h1>
-        <p style="margin: 0.5rem 0 0 0; opacity: 0.95; font-size: 1rem;">Explore, add, and manage all your tour packages with ease</p>
+        <h1>Manage Tours</h1>
       </header>
 
-      <section class="admin-section">
-        <div class="admin-card">
-
-          <!-- Actions -->
-          <div class="tour-actions">
-            <input class="tour-search" type="text" placeholder="🔍 Search tours by name or destination..." />
-            <button class="search-btn" type="button"><i class="fas fa-search"></i> Search</button>
-            <!-- Opens modal using :target -->
-            <a class="add-tour-btn" href="#tourModal"><i class="fas fa-plus"></i> Add Tour</a>
-          </div>
-
-          <!-- Table -->
-          <div class="tour-table-container">
-            <div class="tour-cards-grid">
-              <?php if (!empty($tours)): ?>
-                <?php $hasValidTour = false; ?>
-                <?php foreach ($tours as $tour): ?>
-                  <?php if (!empty($tour['id']) && is_numeric($tour['id'])): ?>
-                    <?php
-                      $hasValidTour = true;
-                      $isActive = isset($tour['status']) && strcasecmp($tour['status'], 'Active') === 0;
-                      $statusClass = $isActive ? 'active' : 'inactive';
-                      $toggleIcon = $isActive ? 'fa-pause' : 'fa-play';
-                      $toggleText = $isActive ? 'Make Inactive' : 'Make Active';
-                    ?>
-                    <div class="tour-card" data-tour-id="<?php echo $tour['id']; ?>">
-                      <div class="tour-card-header">
-                        <h3><i class="fas fa-tag"></i> <?php echo htmlspecialchars($tour['name']); ?></h3>
-                        <span class="status <?php echo $statusClass; ?>"><?php echo htmlspecialchars($tour['status']); ?></span>
-                      </div>
-                      <div class="tour-card-body">
-                        <div class="tour-info">
-                          <p><i class="fas fa-location-dot"></i> <strong>Destination:</strong> <?php echo htmlspecialchars($tour['destination']); ?></p>
-                          <p><i class="fas fa-calendar-days"></i> <strong>Duration:</strong> <?php echo htmlspecialchars($tour['duration']); ?></p>
-                          <p><i class="fas fa-bangladeshi-taka-sign"></i> <strong>Price:</strong> ৳<?php echo number_format($tour['price']); ?></p>
-                        </div>
-                      </div>
-                      <div class="tour-card-footer">
-                        <a class="edit-btn" href="#tourModal" 
-                           data-id="<?php echo $tour['id']; ?>" 
-                           data-name="<?php echo htmlspecialchars($tour['name']); ?>" 
-                           data-destination="<?php echo htmlspecialchars($tour['destination']); ?>" 
-                           data-duration="<?php echo htmlspecialchars($tour['duration']); ?>" 
-                           data-price="<?php echo $tour['price']; ?>" 
-                           data-status="<?php echo htmlspecialchars($tour['status']); ?>">
-                          <i class="fas fa-pen-to-square"></i> Edit
-                        </a>
-                        <a class="toggle-btn" href="#" onclick="toggleTour(<?php echo $tour['id']; ?>); return false;"><i class="fas <?php echo $toggleIcon; ?>"></i> <?php echo $toggleText; ?></a>
-                        <?php if ($statusClass === 'inactive'): ?>
-                          <a class="delete-btn" href="#" onclick="deleteTour(<?php echo $tour['id']; ?>, '<?php echo htmlspecialchars($tour['name']); ?>'); return false;"><i class="fas fa-trash"></i> Delete</a>
-                        <?php else: ?>
-                          <a class="delete-btn" href="#" style="pointer-events:none;opacity:0.5;" title="Only inactive tours can be deleted"><i class="fas fa-trash"></i> Delete</a>
-                        <?php endif; ?>
-                      </div>
-                    </div>
-                  <?php endif; ?>
-                <?php endforeach; ?>
-                <?php if (!$hasValidTour): ?>
-                  <div class="no-tours-message" style="text-align:center;padding:48px 0;color:#888;font-size:1.2em;">No tours available.</div>
-                <?php endif; ?>
-              <?php else: ?>
-                <div class="no-tours-message" style="text-align:center;padding:48px 0;color:#888;font-size:1.2em;">No tours available.</div>
-              <?php endif; ?>
-            </div>
-          </div>
-
+      <!-- ACTION BAR -->
+      <div class="admin-card">
+        <div class="section-actions">
+          <button type="button" class="add-tour-btn" id="openAddTourBtn">
+            <i class="fas fa-plus-circle"></i> Add Tour
+          </button>
         </div>
-      </section>
-    </main>
-
-  </div>
-
-  
-  <div id="tourModal" class="modal-overlay">
-    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-header">
-        <h3 id="modalTitle"><i class="fas fa-plus-circle"></i> Add / Edit Tour</h3>
-        <a class="modal-close" href="#">✕</a>
       </div>
 
-      <div class="modal-body">
-        <form class="tour-form" id="tourForm" action="../controller/ManageToursController.php" method="POST">
+      <!-- ✅ FORM CARD (HIDDEN BY DEFAULT) -->
+      <div class="admin-card" id="tourFormCard" style="display:none;">
+        <div class="form-title" style="display:flex; align-items:center; justify-content:space-between;">
+          <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> Add Tour</h2>
+          <button type="button" class="modal-close" id="closeTourFormBtn">✕</button>
+        </div>
+
+        <form id="tourForm" method="POST" action="../controller/ManageToursController.php" class="form-container">
           <input type="hidden" name="action" id="formAction" value="add">
           <input type="hidden" name="id" id="tourId" value="">
-          
-          <div class="form-grid">
-            <div class="form-group">
-              <label><i class="fas fa-tag"></i> Tour Name</label>
-              <input type="text" name="name" id="tourName" placeholder="e.g., Cox's Bazar Getaway" required />
-            </div>
 
-            <div class="form-group">
-              <label><i class="fas fa-location-dot"></i> Destination</label>
-              <input type="text" name="destination" id="tourDestination" placeholder="e.g., Cox's Bazar" required />
-            </div>
-
-            <div class="form-group">
-              <label><i class="fas fa-calendar-days"></i> Duration</label>
-              <input type="text" name="duration" id="tourDuration" placeholder="e.g., 3 Days" required />
-            </div>
-
-            <div class="form-group">
-              <label><i class="fas fa-bangladeshi-taka-sign"></i> Price (BDT)</label>
-              <input type="number" name="price" id="tourPrice" placeholder="e.g., 19900" step="0.01" required />
-            </div>
-
-            <div class="form-group full">
-              <label><i class="fas fa-circle-info"></i> Status</label>
-              <select name="status" id="tourStatus" required>
-                <option value="Active">✓ Active</option>
-                <option value="Inactive">✗ Inactive</option>
-              </select>
-            </div>
+          <div class="form-group">
+            <label>Tour Name</label>
+            <input type="text" name="name" id="tourName" placeholder="Example: Sundarbans Adventure" required>
           </div>
 
-          <div class="form-actions">
-            <button class="save-btn" type="submit"><i class="fas fa-check"></i> Save Tour</button>
-            <a class="cancel-btn" href="#" onclick="resetForm(); return false;"><i class="fas fa-times"></i> Cancel</a>
+          <div class="form-group">
+            <label>Destination</label>
+            <input type="text" name="destination" id="tourDestination" placeholder="Example: Khulna" required>
+          </div>
+
+          <div class="form-group">
+            <label>Duration</label>
+            <input type="text" name="duration" id="tourDuration" placeholder="Example: 3 Days / 2 Nights" required>
+          </div>
+
+          <div class="form-group">
+            <label>Price</label>
+            <input type="number" step="0.01" name="price" id="tourPrice" placeholder="Example: 6500" required>
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <select name="status" id="tourStatus">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+
+          <div class="form-actions" style="grid-column:1/-1; display:flex; gap:10px; justify-content:flex-end;">
+            <button type="submit" class="save-btn">Save</button>
+            <button type="button" class="cancel-btn" id="cancelTourFormBtn">Cancel</button>
           </div>
         </form>
       </div>
-    </div>
+
+      <!-- TOURS GRID -->
+      <div class="admin-card">
+        <div class="tour-cards-grid">
+          <?php if (empty($tours)): ?>
+            <div style="padding:14px; font-weight:900;">No tours found.</div>
+          <?php else: ?>
+            <?php foreach ($tours as $tour): ?>
+              <?php
+                $isActive = (strtolower(trim($tour['status'])) === 'active');
+                $toggleText = $isActive ? 'Inactive' : 'Active';
+                $toggleIcon = $isActive ? 'fa-toggle-off' : 'fa-toggle-on';
+              ?>
+              <div class="tour-card">
+                <div class="tour-card-header">
+                  <div class="tour-title">
+                    <i class="fas fa-tag"></i> <?= esc($tour['name']) ?>
+                  </div>
+                  <span class="tour-pill <?= $isActive ? 'active' : 'inactive' ?>">
+                    <span class="dot"></span> <?= esc($tour['status']) ?>
+                  </span>
+                </div>
+                <div class="tour-card-body">
+                  <div class="info-row"><i class="fas fa-location-dot"></i> Destination: <?= esc($tour['destination']) ?></div>
+                  <div class="info-row"><i class="fas fa-calendar-days"></i> Duration: <?= esc($tour['duration']) ?></div>
+                  <div class="info-row"><i class="fas fa-bangladeshi-taka-sign"></i> Price: <?= number_format((float)$tour['price'], 2) ?></div>
+                </div>
+                <div class="tour-card-actions">
+                  <a href="#" class="btn btn-edit edit-btn"
+                     data-id="<?= (int)$tour['id'] ?>"
+                     data-name="<?= esc($tour['name']) ?>"
+                     data-destination="<?= esc($tour['destination']) ?>"
+                     data-duration="<?= esc($tour['duration']) ?>"
+                     data-price="<?= esc($tour['price']) ?>"
+                     data-status="<?= esc($tour['status']) ?>">
+                    <i class="fas fa-pen-to-square"></i> Edit
+                  </a>
+                  <a href="#" class="btn btn-toggle toggle-btn" data-id="<?= (int)$tour['id'] ?>">
+                    <i class="fas <?= esc($toggleIcon) ?>"></i> <?= esc($toggleText) ?>
+                  </a>
+                  <?php if (!$isActive): ?>
+                    <a href="#" class="btn btn-delete delete-btn"
+                       data-enabled="1"
+                       data-id="<?= (int)$tour['id'] ?>"
+                       data-name="<?= esc($tour['name']) ?>">
+                      <i class="fas fa-trash"></i> Delete
+                    </a>
+                  <?php else: ?>
+                    <a href="#" class="btn btn-delete btn-disabled delete-btn"
+                       data-enabled="0"
+                       title="Only inactive tours can be deleted">
+                      <i class="fas fa-trash"></i> Delete
+                    </a>
+                  <?php endif; ?>
+                </div>
+              </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+      </div>
+
+    </main>
   </div>
+
+  <script src="../js/ManageTours.js"></script>
 </body>
 </html>

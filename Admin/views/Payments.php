@@ -1,7 +1,7 @@
 <?php
 // Show customer payment history from database
 include('../database/dbconnection.php');
-include('../database/PaymentsData.php');
+include('../database/Payments.php');
 $msg = isset($_GET['msg']) ? $_GET['msg'] : '';
 $err = isset($_GET['err']) ? $_GET['err'] : '';
 if (!isset($msg)) $msg = '';
@@ -38,7 +38,6 @@ if ($search !== '') {
                 <li><a href="ManageTickets.php">Tickets</a></li>
                 <li><a href="ManageHotels.php">Hotels</a></li>
                 <li><a href="ManageTours.php">Tours</a></li>
-                <li><a href="Reports.php">Reports</a></li>
                 <li><a href="Payments.php" class="active">Payments</a></li>
                 <li><a href="Settings.php">Settings</a></li>
                 <li><a href="MyProfile.php">My Profile</a></li>

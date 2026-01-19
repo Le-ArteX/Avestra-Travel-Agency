@@ -50,7 +50,6 @@ include('../database/HotelsData.php');
                     <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a class="active" href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
-                    <li><a href="Reports.php">Reports</a></li>
                     <li><a href="Payments.php">Payments</a></li>
                     <li><a href="Settings.php">Settings</a></li>
                     <li><a href="MyProfile.php">My Profile</a></li>
@@ -213,12 +212,12 @@ include('../database/HotelsData.php');
                     <div class="form-grid">
                         <div class="form-group">
                             <label><i class="fa-solid fa-hotel"></i> Hotel Name</label>
-                            <input type="text" name="name" id="hotelName" placeholder="e.g., Grand Hotel" required />
+                            <input type="text" name="name" id="hotelName" placeholder="e.g., Radision Hotel" required />
                         </div>
 
                         <div class="form-group">
                             <label><i class="fa-solid fa-location-dot"></i> Location</label>
-                            <input type="text" name="location" id="hotelLocation" placeholder="e.g., New York"
+                            <input type="text" name="location" id="hotelLocation" placeholder="e.g., Dhaha "
                                 required />
                         </div>
 

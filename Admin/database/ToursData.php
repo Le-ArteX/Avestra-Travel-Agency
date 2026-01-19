@@ -30,6 +30,14 @@ if (!function_exists('getActiveToursCount')) {
     }
 }
 
+// Helper: count all tours (active + inactive)
+if (!function_exists('getTotalToursCount')) {
+    function getTotalToursCount(array $tours): int
+    {
+        return count($tours);
+    }
+}
+
 // Helper: get single tour by ID
 if (!function_exists('getTourById')) {
     function getTourById($conn, $id) {
