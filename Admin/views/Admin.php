@@ -2,7 +2,7 @@
 session_start();
 include('../database/dbconnection.php');
 
-include('../database/ToursData.php');
+
 // Ensure $activeToursCount is set after $tours is available
 $activeToursCount = isset($tours) ? getActiveToursCount($tours) : 0;
 
@@ -21,8 +21,26 @@ function getAvailableHotelsCount(array $hotels): int {
     return count($hotels);
 }
 
+
 $activeHotelsCount = getActiveHotelsCount($hotels);
 $availableHotelsCount = getAvailableHotelsCount($hotels);
+
+// --- Bus Seats Calculation ---
+$acSeats = 0;
+$nonAcSeats = 0;
+$totalSeats = 0;
+$sql = "SELECT bus_class, seat_count FROM tickets WHERE ticket_type='Bus' AND status='active'";
+$result = $conn->query($sql);
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        if (strcasecmp($row['bus_class'], 'AC') === 0) {
+            $acSeats += (int)$row['seat_count'];
+        } elseif (strcasecmp($row['bus_class'], 'Non-AC') === 0) {
+            $nonAcSeats += (int)$row['seat_count'];
+        }
+    }
+    $totalSeats = $acSeats + $nonAcSeats;
+}
 
 // Get message_option from session (default is enabled)
 $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
@@ -50,6 +68,7 @@ $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
                     <li><a href="Admin.php" class="active">Dashboard</a></li>
                     <li><a href="ManageUsers.php">Manage Users</a></li>
                     <li><a href="ManageBookings.php">Bookings</a></li>
+                    <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
                     <li><a href="Reports.php">Reports</a></li>
@@ -72,12 +91,16 @@ $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
                     <h3>Statistics Overview</h3>
                     <div class="admin-stats">
                         <div class="stat-box">
-                            <span class="stat-number">120</span>
-                            <span class="stat-label">Bookings</span>
+                            <span class="stat-number"><?php echo $acSeats; ?></span>
+                            <span class="stat-label">Available AC Seats</span>
                         </div>
                         <div class="stat-box">
-                            <span class="stat-number">45</span>
-                            <span class="stat-label">Payments</span>
+                            <span class="stat-number"><?php echo $nonAcSeats; ?></span>
+                            <span class="stat-label">Available Non-AC Seats</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-number"><?php echo $totalSeats; ?></span>
+                            <span class="stat-label">Total Available Seats</span>
                         </div>
                         <div class="stat-box">
                             <span class="stat-number"><?php echo $activeToursCount; ?></span>
