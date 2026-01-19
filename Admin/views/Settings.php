@@ -68,7 +68,7 @@ include('../database/SettingsData.php');
                             <label for="site-theme">Site Theme:</label>
                             <select id="site-theme" name="site_theme">
                                 <option value="light" <?php echo $site_theme === 'light' ? 'selected' : ''; ?>>Light</option>
-                                <option value="dark" <?php echo $site_theme === 'dark' ? 'selected' : ''; ?>>Dark</option>
+                                
                             </select>
                         </div>
                         <div class="settings-row">
@@ -82,8 +82,6 @@ include('../database/SettingsData.php');
                             <label for="language">Language:</label>
                             <select id="language" name="language">
                                 <option value="en" <?php echo $language === 'en' ? 'selected' : ''; ?>>English</option>
-                                <option value="es" <?php echo $language === 'es' ? 'selected' : ''; ?>>Spanish</option>
-                                <option value="fr" <?php echo $language === 'fr' ? 'selected' : ''; ?>>French</option>
                             </select>
                         </div>
                         <div class="settings-row">

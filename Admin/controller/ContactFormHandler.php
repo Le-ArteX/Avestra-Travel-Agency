@@ -10,13 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $message = trim($_POST['message'] ?? '');
     
     if (!empty($name) && !empty($email) && !empty($message)) {
-        // Validate email
+     
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             echo json_encode(['success' => false, 'message' => 'Please enter a valid email address.']);
             exit();
         }
         
-        // Insert message into database
         $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $name, $email, $message);
         

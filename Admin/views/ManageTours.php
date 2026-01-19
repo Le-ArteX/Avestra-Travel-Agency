@@ -154,7 +154,7 @@ include('../database/ToursData.php');
 
   </div>
 
-  <!-- Modal using :target -->
+  
   <div id="tourModal" class="modal-overlay">
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-header">

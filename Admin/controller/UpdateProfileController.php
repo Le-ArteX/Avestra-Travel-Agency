@@ -2,7 +2,6 @@
 session_start();
 include('../database/dbconnection.php');
 
-// Check if admin is logged in
 $admin_email = $_SESSION['admin_email'] ?? '';
 
 if (empty($admin_email)) {
@@ -11,38 +10,27 @@ if (empty($admin_email)) {
     exit();
 }
 
-// Handle profile image upload
 if (isset($_FILES['profile-image']) && $_FILES['profile-image']['error'] === 0) {
     $allowed_types = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
     $file_type = $_FILES['profile-image']['type'];
     $file_size = $_FILES['profile-image']['size'];
-    
-    // Validate file type
     if (!in_array($file_type, $allowed_types)) {
         $_SESSION['error_message'] = 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
         header('Location: ../views/MyProfile.php');
         exit();
     }
-    
-    // Validate file size (max 5MB)
     if ($file_size > 5 * 1024 * 1024) {
         $_SESSION['error_message'] = 'File size too large. Maximum 5MB allowed.';
         header('Location: ../views/MyProfile.php');
         exit();
     }
-    
-    // Create uploads directory if it doesn't exist
     $upload_dir = '../images/profiles/';
     if (!file_exists($upload_dir)) {
         mkdir($upload_dir, 0777, true);
     }
-    
-    // Generate unique filename using admin email
     $file_extension = pathinfo($_FILES['profile-image']['name'], PATHINFO_EXTENSION);
     $new_filename = 'profile_' . md5($admin_email) . '.' . $file_extension;
     $upload_path = $upload_dir . $new_filename;
-    
-    // Delete old profile image if exists
     $sql = "SELECT profile_image FROM admin WHERE email = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $admin_email);
@@ -56,7 +44,7 @@ if (isset($_FILES['profile-image']) && $_FILES['profile-image']['error'] === 0) 
         }
     }
     $stmt->close();
-    
+
     // Move uploaded file
     if (move_uploaded_file($_FILES['profile-image']['tmp_name'], $upload_path)) {
         // Update database with new image filename

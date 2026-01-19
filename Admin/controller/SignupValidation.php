@@ -8,48 +8,37 @@ $username_error = $email_error = $phoneNumber_error =
 $general_error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    // Check if any field is empty
     if (empty(trim($_POST["username"])) || empty(trim($_POST["email"])) || 
         empty(trim($_POST["phoneNumber"])) || empty(trim($_POST["role"])) || 
         empty(trim($_POST["password"])) || empty(trim($_POST["confirm-password"]))) {
         $general_error = "Please fill up all requirements.";
     } else {
-        // Only validate individual fields if all fields are filled
-
         if (!preg_match("/^[a-zA-Z\s]+$/", trim($_POST["username"]))) {
             $username_error = " Fullname must contain only letters and spaces.";
         } else {
             $username = trim($_POST["username"]);
         }
-
         if (!filter_var(trim($_POST["email"]), FILTER_VALIDATE_EMAIL)) {
             $email_error = "Please enter a valid email address.";
         } else {
             $email = trim($_POST["email"]);
         }
-
         if (!preg_match("/^[0-9]{11}$/", trim($_POST["phoneNumber"]))) {
             $phoneNumber_error = "Phone number must be exactly 11 digits.";
         } else {
             $phoneNumber = trim($_POST["phoneNumber"]);
         }
-
         $role = trim($_POST["role"]);
-
         if (strlen(trim($_POST["password"])) < 6) {
             $password_error = "Password must have at least 6 characters.";
         } else {
             $password = trim($_POST["password"]);
         }
-
         $confirmPassword = trim($_POST["confirm-password"]);
         if ($password != $confirmPassword) {
             $confirmPassword_error = "Passwords do not match.";
         }
     }
-
-    // Store form data and errors in session
     $_SESSION['form_data'] = [
         'username' => $username,
         'email' => $email,
@@ -69,15 +58,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'general_error' => $general_error
     ];
 
-    // If no errors, process signup
+   
     if (empty($username_error) && empty($email_error) && empty($phoneNumber_error) && empty($role_error) && empty($password_error) && empty($confirmPassword_error) && empty($general_error)) {
-        // Hash the password for security
+      
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
-        // Get current date and time
+     
         $date = date('Y-m-d H:i:s');
         
-        // If role is Admin, insert into admin table with Pending status
+     
         if (strtolower($role) === 'admin') {
             // Check if email already exists in admin table
             $check_email = $conn->prepare("SELECT email FROM admin WHERE email = ?");

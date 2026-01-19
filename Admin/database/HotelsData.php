@@ -1,7 +1,5 @@
 <?php
-// HotelsData.php - Fetch all hotels from the database
 include('dbconnection.php');
-
 
 $hotels = [];
 
@@ -16,4 +14,3 @@ if ($result) {
         $hotels[] = $row;
     }
 }
-?>

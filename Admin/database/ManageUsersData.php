@@ -1,21 +1,14 @@
 <?php
-// Include database connection
 include('dbconnection.php');
 
-// Debug: Check what's in POST
-// echo "<pre>POST: "; print_r($_POST); echo "</pre>";
-
-// Get search and filter parameters
 $search = $_POST['search'] ?? '';
 $role_filter = $_POST['role_filter'] ?? '';
 $status_filter = $_POST['status_filter'] ?? '';
 
-// Pagination setup
 $items_per_page = 5;
 $current_page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
 $offset = ($current_page - 1) * $items_per_page;
 
-// Build WHERE clause
 $where_conditions = [];
 $params = [];
 $types = '';
@@ -35,7 +28,6 @@ if (!empty($role_filter)) {
 }
 
 if (!empty($status_filter)) {
-    // Only filter by status if column exists
     $check_column = $conn->query("SHOW COLUMNS FROM customer LIKE 'status'");
     if ($check_column->num_rows > 0) {
         $where_conditions[] = "status = ?";
@@ -46,17 +38,14 @@ if (!empty($status_filter)) {
 
 $where_clause = !empty($where_conditions) ? "WHERE " . implode(" AND ", $where_conditions) : "";
 
-// Build admin WHERE clause (always exclude Pending, plus other filters)
 $admin_where = "status != 'Pending'";
 if (!empty($where_conditions)) {
     $admin_where .= " AND " . implode(" AND ", $where_conditions);
 }
 
-// Get total count of users (customers + admins) - exclude Pending admins
 $customer_count = 0;
 $admin_count = 0;
 
-// Count customers
 if (!empty($params)) {
     $count_stmt = $conn->prepare("SELECT COUNT(*) as total FROM customer $where_clause");
     $count_stmt->bind_param($types, ...$params);

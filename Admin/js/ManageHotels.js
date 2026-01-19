@@ -122,6 +122,5 @@
   if (searchBtn) searchBtn.addEventListener("click", runSearch);
   if (searchInput) searchInput.addEventListener("input", runSearch);
 
-  // IMPORTANT: we do NOT preventDefault on hotelForm submit.
-  // Save Hotel will submit normally to PHP controller.
+
 })();

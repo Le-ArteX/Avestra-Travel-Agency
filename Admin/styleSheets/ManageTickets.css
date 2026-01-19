@@ -16,9 +16,6 @@
   display: flex;
   flex-direction: column;
 }
-/* ===============================
-   GLOBAL
-   =============================== */
 
 html, body {
     margin: 0;
@@ -108,6 +105,9 @@ html, body {
   flex: 1;
   padding: 44px;
   box-sizing: border-box;
+  overflow-y: auto;
+  height: 100vh;
+  padding-bottom: 32px;
 }
 
 .admin-header h1 {
@@ -535,3 +535,139 @@ html, body {
 .stat-title { font-weight:900; font-size:1.1em; }
 .stat-number { font-size:2.2em; font-weight:900; margin-top:6px; color:#22304a; }
 .stat-hint { font-weight:800; color:#60708a; }
+
+/* Sidebar logo and layout */
+.sidebar-logo-wrap {
+  padding: 24px 32px;
+}
+.sidebar-logo-center {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.sidebar-logo-img {
+  width: 60px;
+  height: auto;
+}
+
+/* Ticket grid margin */
+.ticket-grid-margin {
+  margin-bottom: 32px;
+}
+
+/* No tickets message */
+.no-tickets-msg {
+  padding: 40px;
+  text-align: center;
+  width: 100%;
+}
+
+/* Ticket card header */
+.ticket-card-header {
+  background: #2563eb;
+  color: #fff;
+  padding: 18px 24px 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ticket-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ticket-card-icon {
+  font-size: 20px;
+}
+.ticket-status-badge {
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ticket-status-badge.active {
+  background: #0ecb8120;
+  color: #0ecb81;
+}
+.ticket-status-badge.inactive {
+  background: #f8717120;
+  color: #f87171;
+}
+.ticket-status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.ticket-status-dot.active {
+  background: #0ecb81;
+}
+.ticket-status-dot.inactive {
+  background: #f87171;
+}
+
+.ticket-card-body {
+  padding: 18px 24px 10px 24px;
+}
+.ticket-card-row {
+  margin-bottom: 8px;
+}
+
+.ticket-card-actions {
+  padding: 12px 24px 18px 24px;
+  border-top: 1px solid #e3e8ee;
+  display: flex;
+  gap: 10px;
+}
+.edit-btn {
+  flex: 1;
+  background: #eff6ff;
+  color: #2563eb;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 0;
+  font-weight: 500;
+  cursor: pointer;
+}
+.ticket-action-form {
+  flex: 1;
+  display: inline;
+}
+.make-inactive-btn {
+  width: 100%;
+  background: #fef9e7;
+  color: #f59e42;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 0;
+  font-weight: 500;
+  cursor: pointer;
+}
+.make-active-btn {
+  width: 100%;
+  background: #e6f9f0;
+  color: #0ecb81;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 0;
+  font-weight: 500;
+  cursor: pointer;
+}
+.delete-btn {
+  width: 100%;
+  background: #fef2f2;
+  color: #f87171;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 0;
+  font-weight: 500;
+  cursor: pointer;
+}
+.delete-btn[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+}

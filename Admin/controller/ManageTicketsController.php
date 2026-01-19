@@ -1,4 +1,3 @@
-
 <?php
 include('../database/dbconnection.php');
 include('../database/TicketsData.php');
@@ -44,7 +43,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'add') {
     $bus_class = $_POST['bus_class'];
     $seat_count = (int)$_POST['seat_count'];
     $status = $_POST['status'];
-
     if (insert_ticket($conn, $ticket_code, $route, $bus_class, $seat_count, $status)) {
         header("Location: ../views/ManageTickets.php?msg=Ticket added successfully");
     } else {

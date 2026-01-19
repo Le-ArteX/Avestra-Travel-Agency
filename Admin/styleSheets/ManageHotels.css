@@ -73,13 +73,16 @@ html, body {
 .main-content {
     flex: 1;
     height: 100vh;
-    overflow-y: auto;
+    overflow-y: scroll !important;
     padding: 48px 48px 32px 48px;
     background: #fff;
     box-sizing: border-box;
 }
 
-.admin-section { margin-top: 24px; }
+.admin-section {
+    margin-top: 24px;
+    max-height: 80vh;
+}
 
 .admin-card {
     background: #fff;

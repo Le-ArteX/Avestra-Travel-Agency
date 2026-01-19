@@ -17,7 +17,7 @@
     ?>
     <div class="admin-container">
 
-        <!-- Sidebar -->
+      
         <aside class="sidebar">
             <div style="padding: 24px 32px;">
                 <div style="text-align: center; margin-bottom: 16px;">
@@ -42,13 +42,13 @@
             </nav>
         </aside>
 
-        <!-- Main -->
+  
         <main class="main-content">
 
             <section class="admin-section">
                 <div class="admin-card">
 
-                    <!-- Success/Error Messages -->
+               
                     <?php if (!empty($success_message)): ?>
                         <div
                             style="padding:12px; background:#d0f8e8; color:#2e7d32; border-radius:8px; margin-bottom:16px;">

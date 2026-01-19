@@ -3,20 +3,19 @@ session_start();
 include('../database/dbconnection.php');
 
 
-// Ensure $activeToursCount is set after $tours is available
 $activeToursCount = isset($tours) ? getActiveToursCount($tours) : 0;
 
-// Hotels data
+
 include('../database/HotelsData.php');
 
-// Helper: count active hotels
+
 function getActiveHotelsCount(array $hotels): int {
     return count(array_filter($hotels, function ($hotel) {
         return isset($hotel['status']) && strcasecmp($hotel['status'], 'Active') === 0;
     }));
 }
 
-// Helper: count available hotels (all hotels)
+
 function getAvailableHotelsCount(array $hotels): int {
     return count($hotels);
 }
@@ -25,7 +24,7 @@ function getAvailableHotelsCount(array $hotels): int {
 $activeHotelsCount = getActiveHotelsCount($hotels);
 $availableHotelsCount = getAvailableHotelsCount($hotels);
 
-// --- Bus Seats Calculation ---
+
 $acSeats = 0;
 $nonAcSeats = 0;
 $totalSeats = 0;
@@ -42,7 +41,7 @@ if ($result) {
     $totalSeats = $acSeats + $nonAcSeats;
 }
 
-// Get message_option from session (default is enabled)
+
 $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
 ?>
 <!DOCTYPE html>
@@ -113,7 +112,7 @@ $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
                 </div>
             </section>
 
-            <!-- Recent Contact Messages Section -->
+            
             <?php if ($message_option === 'enabled'): ?>
             <section class="admin-section">
                 <div class="admin-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
@@ -126,7 +125,7 @@ $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
                     </div>
                     
                     <?php
-                    // Get recent messages
+               
                     $sql = "SELECT id, name, email, message, date FROM contact_messages ORDER BY date DESC LIMIT 4";
                     $result = $conn->query($sql);
                     $recent_messages = [];

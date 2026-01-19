@@ -3,12 +3,14 @@
 session_start();
 include('../database/dbconnection.php');
 
+include('../database/TicketsData.php');
+
 function esc($s) { return htmlspecialchars($s ?? '', ENT_QUOTES, 'UTF-8'); }
 
 $msg = $_GET['msg'] ?? '';
 $err = $_GET['err'] ?? '';
 
-// Only show/manage Bus tickets
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $q = trim($_POST['q'] ?? '');
@@ -18,22 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $status = trim($_GET['status'] ?? '');
 }
 
-// Fetch tickets from database
-$tickets = [];
-$sql = "SELECT * FROM tickets WHERE ticket_type = 'Bus'";
-if ($q !== '') {
-  $sql .= " AND (ticket_code LIKE '%" . $conn->real_escape_string($q) . "%' OR route LIKE '%" . $conn->real_escape_string($q) . "%')";
-}
-if ($status !== '') {
-  $sql .= " AND status = '" . $conn->real_escape_string($status) . "'";
-}
-$sql .= " ORDER BY id DESC";
-$result = $conn->query($sql);
-if ($result) {
-  while ($row = $result->fetch_assoc()) {
-    $tickets[] = $row;
-  }
-}
+$tickets = getBusTickets($q, $status);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,9 +35,9 @@ if ($result) {
 <body>
   <div class="admin-container">
     <aside class="sidebar">
-      <div style="padding: 24px 32px;">
-        <div style="text-align: center; margin-bottom: 16px;">
-          <img src="../images/logo.png" alt="Avestra Logo" style="width: 60px; height: auto;">
+      <div class="sidebar-logo-wrap">
+        <div class="sidebar-logo-center">
+          <img src="../images/logo.png" alt="Avestra Logo" class="sidebar-logo-img">
         </div>
         <h2 class="sidebar-title">Admin Panel</h2>
       </div>
@@ -59,7 +46,7 @@ if ($result) {
         <ul class="sidebar-menu">
           <li><a href="Admin.php">Dashboard</a></li>
           <li><a href="ManageUsers.php">Manage Users</a></li>
-          <li><a href="ManageTickets.php" class="active">Tickets</a></li>
+          <li><a href="ManageTickets.php">Tickets</a></li>
           <li><a href="ManageHotels.php">Hotels</a></li>
           <li><a href="ManageTours.php">Tours</a></li>
           <li><a href="Reports.php">Reports</a></li>
@@ -97,7 +84,6 @@ if ($result) {
         </div>
       </div>
 
-      <!-- FORM CARD -->
       <div class="admin-card form-card" id="ticketFormCard">
         <div class="form-title">
           <h2 id="formTitle">Add Ticket</h2>
@@ -162,10 +148,10 @@ if ($result) {
 
 
 
-      <!-- TICKET GRID CARDS -->
-      <div class="ticket-grid" style="margin-bottom: 32px;">
+    
+      <div class="ticket-grid ticket-grid-margin">
         <?php if (empty($tickets)): ?>
-          <div style="padding: 40px; text-align: center; width: 100%;">No tickets found.</div>
+          <div class="no-tickets-msg">No tickets found.</div>
         <?php else: ?>
           <?php foreach ($tickets as $t): ?>
             <?php
@@ -182,39 +168,36 @@ if ($result) {
               data-seat_count="<?= (int)$t['seat_count'] ?>"
               data-status="<?= esc($t['status']) ?>"
             >
-              <div style="background: #2563eb; color: #fff; padding: 18px 24px 14px 24px; display: flex; align-items: center; justify-content: space-between;">
-                <div style="font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-                  <span style="font-size: 20px;">🚌</span> <?= esc($t['ticket_code']) ?>
+              <div class="ticket-card-header <?= $statusClass ?>">
+                <div class="ticket-card-title">
+                  <span class="ticket-card-icon">🚌</span> <?= esc($t['ticket_code']) ?>
                 </div>
-                <span style="background: <?= $statusClass === 'active' ? '#0ecb81' : '#f87171' ?>20; color: <?= $statusClass === 'active' ? '#0ecb81' : '#f87171' ?>; padding: 4px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px;">
-                  <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:<?= $statusClass === 'active' ? '#0ecb81' : '#f87171' ?>;"></span> <?= $statusText ?>
+                <span class="ticket-status-badge <?= $statusClass ?>">
+                  <span class="ticket-status-dot <?= $statusClass ?>"></span> <?= $statusText ?>
                 </span>
               </div>
-              <div style="padding: 18px 24px 10px 24px;">
-                <div style="margin-bottom: 8px;"><b>Route:</b> <?= esc($t['route']) ?></div>
-                <div style="margin-bottom: 8px;"><b>Bus Class:</b> <?= $busClass ?></div>
-                <div style="margin-bottom: 8px;"><b>Seats:</b> <?= (int)$t['seat_count'] ?></div>
+              <div class="ticket-card-body">
+                <div class="ticket-card-row"><b>Route:</b> <?= esc($t['route']) ?></div>
+                <div class="ticket-card-row"><b>Bus Class:</b> <?= $busClass ?></div>
+                <div class="ticket-card-row"><b>Seats:</b> <?= (int)$t['seat_count'] ?></div>
               </div>
-              <div style="padding: 12px 24px 18px 24px; border-top: 1px solid #e3e8ee; display: flex; gap: 10px;">
-                <button class="edit-btn" type="button" data-action="edit" style="flex:1; background:#eff6ff; color:#2563eb; border:none; border-radius:6px; padding:8px 0; font-weight:500; cursor:pointer;">Edit</button>
-                <form method="POST" action="../controller/ManageTicketsController.php" style="flex:1; display:inline;">
+              <div class="ticket-card-actions">
+                <button class="edit-btn" type="button" data-action="edit">Edit</button>
+                <form method="POST" action="../controller/ManageTicketsController.php" class="ticket-action-form">
                   <input type="hidden" name="action" value="toggle_status">
                   <input type="hidden" name="id" value="<?= (int)$t['id'] ?>">
                   <input type="hidden" name="current_status" value="<?= esc($t['status']) ?>">
 
                   <?php if (strtolower($t['status']) === 'active'): ?>
-                    <button type="submit" style="width:100%; background:#fef9e7; color:#f59e42; border:none; border-radius:6px; padding:8px 0; font-weight:500; cursor:pointer;">Make Inactive</button>
+                    <button type="submit" class="make-inactive-btn">Make Inactive</button>
                   <?php else: ?>
-                    <button type="submit" style="width:100%; background:#e6f9f0; color:#0ecb81; border:none; border-radius:6px; padding:8px 0; font-weight:500; cursor:pointer;">Make Active</button>
+                    <button type="submit" class="make-active-btn">Make Active</button>
                   <?php endif; ?>
                 </form>
-                <form method="POST" action="../controller/ManageTicketsController.php" style="flex:1; display:inline;">
+                <form method="POST" action="../controller/ManageTicketsController.php" class="ticket-action-form">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="id" value="<?= (int)$t['id'] ?>">
-                  <button class="delete-btn" type="submit"
-                    style="width:100%; background:#fef2f2; color:#f87171; border:none; border-radius:6px; padding:8px 0; font-weight:500; cursor:pointer;<?php if (strtolower($t['status']) === 'active') echo ' opacity:0.5; pointer-events:none;'; ?>">
-                    Delete
-                  </button>
+                  <button class="delete-btn" type="submit" <?php if (strtolower($t['status']) === 'active') echo 'disabled'; ?>>Delete</button>
                 </form>
               </div>
             </div>
@@ -227,7 +210,7 @@ if ($result) {
 
   <script src="../js/ManageTicket.js"></script>
   <script>
-    // Auto-hide toast after 3 seconds and remove ?msg or ?err from URL
+    
     document.addEventListener('DOMContentLoaded', function() {
       var toast = document.querySelector('.toast');
       if (toast) {
@@ -235,7 +218,6 @@ if ($result) {
           toast.style.opacity = '0';
           setTimeout(function() { toast.remove(); }, 500);
         }, 3000);
-        // Remove ?msg or ?err from URL after showing
         setTimeout(function() {
           if (window.history.replaceState) {
             const url = new URL(window.location.href);

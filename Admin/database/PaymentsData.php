@@ -1,4 +1,3 @@
-
 <?php
 
 function getAllPayments($conn) {
@@ -10,12 +9,10 @@ function getAllPayments($conn) {
         }
     }
     return $payments;
-}
 
 function searchPayments($conn, $search) {
     $payments = [];
     $search = trim($search);
- 
     if (strpos($search, '#') === 0) {
         $search = substr($search, 1);
     }
@@ -28,5 +25,6 @@ function searchPayments($conn, $search) {
         }
     }
     return $payments;
+}
 }
 

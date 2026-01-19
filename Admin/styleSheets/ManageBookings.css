@@ -15,9 +15,6 @@ html, body {
   background: #fff;
 }
 
-/* ===============================
-   SIDEBAR
-   =============================== */
 .sidebar {
   width: 240px;
   background: linear-gradient(135deg, #22304a 80%, #2e3e5c 100%);

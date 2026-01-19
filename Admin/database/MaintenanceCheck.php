@@ -1,20 +1,12 @@
 <?php
-// Maintenance mode check - add this at the top of public pages
 function checkMaintenanceMode($allow_admin_bypass = true) {
-    // Get maintenance mode from file
     $maintenance_file = __DIR__ . '/maintenance_mode.txt';
     $maintenance_mode = 'off';
-    
     if (file_exists($maintenance_file)) {
         $maintenance_mode = trim(file_get_contents($maintenance_file));
     }
-    
-    // If maintenance mode is on, show maintenance page
     if ($maintenance_mode === 'on') {
-        // Check if it's an admin
         $is_admin = isset($_SESSION['admin_email']);
-        
-        // Show maintenance page to non-admins, or to admins if bypass is disabled
         if (!$is_admin) {
             showMaintenancePage();
         } elseif ($is_admin && !$allow_admin_bypass) {
@@ -23,7 +15,6 @@ function checkMaintenanceMode($allow_admin_bypass = true) {
     }
 }
 
-// Display maintenance page
 function showMaintenancePage() {
     ?>
     <!DOCTYPE html>
@@ -38,7 +29,6 @@ function showMaintenancePage() {
                 padding: 0;
                 box-sizing: border-box;
             }
-            
             body {
                 font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -48,7 +38,6 @@ function showMaintenancePage() {
                 justify-content: center;
                 padding: 20px;
             }
-            
             .maintenance-container {
                 background: white;
                 border-radius: 16px;

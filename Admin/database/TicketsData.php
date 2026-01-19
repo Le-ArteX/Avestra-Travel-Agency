@@ -1,4 +1,26 @@
 <?php
+include_once('dbconnection.php');
+
+function getBusTickets($q = '', $status = '') {
+    global $conn;
+    $tickets = [];
+    $sql = "SELECT * FROM tickets WHERE ticket_type = 'Bus'";
+    if ($q !== '') {
+        $sql .= " AND (ticket_code LIKE '%" . $conn->real_escape_string($q) . "%' OR route LIKE '%" . $conn->real_escape_string($q) . "%')";
+    }
+    if ($status !== '') {
+        $sql .= " AND status = '" . $conn->real_escape_string($status) . "'";
+    }
+    $sql .= " ORDER BY id DESC";
+    $result = $conn->query($sql);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $tickets[] = $row;
+        }
+    }
+    return $tickets;
+}
+
 function insert_ticket($conn, $ticket_code, $route, $bus_class, $seat_count, $status) {
     $ticket_type = 'Bus';
     // Check for duplicate ticket_code
@@ -16,7 +38,7 @@ function insert_ticket($conn, $ticket_code, $route, $bus_class, $seat_count, $st
 }
 
 function update_ticket($conn, $id, $ticket_code, $route, $bus_class, $seat_count, $status) {
-    // Check for duplicate ticket_code (excluding this ticket)
+  
     $check = $conn->prepare("SELECT COUNT(*) FROM tickets WHERE ticket_code = ? AND id != ?");
     $check->bind_param("si", $ticket_code, $id);
     $check->execute();
