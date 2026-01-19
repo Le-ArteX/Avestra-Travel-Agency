@@ -142,8 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         unset($_SESSION['login_form_data']);
                         unset($_SESSION['login_form_errors']);
                         
-                        // Redirect to customer dashboard
-                        header("Location: ../../User/views/homepageUser.php");
+                        // Redirect to user home page
+                        header("Location: ../../User/views/user_homePage.php");
                         exit();
                     } else {
                         $_SESSION['login_error_message'] = "Invalid email or password.";

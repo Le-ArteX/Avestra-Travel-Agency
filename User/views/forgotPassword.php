@@ -15,11 +15,10 @@ include '../controller/forgotPasswordFormDataHandler.php';
 <body>
     <div class="forgot-container">
         <h2>Forgot Password</h2>
-        <?php include '../controller/ForgotPasswordMessageDisplay.php'; ?>
-        
-        <form class="forgot-form" action="../controller/forgotPasswordValidation.php" method="post">
-            <div class="form-group">
-                <input type="email" id="email" name="email" placeholder=" " autocomplete="email"
+<?php
+header("Location: ../../Admin/views/forgotPassword.php");
+exit();
+?>
                     title="Please enter your registered email address"
                     value="<?php echo htmlspecialchars($email); ?>">
                 <label for="email">Enter your email address</label>

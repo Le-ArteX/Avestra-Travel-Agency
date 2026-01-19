@@ -1,7 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
+<?php
+header("Location: ../../Admin/views/homePage.php");
+exit();
+?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avestra Travel Agency : Book Tickets, Hotels, Packages</title>

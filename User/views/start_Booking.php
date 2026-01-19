@@ -2,10 +2,10 @@
 include 'session_check.php';
 include '../database/dbconnection.php';
 
-$stmt = $conn->prepare("SELECT id, route_from, route_to, transport_type, provider, includes_text, price, image 
+$stmt = $conn->prepare("SELECT id, ticket_code, ticket_type, route, bus_class, seat_count, status, image,includes_text, price, provider 
                         FROM tickets 
                         WHERE status='active'
-                        ORDER BY created_at DESC");
+                        ORDER BY id DESC");
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
@@ -29,9 +29,15 @@ $result = $stmt->get_result();
         <?php else: ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 <div class="service-card">
-                    <img src="<?= htmlspecialchars($row['image']) ?>" alt="Ticket Image">
-                    <h3><?= htmlspecialchars($row['route_from']) ?> → <?= htmlspecialchars($row['route_to']) ?></h3>
-                    <p><?= htmlspecialchars($row['transport_type']) ?> | <?= htmlspecialchars($row['provider']) ?></p>
+                    <?php if (!empty($row['image'])): ?>
+                        <img src="../images/<?= htmlspecialchars($row['image']) ?>" alt="Ticket Image" style="max-width:150px;">
+                    <?php else: ?>
+                        <img src="../images/ticket1.jpg" alt="Default Ticket Image" style="max-width:150px;">
+                    <?php endif; ?>
+                    <h3><?= htmlspecialchars($row['route']) ?></h3>
+                    <p><?= htmlspecialchars($row['ticket_type']) ?> | <?= htmlspecialchars($row['bus_class']) ?> | <?= htmlspecialchars($row['provider']) ?></p>
+                    <p>Seats: <?= (int)$row['seat_count'] ?></p>
+                    <p>Status: <?= htmlspecialchars($row['status']) ?></p>
                     <p>Includes: <?= htmlspecialchars($row['includes_text']) ?></p>
                     <p><b>Price:</b> <?= (float)$row['price'] ?> ৳</p>
 

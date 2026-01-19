@@ -2,7 +2,7 @@
 include 'session_check.php';
 include '../database/dbconnection.php';
 
-$stmt = $conn->prepare("SELECT id, hotel_name, location, includes_text, price_per_night, image
+ $stmt = $conn->prepare("SELECT id, name, location, includes_text, price_per_night, image
                         FROM hotels
                         WHERE status='active'
                         ORDER BY created_at DESC");
@@ -29,12 +29,16 @@ $result = $stmt->get_result();
         <?php else: ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 <div class="service-card">
-                    <img src="../images/<?= htmlspecialchars($row['image']) ?>" alt="Hotel Image">
+                    <?php if (!empty($row['image'])): ?>
+                        <img src="../images/<?= htmlspecialchars($row['image']) ?>" alt="Hotel Image" style="max-width:150px;">
+                    <?php else: ?>
+                        <img src="../images/hotel1.jpg" alt="Default Hotel Image" style="max-width:150px;">
+                    <?php endif; ?>
 
-                    <h3><?= htmlspecialchars($row['hotel_name']) ?></h3>
+                    <h3><?= htmlspecialchars($row['name']) ?></h3>
                     <p>📍 <?= htmlspecialchars($row['location']) ?></p>
                     <p>Includes: <?= htmlspecialchars($row['includes_text']) ?></p>
-                    <p><b>Price/Night:</b> <?= (float)$row['price_per_night'] ?> ৳</p>
+                    <p><b>Price/Night:</b> <?= ($row['price_per_night'] > 0 ? (float)$row['price_per_night'] . ' ৳' : 'Contact for price') ?></p>
 
                     <form action="confirmOrder.php" method="post">
                         <input type="hidden" name="service_type" value="hotel">

@@ -3,7 +3,7 @@
 $host = "localhost";
 $user = "root";
 $password = "";
-$database = "avestra_db";
+$database = "avestra-Travel-Agency";
 
 // Create connection
 $conn = new mysqli($host, $user, $password, $database);

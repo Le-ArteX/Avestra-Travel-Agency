@@ -2,10 +2,10 @@
 include 'session_check.php';
 include '../database/dbconnection.php';
 
-$stmt = $conn->prepare("SELECT id, package_name, duration, includes_text, price, image
-                        FROM tour_packages
+$stmt = $conn->prepare("SELECT id, name, duration, includes_text, price, image
+                        FROM tours
                         WHERE status='active'
-                        ORDER BY created_at DESC");
+                        ORDER BY id DESC");
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
@@ -29,9 +29,13 @@ $result = $stmt->get_result();
         <?php else: ?>
             <?php while($row = $result->fetch_assoc()): ?>
                 <div class="service-card">
-                    <img src="../images/<?= htmlspecialchars($row['image']) ?>" alt="Tour Image">
+                    <?php if (!empty($row['image'])): ?>
+                        <img src="../images/<?= htmlspecialchars($row['image']) ?>" alt="Tour Image" style="max-width:150px;">
+                    <?php else: ?>
+                        <img src="../images/tour1.jpg" alt="Default Tour Image" style="max-width:150px;">
+                    <?php endif; ?>
 
-                    <h3><?= htmlspecialchars($row['package_name']) ?></h3>
+                    <h3><?= htmlspecialchars($row['name']) ?></h3>
                     <p><?= htmlspecialchars($row['duration']) ?></p>
                     <p>Includes: <?= htmlspecialchars($row['includes_text']) ?></p>
                     <p><b>Price:</b> <?= (float)$row['price'] ?> ৳</p>

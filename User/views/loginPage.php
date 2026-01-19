@@ -1,6 +1,4 @@
-<?php
-include '../controller/loginFormDataHandler.php';
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,6 +8,10 @@ include '../controller/loginFormDataHandler.php';
     <title>Avestra Travel Agency</title>
     <link rel="stylesheet" href="../styleSheets/loginPage.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
+<?php
+header("Location: ../../Admin/views/loginPage.php");
+exit();
+?>
 </head>
 
 <body>

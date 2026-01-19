@@ -2,6 +2,6 @@
 session_start();
 $_SESSION = [];
 session_destroy();
-header("Location: homePage.php");
+header("Location: /Avestra-Travel-Agency/Admin/views/homePage.php");
 exit();
 ?>

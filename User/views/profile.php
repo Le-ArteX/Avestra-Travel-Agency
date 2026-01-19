@@ -4,7 +4,7 @@ include '../database/dbconnection.php';
 
 $email = $_SESSION['email'];
 
-$stmt = $conn->prepare("SELECT username, email, phoneNumber, role FROM signup WHERE email=?");
+$stmt = $conn->prepare("SELECT username, email, phoneNumber, role FROM customer WHERE email=?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!preg_match("/^[0-9]{11}$/", $phone)) {
         $error = "Phone number must be exactly 11 digits.";
     } else {
-        $update = $conn->prepare("UPDATE signup SET username=?, phoneNumber=? WHERE email=?");
+        $update = $conn->prepare("UPDATE customer SET username=?, phoneNumber=? WHERE email=?");
         $update->bind_param("sss", $username, $phone, $email);
 
         if ($update->execute()) {

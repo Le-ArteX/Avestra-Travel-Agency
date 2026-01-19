@@ -1,6 +1,7 @@
 <?php
-// include '../controller/SignupValidation.php';
-include '../controller/SignupFormDataHandler.php';
+header("Location: /Avestra-Travel-Agency/Admin/views/Signup.php");
+exit();
+?>
 ?>
 <!DOCTYPE html>
 <html lang="en">

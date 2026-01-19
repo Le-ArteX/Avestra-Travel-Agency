@@ -17,34 +17,43 @@ if ($service_type === '' || $service_id <= 0) {
 
 /* Fetch service from DB based on service_type */
 if ($service_type === 'ticket') {
-    $q = $conn->prepare("SELECT route_from, route_to, price FROM tickets WHERE id=? AND status='active'");
+    $q = $conn->prepare("SELECT route, price FROM tickets WHERE id=? AND status='active'");
     $q->bind_param("i", $service_id);
     $q->execute();
     $s = $q->get_result()->fetch_assoc();
     if (!$s) die("Ticket not found.");
 
-    $service_name = $s['route_from'] . " → " . $s['route_to'];
+    $service_name = $s['route'];
     $total_price  = (float)$s['price'];
+    if ($total_price <= 0) {
+        $total_price = rand(500, 5000); // Assign a random price if 0 or missing
+    }
 
 } elseif ($service_type === 'hotel') {
-    $q = $conn->prepare("SELECT hotel_name, price_per_night FROM hotels WHERE id=? AND status='active'");
+    $q = $conn->prepare("SELECT name, price_per_night FROM hotels WHERE id=? AND status='active'");
     $q->bind_param("i", $service_id);
     $q->execute();
     $s = $q->get_result()->fetch_assoc();
     if (!$s) die("Hotel not found.");
 
-    $service_name = $s['hotel_name'];
+    $service_name = $s['name'];
     $total_price  = (float)$s['price_per_night'];
+    if ($total_price <= 0) {
+        $total_price = rand(1000, 10000); // Assign a random price if 0 or missing
+    }
 
 } elseif ($service_type === 'tour') {
-    $q = $conn->prepare("SELECT package_name, price FROM tour_packages WHERE id=? AND status='active'");
+    $q = $conn->prepare("SELECT name, price FROM tours WHERE id=? AND status='active'");
     $q->bind_param("i", $service_id);
     $q->execute();
     $s = $q->get_result()->fetch_assoc();
     if (!$s) die("Tour package not found.");
 
-    $service_name = $s['package_name'];
+    $service_name = $s['name'];
     $total_price  = (float)$s['price'];
+    if ($total_price <= 0) {
+        $total_price = rand(2000, 20000); // Assign a random price if 0 or missing
+    }
 
 } else {
     die("Invalid service type.");

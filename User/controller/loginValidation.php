@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($_POST['email']) || empty($_POST['password'])) {
         $_SESSION['login_error_message'] = "All fields required.";
-        header("Location: ../views/loginPage.php");
+        header("Location: ../../Admin/views/loginPage.php");
         exit();
     }
 
@@ -30,10 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['role'] = $user['role'];
 
             /* Admin redirect */
-            if ($user['role'] === 'admin') {
-                header("Location: ../views/Admin.php");
-                exit();
-            }
+            // if ($user['role'] === 'admin') {
+            //     header("Location: ../Admin/views/Admin.php");
+            //     exit();
+            // }
 
             /* Redirect back after booking */
             if (isset($_SESSION['redirect_after_login'])) {
@@ -44,13 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             /* Default user dashboard */
-            header("Location: ../views/user_dashboard.php");
+            header("Location: ../User/views/user_dashboard.php");
             exit();
         }
     }
 
     $_SESSION['login_error_message'] = "Invalid email or password.";
-    header("Location: ../views/loginPage.php");
+    header("Location: ../Admin/views/loginPage.php");
     exit();
 }
 ?>

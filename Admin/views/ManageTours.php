@@ -87,8 +87,8 @@ unset($_SESSION['tour_success'], $_SESSION['tour_error']);
           <li><a href="Admin.php">Dashboard</a></li>
           <li><a href="ManageUsers.php">Manage Users</a></li>
           <li><a href="ManageHotels.php">Hotels</a></li>
-          <li><a href="ManageTours.php" class="active">Tours</a></li>
           <li><a href="ManageTickets.php">Tickets</a></li>
+          <li><a href="ManageTours.php" class="active">Tours</a></li>
           <li><a href="Payments.php">Payments</a></li>
           <li><a href="Settings.php">Settings</a></li>
           <li><a href="MyProfile.php">My Profile</a></li>

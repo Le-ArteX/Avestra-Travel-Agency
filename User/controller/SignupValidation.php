@@ -92,12 +92,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             /* Default */
-            header("Location: ../views/user_dashboard.php");
+            header("Location: ../../Admin/views/loginPage.php");
             exit();
         }
     }
 
-    header("Location: ../views/Signup.php");
+    header("Location: ../../Admin/views/Signup.php");
     exit();
 }
 ?>
