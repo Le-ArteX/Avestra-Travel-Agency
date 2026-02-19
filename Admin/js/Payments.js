@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.payment-action-group form').forEach(function(form) {
         form.addEventListener('submit', function(e) {
-            // Use event.submitter if available (modern browsers)
+            // Use event submitter
             let btn = e.submitter || form.querySelector('button[type="submit"]');
             if (btn) {
                 let action = btn.value;
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Custom confirm modal logic
+
 function showCustomConfirm(message, callback) {
     let modal = document.getElementById('customConfirmModal');
     if (!modal) return callback(window.confirm(message)); // fallback
@@ -45,7 +45,7 @@ function showCustomConfirm(message, callback) {
     function noHandler() { cleanup(false); }
     yesBtn.onclick = yesHandler;
     noBtn.onclick = noHandler;
-    // Allow ESC to close
+   
     modal.onkeydown = function(e) { if (e.key === 'Escape') cleanup(false); };
     yesBtn.focus();
 }

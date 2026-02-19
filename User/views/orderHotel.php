@@ -14,4 +14,5 @@ include 'session_check.php';
 <a href="homePage.php">Go to Home</a>
 
 </body>
+<?php include 'footer.php'; ?>
 </html>

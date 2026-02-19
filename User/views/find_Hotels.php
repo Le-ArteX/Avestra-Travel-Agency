@@ -14,45 +14,44 @@ $result = $stmt->get_result();
 <head>
     <title>Find Hotels</title>
     <link rel="stylesheet" href="../styleSheets/user.css">
+    <link rel="stylesheet" href="../styleSheets/find_Hotels.css">
+    <link rel="stylesheet" href="../styleSheets/footer.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 <body>
 
 <?php include 'nav.php'; ?>
 
-<div class="container">
-    <h2>Hotels</h2>
+<div class="find-hotels-container">
+    <h2 class="find-hotels-title">Hotels</h2>
+</div>
+<div class="hotel-card-grid">
+    <?php if ($result->num_rows == 0): ?>
+        <p>No hotels available right now.</p>
+    <?php else: ?>
+        <?php while($row = $result->fetch_assoc()): ?>
+            <div class="hotel-card">
+                <?php if (!empty($row['image'])): ?>
+                    <img src="hotel_image.php?id=<?= (int)$row['id'] ?>" alt="Hotel Image">
+                <?php else: ?>
+                    <img src="../images/hotel1.jpg" alt="Default Hotel Image">
+                <?php endif; ?>
 
-    <div class="card-grid">
-        <?php if ($result->num_rows == 0): ?>
-            <p>No hotels available right now.</p>
-        <?php else: ?>
-            <?php while($row = $result->fetch_assoc()): ?>
-                <div class="service-card">
-                    <?php if (!empty($row['image'])): ?>
-                        <img src="../images/<?= htmlspecialchars($row['image']) ?>" alt="Hotel Image" style="max-width:150px;">
-                    <?php else: ?>
-                        <img src="../images/hotel1.jpg" alt="Default Hotel Image" style="max-width:150px;">
-                    <?php endif; ?>
+                <h3><?= htmlspecialchars($row['name']) ?></h3>
+                <p>📍 <?= htmlspecialchars($row['location']) ?></p>
+                <p>Includes: <?= htmlspecialchars($row['includes_text']) ?></p>
+                <p><b>Price/Night:</b> <?= ($row['price_per_night'] > 0 ? (float)$row['price_per_night'] . ' ৳' : 'Contact for price') ?></p>
 
-                    <h3><?= htmlspecialchars($row['name']) ?></h3>
-                    <p>📍 <?= htmlspecialchars($row['location']) ?></p>
-                    <p>Includes: <?= htmlspecialchars($row['includes_text']) ?></p>
-                    <p><b>Price/Night:</b> <?= ($row['price_per_night'] > 0 ? (float)$row['price_per_night'] . ' ৳' : 'Contact for price') ?></p>
-
-                    <form action="confirmOrder.php" method="post">
-                        <input type="hidden" name="service_type" value="hotel">
-                        <input type="hidden" name="service_id" value="<?= (int)$row['id'] ?>">
-                        <button class="btn">Book Hotel</button>
-                        <br><br>
-                        <br><br>
-                        <br><br>
-                    </form>
-                </div>
-            <?php endwhile; ?>
-        <?php endif; ?>
-    </div>
+                <form action="confirmOrder.php" method="post" class="hotel-booking-form">
+                    <input type="hidden" name="service_type" value="hotel">
+                    <input type="hidden" name="service_id" value="<?= (int)$row['id'] ?>">
+                    <button type="submit">Book Hotel</button>
+                </form>
+            </div>
+        <?php endwhile; ?>
+    <?php endif; ?>
 </div>
 
 </body>
+<?php include 'footer.php'; ?>
 </html>

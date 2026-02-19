@@ -196,7 +196,7 @@ include('../database/HotelsData.php');
         </main>
     </div>
 
-    <!-- Modal (pure CSS :target) -->
+
     <div id="hotelModal" class="modal-overlay">
         <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="modal-header">
@@ -205,9 +205,15 @@ include('../database/HotelsData.php');
             </div>
 
             <div class="modal-body">
-                <form class="hotel-form" id="hotelForm" action="../controller/ManageHotelsController.php" method="POST">
+                <form class="hotel-form" id="hotelForm" action="../controller/ManageHotelsController.php" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="action" id="formAction" value="add">
                     <input type="hidden" name="id" id="hotelId" value="">
+
+       
+                    <div class="form-group full">
+                        <label><i class="fa-solid fa-image"></i> Hotel Image</label>
+                        <input type="file" name="hotel_image" id="hotelImage" accept="image/*" required />
+                    </div>
 
                     <div class="form-grid">
                         <div class="form-group">
@@ -221,7 +227,7 @@ include('../database/HotelsData.php');
                                 required />
                         </div>
 
-                        <!-- Rating as Stars -->
+                 
                         <div class="form-group full">
                             <label><i class="fa-solid fa-star"></i> Rating</label>
                             <div class="star-rating" id="starRating">

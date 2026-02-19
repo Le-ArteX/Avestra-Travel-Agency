@@ -44,34 +44,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>My Profile | Avestra</title>
     <link rel="stylesheet" href="../styleSheets/user.css">
+    <link rel="stylesheet" href="../styleSheets/profile.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 <body>
 
 <?php include 'nav.php'; ?>
 
-<div class="container">
-    <h2>👤 My Profile</h2>
+<div class="profile-container">
+    <h2 class="profile-title">👤 My Profile</h2>
 
-    <?php if ($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
-    <?php if ($error): ?><p style="color:red;"><?= $error ?></p><?php endif; ?>
+    <?php if ($success): ?><p style="color:green; text-align:center; margin-bottom:10px;"><?= $success ?></p><?php endif; ?>
+    <?php if ($error): ?><p style="color:red; text-align:center; margin-bottom:10px;"><?= $error ?></p><?php endif; ?>
 
-    <form method="post">
-        <label>Full Name</label>
-        <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" required>
-
-        <label>Email (cannot be changed)</label>
-        <input type="email" value="<?= htmlspecialchars($user['email']) ?>" readonly>
-
-        <label>Phone Number</label>
-        <input type="text" name="phoneNumber" value="<?= htmlspecialchars($user['phoneNumber']) ?>" required>
-
-        <label>Account Type</label>
-        <input type="text" value="<?= ucfirst($user['role']) ?>" readonly>
-
-        <button type="submit">Update Profile</button>
+    <form method="post" class="profile-info">
+        <div class="profile-info-row">
+            <label>Full Name</label>
+            <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" required>
+        </div>
+        <div class="profile-info-row">
+            <label>Email (cannot be changed)</label>
+            <input type="email" value="<?= htmlspecialchars($user['email']) ?>" readonly>
+        </div>
+        <div class="profile-info-row">
+            <label>Phone Number</label>
+            <input type="text" name="phoneNumber" value="<?= htmlspecialchars($user['phoneNumber']) ?>" required>
+        </div>
+        <div class="profile-info-row">
+            <label>Account Type</label>
+            <input type="text" value="<?= ucfirst($user['role']) ?>" readonly>
+        </div>
+        <div class="profile-actions">
+            <button type="submit">Update Profile</button>
+        </div>
     </form>
 </div>
 
 </body>
+<?php include 'footer.php'; ?>
 </html>

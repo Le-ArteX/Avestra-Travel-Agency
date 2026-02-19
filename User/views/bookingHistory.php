@@ -21,20 +21,22 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <title>My Booking History</title>
     <link rel="stylesheet" href="../styleSheets/user.css">
+    <link rel="stylesheet" href="../styleSheets/bookingHistory.css">
+    <link rel="stylesheet" href="../styleSheets/footer.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 <body>
 
 <?php include 'nav.php'; ?>
 
-<div class="container">
-    <h2>📋 My Booking History</h2>
+<div class="booking-history-container">
+    <h2 class="booking-history-title">📋 My Booking History</h2>
 
     <?php if ($result->num_rows === 0): ?>
         <p>No bookings found.</p>
     <?php else: ?>
 
-        <table border="1" cellpadding="10" cellspacing="0" width="100%">
+        <table class="booking-history-table">
             <tr>
                 <th>#</th>
                 <th>Service</th>
@@ -69,4 +71,5 @@ $result = $stmt->get_result();
 </div>
 
 </body>
+<?php include 'footer.php'; ?>
 </html>

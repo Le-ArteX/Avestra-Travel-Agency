@@ -28,4 +28,5 @@
         }, 1000);
     </script>
 </body>
+<?php include 'footer.php'; ?>
 </html>

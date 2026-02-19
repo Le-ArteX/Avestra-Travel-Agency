@@ -53,46 +53,50 @@ $paid_date = $payment['payment_date'] ?? '—';
     <meta charset="UTF-8">
     <title>Invoice #<?= (int)$booking['id'] ?> | Avestra</title>
     <link rel="stylesheet" href="../styleSheets/user.css">
+    <link rel="stylesheet" href="../styleSheets/invoice.css">
+    <link rel="stylesheet" href="../styleSheets/footer.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 <body>
 
 <?php include 'nav.php'; ?>
 
-<div class="container">
-    <div class="card">
+<div class="invoice-container">
+    <div class="invoice-header">
         <h2>🧾 Invoice</h2>
+        <div class="invoice-id">Invoice ID: #<?= (int)$booking['id'] ?></div>
+        <div class="invoice-date">Booked On: <?= htmlspecialchars(date("d M Y, h:i A", strtotime($booking['created_at']))) ?></div>
+    </div>
 
-        <p><b>Invoice ID:</b> #<?= (int)$booking['id'] ?></p>
-        <p><b>Booked On:</b> <?= htmlspecialchars(date("d M Y, h:i A", strtotime($booking['created_at']))) ?></p>
-
-        <hr>
-
+    <div class="invoice-section invoice-details">
         <h3>📌 Booking Details</h3>
         <p><b>Service Type:</b> <?= htmlspecialchars(ucfirst($booking['service_type'])) ?></p>
         <p><b>Service Name:</b> <?= htmlspecialchars($booking['service_name']) ?></p>
         <p><b>Travel Date:</b> <?= htmlspecialchars($booking['travel_date']) ?></p>
         <p><b>Quantity:</b> <?= (int)$booking['quantity'] ?></p>
-        <p><b>Total Price:</b> <?= (float)$booking['total_price'] ?> ৳</p>
+        <p><b>Total Price:</b> <span style="color:#43a047;font-weight:600;"><?= (float)$booking['total_price'] ?> ৳</span></p>
+    </div>
 
-        <hr>
+    <div class="invoice-section invoice-status">
+        <div>
+            <p><b>Booking Status:</b> <span style="color:#1976d2;"><?= htmlspecialchars(ucfirst($booking_status)) ?></span></p>
+        </div>
+        <div>
+            <p><b>Payment Status:</b> <span style="color:#43a047;"><?= htmlspecialchars(ucfirst($payment_status)) ?></span></p>
+        </div>
+    </div>
 
-        <h3>✅ Status</h3>
-        <p><b>Booking Status:</b> <?= htmlspecialchars(ucfirst($booking_status)) ?></p>
-        <p><b>Payment Status:</b> <?= htmlspecialchars(ucfirst($payment_status)) ?></p>
-
-        <hr>
-
+    <div class="invoice-section">
         <h3>💳 Payment Info</h3>
         <p><b>Payment Method:</b> <?= htmlspecialchars($paid_method) ?></p>
         <p><b>Payment Status:</b> <?= htmlspecialchars(ucfirst($paid_status)) ?></p>
         <p><b>Transaction ID:</b> <?= htmlspecialchars($txn) ?></p>
         <p><b>Payment Date:</b> <?= htmlspecialchars($paid_date) ?></p>
-
-        <br>
-        <a href="bookingHistory.php" class="btn">⬅ Back to Booking History</a>
     </div>
+
+    <a href="bookingHistory.php" class="invoice-btn">⬅ Back to Booking History</a>
 </div>
 
 </body>
+<?php include 'footer.php'; ?>
 </html>

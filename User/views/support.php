@@ -24,4 +24,5 @@ include 'session_check.php';
 </div>
 
 </body>
+<?php include 'footer.php'; ?>
 </html>

@@ -31,10 +31,19 @@ if ($action === 'add' || $action === 'edit') {
     $rooms    = (int)$_POST['rooms'];
     $status   = $_POST['status'];
 
-    if ($action === 'add') {
-        $stmt = $conn->prepare("INSERT INTO hotels (name, location, rating, rooms, status) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssiis", $name, $location, $rating, $rooms, $status);
+    // Handle image upload (store as blob)
+    $imageData = null;
+    if (isset($_FILES['hotel_image']) && $_FILES['hotel_image']['error'] === UPLOAD_ERR_OK) {
+        $imageData = file_get_contents($_FILES['hotel_image']['tmp_name']);
+    }
 
+    if ($action === 'add') {
+        $stmt = $conn->prepare("INSERT INTO hotels (name, location, rating, rooms, status, image) VALUES (?, ?, ?, ?, ?, ?)");
+        $null = null;
+        $stmt->bind_param("ssiisb", $name, $location, $rating, $rooms, $status, $null);
+        if ($imageData !== null) {
+            $stmt->send_long_data(5, $imageData);
+        }
         if ($stmt->execute()) {
             $_SESSION['hotel_success'] = "Hotel added successfully.";
         } else {

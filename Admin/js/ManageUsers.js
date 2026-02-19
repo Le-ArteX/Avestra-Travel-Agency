@@ -50,13 +50,13 @@ function submitPendingAction() {
     form.action = '../controller/ManageUsersActions.php';
     
     if (pendingAction === 'approve_admin') {
-        // For approve_admin, use request_id instead of email
+        // For approving admin requests, use request_id
         form.innerHTML = `
             <input type="hidden" name="action" value="${pendingAction}">
             <input type="hidden" name="request_id" value="${pendingEmail}">
         `;
     } else {
-        // For other actions, use email
+       
         form.innerHTML = `
             <input type="hidden" name="action" value="${pendingAction}">
             <input type="hidden" name="email" value="${pendingEmail}">
@@ -80,7 +80,7 @@ function unblockUser(email) {
     openConfirmModal('Unblock this user?', 'unblock', email);
 }
 function approveAdminRequest(requestId, username) {
-    // Store data for custom modal submission
+    // Store data for custom 
     window.approveData = {
         requestId: requestId,
         username: username
