@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>My Profile | Avestra</title>
     <link rel="stylesheet" href="../styleSheets/user.css">
     <link rel="stylesheet" href="../styleSheets/profile.css">
+    <link rel="stylesheet" href="../styleSheets/footer.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 <body>
@@ -63,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" required>
         </div>
         <div class="profile-info-row">
-            <label>Email (cannot be changed)</label>
+            <label>Email</label>
             <input type="email" value="<?= htmlspecialchars($user['email']) ?>" readonly>
         </div>
         <div class="profile-info-row">
