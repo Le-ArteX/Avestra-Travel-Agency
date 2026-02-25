@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 include('../database/dbconnection.php');
@@ -21,6 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $tickets = getBusTickets($q, $status);
+
+// Pagination
+$per_page    = 6;
+$total       = count($tickets);
+$total_pages = max(1, (int)ceil($total / $per_page));
+$current_page = max(1, min($total_pages, (int)($_GET['page'] ?? 1)));
+$offset       = ($current_page - 1) * $per_page;
+$tickets_page = array_slice($tickets, $offset, $per_page);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,6 +36,7 @@ $tickets = getBusTickets($q, $status);
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manage Tickets - Avestra Travel Agency</title>
   <link rel="stylesheet" href="../styleSheets/ManageTickets.css" />
+   <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
   <link rel="icon" href="../images/logo.png" type="image/png" />
 </head>
 
@@ -46,7 +54,7 @@ $tickets = getBusTickets($q, $status);
         <ul class="sidebar-menu">
           <li><a href="Admin.php">Dashboard</a></li>
           <li><a href="ManageUsers.php">Manage Users</a></li>
-          <li><a href="ManageTickets.php">Tickets</a></li>
+          <li><a href="ManageTickets.php" class="active">Tickets</a></li>
           <li><a href="ManageHotels.php">Hotels</a></li>
           <li><a href="ManageTours.php">Tours</a></li>
           <li><a href="Payments.php">Payments</a></li>
@@ -59,7 +67,7 @@ $tickets = getBusTickets($q, $status);
 
     <main class="main-content">
       <header class="admin-header">
-        <h1>Manage Tickets</h1>
+        <h1><i class="fa-solid fa-ticket"></i> Manage Tickets</h1>
       </header>
 
       <?php if ($msg): ?>
@@ -70,26 +78,25 @@ $tickets = getBusTickets($q, $status);
         <div class="toast error"><?= esc($err) ?></div>
       <?php endif; ?>
 
-      <!-- ACTION BAR -->
+      <!-- MAIN CARD: action bar + form + grid + pagination -->
       <div class="admin-card">
         <div class="section-actions">
           <form class="search-wrap" method="POST" action="ManageTickets.php">
                  <input type="text" class="section-search" name="q"
                    placeholder="Search (Ticket ID)..."
                    value="<?= esc($q) ?>" />
-                 <button class="mini-btn" type="submit">Search</button>
+                 <button class="mini-btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
                </form>
-          <button class="add-section-btn" type="button" id="openFormBtn">+ Add Ticket</button>
+          <button class="add-section-btn" type="button" id="openFormBtn"><i class="fa-solid fa-plus"></i> Add Ticket</button>
         </div>
-      </div>
-
-      <div class="admin-card form-card" id="ticketFormCard">
+      <!-- form panel (hidden until Add/Edit clicked) -->
+      <div class="form-card" id="ticketFormCard">
         <div class="form-title">
           <h2 id="formTitle">Add Ticket</h2>
           <button type="button" class="x-btn" id="closeFormBtn">✕</button>
         </div>
 
-        <form class="form-container" id="ticketForm" method="POST" action="../controller/ManageTicketsController.php">
+        <form class="form-container" id="ticketForm" method="POST" action="../controller/ManageTicketsController.php" enctype="multipart/form-data">
           <input type="hidden" name="action" id="actionField" value="add" />
           <input type="hidden" name="id" id="idField" value="" />
 
@@ -129,6 +136,18 @@ $tickets = getBusTickets($q, $status);
           </div>
 
           <div class="form-group">
+            <label>Price</label>
+            <input type="number" name="price" id="price" min="0" step="0.01" placeholder="Enter ticket price" />
+            <div class="field-error" id="err_price"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Ticket Image</label>
+            <input type="file" name="ticket_image" accept="image/*" required />
+            <div class="field-error" id="err_ticket_image"></div>
+          </div>
+
+          <div class="form-group">
             <label>Status</label>
             <select name="status" id="status">
               <option value="active">Active</option>
@@ -148,11 +167,11 @@ $tickets = getBusTickets($q, $status);
 
 
     
-      <div class="ticket-grid ticket-grid-margin">
-        <?php if (empty($tickets)): ?>
-          <div class="no-tickets-msg">No tickets found.</div>
-        <?php else: ?>
-          <?php foreach ($tickets as $t): ?>
+      <?php if (empty($tickets)): ?>
+        <div class="no-tickets-msg">No tickets found.</div>
+      <?php else: ?>
+        <div class="ticket-grid ticket-grid-margin">
+          <?php foreach ($tickets_page as $t): ?>
             <?php
               $statusClass = strtolower($t['status']) === 'active' ? 'active' : 'inactive';
               $busClass = esc($t['bus_class']);
@@ -175,42 +194,73 @@ $tickets = getBusTickets($q, $status);
                   <span class="ticket-status-dot <?= $statusClass ?>"></span> <?= $statusText ?>
                 </span>
               </div>
+              <?php $imgSrc = !empty($t['image']) ? '../images/' . esc($t['image']) : null; ?>
+              <?php if ($imgSrc): ?>
+                <div class="ticket-card-img-wrap">
+                  <img src="<?= $imgSrc ?>" alt="<?= esc($t['ticket_code']) ?>" class="ticket-card-img" />
+                </div>
+              <?php else: ?>
+                <div class="ticket-card-img-wrap ticket-card-img-placeholder">
+                  <span>🚌</span>
+                </div>
+              <?php endif; ?>
               <div class="ticket-card-body">
                 <div class="ticket-card-row"><b>Route:</b> <?= esc($t['route']) ?></div>
                 <div class="ticket-card-row"><b>Bus Class:</b> <?= $busClass ?></div>
                 <div class="ticket-card-row"><b>Seats:</b> <?= (int)$t['seat_count'] ?></div>
+                <div class="ticket-card-row"><b>Price:</b> <?= isset($t['price']) ? (float)$t['price'] . ' ৳' : 'N/A' ?></div>
               </div>
               <div class="ticket-card-actions">
-                <button class="edit-btn" type="button" data-action="edit">Edit</button>
+                <button class="edit-btn" type="button" data-action="edit"><i class="fa-regular fa-pen-to-square"></i> Edit</button>
                 <form method="POST" action="../controller/ManageTicketsController.php" class="ticket-action-form">
                   <input type="hidden" name="action" value="toggle_status">
                   <input type="hidden" name="id" value="<?= (int)$t['id'] ?>">
                   <input type="hidden" name="current_status" value="<?= esc($t['status']) ?>">
-
                   <?php if (strtolower($t['status']) === 'active'): ?>
-                    <button type="submit" class="make-inactive-btn">Make Inactive</button>
+                    <button type="submit" class="make-inactive-btn"><i class="fa-solid fa-toggle-off"></i> Make Inactive</button>
                   <?php else: ?>
-                    <button type="submit" class="make-active-btn">Make Active</button>
+                    <button type="submit" class="make-active-btn"><i class="fa-solid fa-toggle-on"></i> Make Active</button>
                   <?php endif; ?>
                 </form>
                 <form method="POST" action="../controller/ManageTicketsController.php" class="ticket-action-form">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="id" value="<?= (int)$t['id'] ?>">
-                  <button class="delete-btn" type="submit" <?php if (strtolower($t['status']) === 'active') echo 'disabled'; ?>>Delete</button>
+                  <button class="delete-btn" type="submit" <?php if (strtolower($t['status']) === 'active') echo 'disabled'; ?>><i class="fa-solid fa-trash"></i> Delete</button>
                 </form>
               </div>
             </div>
           <?php endforeach; ?>
-        <?php endif; ?>
-      </div>
+        </div>
+      <?php endif; ?>
 
+      <?php if ($total_pages > 1): ?>
+        <div class="pagination-bar">
+          <div class="pagination-info">
+            Showing <?= $offset + 1 ?>–<?= min($offset + $per_page, $total) ?> of <?= $total ?> tickets
+          </div>
+          <div class="pagination-controls">
+            <?php if ($current_page > 1): ?>
+              <a class="page-btn" href="?q=<?= urlencode($q) ?>&status=<?= urlencode($status) ?>&page=<?= $current_page - 1 ?>">
+                <i class="fa-solid fa-chevron-left"></i> Prev
+              </a>
+            <?php endif; ?>
+            <span class="pagination-page">Page <?= $current_page ?> of <?= $total_pages ?></span>
+            <?php if ($current_page < $total_pages): ?>
+              <a class="page-btn" href="?q=<?= urlencode($q) ?>&status=<?= urlencode($status) ?>&page=<?= $current_page + 1 ?>">
+                Next <i class="fa-solid fa-chevron-right"></i>
+              </a>
+            <?php endif; ?>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      </div><!-- /admin-card -->
     </main>
   </div>
-
   <script src="../js/ManageTicket.js"></script>
   <script>
-
     document.addEventListener('DOMContentLoaded', function() {
+      // Toast auto-hide
       var toast = document.querySelector('.toast');
       if (toast) {
         setTimeout(function() {
@@ -225,6 +275,26 @@ $tickets = getBusTickets($q, $status);
             window.history.replaceState({}, document.title, url.pathname + url.search);
           }
         }, 1000);
+      }
+      // Hide form by default, show on button click
+      var openFormBtn = document.getElementById('openFormBtn');
+      var closeFormBtn = document.getElementById('closeFormBtn');
+      var ticketFormCard = document.getElementById('ticketFormCard');
+      if (openFormBtn && ticketFormCard) {
+        openFormBtn.addEventListener('click', function() {
+          ticketFormCard.style.display = 'block';
+        });
+      }
+      if (closeFormBtn && ticketFormCard) {
+        closeFormBtn.addEventListener('click', function() {
+          ticketFormCard.style.display = 'none';
+        });
+      }
+      var cancelFormBtn = document.getElementById('cancelFormBtn');
+      if (cancelFormBtn && ticketFormCard) {
+        cancelFormBtn.addEventListener('click', function() {
+          ticketFormCard.style.display = 'none';
+        });
       }
     });
   </script>

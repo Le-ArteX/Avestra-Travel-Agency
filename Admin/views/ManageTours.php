@@ -4,17 +4,36 @@ session_start();
 
 function esc($s) { return htmlspecialchars($s ?? '', ENT_QUOTES, 'UTF-8'); }
 
-// Fetch tours
-$tours = [];
-$res = $conn->query("SELECT * FROM tours ORDER BY id DESC");
-if ($res) {
-  while ($row = $res->fetch_assoc()) $tours[] = $row;
-}
-
 // Flash messages from controller
 $success = $_SESSION['tour_success'] ?? '';
 $error   = $_SESSION['tour_error'] ?? '';
 unset($_SESSION['tour_success'], $_SESSION['tour_error']);
+
+// Search
+$q = trim($_GET['q'] ?? '');
+
+// Fetch tours (with search)
+$tours = [];
+if ($q !== '') {
+  $stmt = $conn->prepare("SELECT * FROM tours WHERE name LIKE ? OR destination LIKE ? ORDER BY id DESC");
+  $like = "%$q%";
+  $stmt->bind_param("ss", $like, $like);
+  $stmt->execute();
+  $res = $stmt->get_result();
+} else {
+  $res = $conn->query("SELECT * FROM tours ORDER BY id DESC");
+}
+if ($res) {
+  while ($row = $res->fetch_assoc()) $tours[] = $row;
+}
+
+// Pagination
+$per_page     = 6;
+$total        = count($tours);
+$total_pages  = max(1, (int)ceil($total / $per_page));
+$current_page = max(1, min($total_pages, (int)($_GET['page'] ?? 1)));
+$offset       = ($current_page - 1) * $per_page;
+$tours_page   = array_slice($tours, $offset, $per_page);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,8 +43,9 @@ unset($_SESSION['tour_success'], $_SESSION['tour_error']);
   <title>Manage Tours - Avestra Travel Agency</title>
 
   <link rel="stylesheet" href="../styleSheets/ManageTours.css" />
+  <link rel="stylesheet" href="../styleSheets/ManageToursExtra.css" />
   <link rel="icon" href="../images/logo.png" type="image/png" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css"/>
 </head>
 
 <body>
@@ -86,8 +106,8 @@ unset($_SESSION['tour_success'], $_SESSION['tour_error']);
         <ul class="sidebar-menu">
           <li><a href="Admin.php">Dashboard</a></li>
           <li><a href="ManageUsers.php">Manage Users</a></li>
-          <li><a href="ManageHotels.php">Hotels</a></li>
           <li><a href="ManageTickets.php">Tickets</a></li>
+          <li><a href="ManageHotels.php">Hotels</a></li>
           <li><a href="ManageTours.php" class="active">Tours</a></li>
           <li><a href="Payments.php">Payments</a></li>
           <li><a href="Settings.php">Settings</a></li>
@@ -100,20 +120,27 @@ unset($_SESSION['tour_success'], $_SESSION['tour_error']);
     <!-- MAIN -->
     <main class="main-content">
       <header class="admin-header">
-        <h1>Manage Tours</h1>
+        <h1><i class="fa-solid fa-map-location-dot"></i> Manage Tours</h1>
       </header>
 
-      <!-- ACTION BAR -->
+      <!-- MAIN CARD -->
       <div class="admin-card">
         <div class="section-actions">
+          <form class="search-wrap" method="GET" action="ManageTours.php">
+            <input type="text" class="section-search" name="q"
+              placeholder="Search by name or destination..."
+              value="<?= esc($q) ?>" />
+            <button class="mini-btn search-btn" type="submit">
+              <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+          </form>
           <button type="button" class="add-tour-btn" id="openAddTourBtn">
-            <i class="fas fa-plus-circle"></i> Add Tour
+            <i class="fas fa-plus"></i> Add Tour
           </button>
         </div>
-      </div>
 
       <!-- ✅ FORM CARD (HIDDEN BY DEFAULT) -->
-      <div class="admin-card" id="tourFormCard" style="display:none;">
+      <div class="tour-form-card" id="tourFormCard" style="display:none;">
         <div class="form-title" style="display:flex; align-items:center; justify-content:space-between;">
           <h2 id="modalTitle"><i class="fas fa-plus-circle"></i> Add Tour</h2>
           <button type="button" class="modal-close" id="closeTourFormBtn">✕</button>
@@ -159,12 +186,11 @@ unset($_SESSION['tour_success'], $_SESSION['tour_error']);
       </div>
 
       <!-- TOURS GRID -->
-      <div class="admin-card">
-        <div class="tour-cards-grid">
-          <?php if (empty($tours)): ?>
-            <div style="padding:14px; font-weight:900;">No tours found.</div>
-          <?php else: ?>
-            <?php foreach ($tours as $tour): ?>
+        <?php if (empty($tours)): ?>
+          <div style="padding:14px; font-weight:900;">No tours found.</div>
+        <?php else: ?>
+          <div class="tour-cards-grid">
+            <?php foreach ($tours_page as $tour): ?>
               <?php
                 $isActive = (strtolower(trim($tour['status'])) === 'active');
                 $toggleText = $isActive ? 'Inactive' : 'Active';
@@ -214,9 +240,31 @@ unset($_SESSION['tour_success'], $_SESSION['tour_error']);
                 </div>
               </div>
             <?php endforeach; ?>
-          <?php endif; ?>
-        </div>
-      </div>
+          </div>
+        <?php endif; ?>
+
+        <?php if ($total_pages > 1): ?>
+          <div class="pagination-bar">
+            <div class="pagination-info">
+              Showing <?= $offset + 1 ?>–<?= min($offset + $per_page, $total) ?> of <?= $total ?> tours
+            </div>
+            <div class="pagination-controls">
+              <?php if ($current_page > 1): ?>
+                <a class="page-btn" href="?q=<?= urlencode($q) ?>&page=<?= $current_page - 1 ?>">
+                  <i class="fa-solid fa-chevron-left"></i> Prev
+                </a>
+              <?php endif; ?>
+              <span class="pagination-page">Page <?= $current_page ?> of <?= $total_pages ?></span>
+              <?php if ($current_page < $total_pages): ?>
+                <a class="page-btn" href="?q=<?= urlencode($q) ?>&page=<?= $current_page + 1 ?>">
+                  Next <i class="fa-solid fa-chevron-right"></i>
+                </a>
+              <?php endif; ?>
+            </div>
+          </div>
+        <?php endif; ?>
+
+      </div><!-- /admin-card -->
 
     </main>
   </div>

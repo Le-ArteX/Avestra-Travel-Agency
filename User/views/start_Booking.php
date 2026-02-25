@@ -2,7 +2,8 @@
 include 'session_check.php';
 include '../database/dbconnection.php';
 
-$stmt = $conn->prepare("SELECT id, ticket_code, ticket_type, route, bus_class, seat_count, status, image,includes_text, price, provider 
+
+$stmt = $conn->prepare("SELECT id, ticket_code, ticket_type, route, bus_class, seat_count, status, image, includes_text, price, provider 
                         FROM tickets 
                         WHERE status='active'
                         ORDER BY id DESC");
@@ -22,26 +23,31 @@ $result = $stmt->get_result();
 
 <?php include 'nav.php'; ?>
 
-<div class="start-booking-container">
+<div class="start-booking-header">
     <h2 class="start-booking-title">Available Tickets</h2>
 </div>
+
 <div class="card-grid">
     <?php if ($result->num_rows == 0): ?>
-        <p>No tickets available right now.</p>
+        <p class="no-tickets">No tickets available right now.</p>
     <?php else: ?>
         <?php while($row = $result->fetch_assoc()): ?>
             <div class="service-card">
-                <?php if (!empty($row['image'])): ?>
-                    <img src="../images/<?= htmlspecialchars($row['image']) ?>" alt="Ticket Image" style="max-width:150px;">
-                <?php else: ?>
-                    <img src="../images/ticket1.jpg" alt="Default Ticket Image" style="max-width:150px;">
-                <?php endif; ?>
+                <div class="image-container">
+                    <?php if (!empty($row['image'])): ?>
+                        <img src="../../Admin/images/<?= htmlspecialchars($row['image']) ?>" alt="Ticket Image">
+                    <?php else: ?>
+                        <img src="../images/ticket1.jpg" alt="Default Ticket Image">
+                    <?php endif; ?>
+                </div>
+
                 <h3><?= htmlspecialchars($row['route']) ?></h3>
-                <p><?= htmlspecialchars($row['ticket_type']) ?> | <?= htmlspecialchars($row['bus_class']) ?> | <?= htmlspecialchars($row['provider']) ?></p>
-                <p>Seats: <?= (int)$row['seat_count'] ?></p>
-                <p>Status: <?= htmlspecialchars($row['status']) ?></p>
-                <p>Includes: <?= htmlspecialchars($row['includes_text']) ?></p>
-                <p><b>Price:</b> <?= (float)$row['price'] ?> ৳</p>
+                <div class="ticket-info">
+                    <p><b>Code:</b> <?= htmlspecialchars($row['ticket_code']) ?></p>
+                    <p><?= htmlspecialchars($row['ticket_type']) ?> | <?= htmlspecialchars($row['bus_class']) ?> | <?= htmlspecialchars($row['provider'] ?? 'Avestra') ?></p>
+                    <p>Seats Available: <?= (int)$row['seat_count'] ?></p>
+                    <p class="price-tag">Price: <?= (float)$row['price'] ?> ৳</p>
+                </div>
 
                 <form action="confirmOrder.php" method="post" class="start-booking-form">
                     <input type="hidden" name="service_type" value="ticket">

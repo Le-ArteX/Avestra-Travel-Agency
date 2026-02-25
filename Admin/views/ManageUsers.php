@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Users - Avestra Travel Agency</title>
     <link rel="stylesheet" href="../styleSheets/ManageUsers.css">
+    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 
@@ -43,6 +44,10 @@
 
   
         <main class="main-content">
+
+            <header class="admin-header">
+                <h1><i class="fa-solid fa-users"></i> Manage Users</h1>
+            </header>
 
             <section class="admin-section">
                 <div class="admin-card">
@@ -130,8 +135,8 @@
 
                             <!-- Actions -->
                             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                                <button class="edit-btn" type="submit">Search</button>
-                                <button class="add-user-btn" type="button" onclick="openAddModal()">+ Add User</button>
+                                <button class="edit-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                                <button class="add-user-btn" type="button" onclick="openAddModal()"><i class="fa-solid fa-plus"></i> Add User</button>
                             </div>
                         </div>
                     </form>
@@ -177,7 +182,7 @@
                                             <td>
                                                 <div class="action-buttons">
                                                     <button class="edit-btn" type="button"
-                                                        onclick='openEditModal(<?php echo json_encode($user); ?>)'>Edit</button>
+                                                        onclick='openEditModal(<?php echo json_encode($user); ?>)'><i class="fa-regular fa-pen-to-square"></i> Edit</button>
                                                     <?php if ($status === 'Active'): ?>
                                                         <button class="block-btn" type="button"
                                                             onclick="blockUser('<?php echo htmlspecialchars($user['email']); ?>')">Block</button>
@@ -189,7 +194,7 @@
                                                             onclick="unblockUser('<?php echo htmlspecialchars($user['email']); ?>')">Activate</button>
                                                     <?php endif; ?>
                                                     <button class="delete-btn" type="button"
-                                                        onclick="deleteUser('<?php echo htmlspecialchars($user['email']); ?>', '<?php echo htmlspecialchars($user['username']); ?>')">Delete</button>
+                                                        onclick="deleteUser('<?php echo htmlspecialchars($user['email']); ?>', '<?php echo htmlspecialchars($user['username']); ?>')"><i class="fa-solid fa-trash"></i> Delete</button>
                                                 </div>
                                             </td>
                                         </tr>

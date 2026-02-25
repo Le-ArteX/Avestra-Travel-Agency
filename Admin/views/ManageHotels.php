@@ -14,7 +14,7 @@ include('../database/HotelsData.php');
     <link rel="stylesheet" href="../styleSheets/ManageHotelsExtra.css" />
 
     <link rel="icon" href="../images/logo.png" type="image/png" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
 
     <script src="../js/ManageHotels.js" defer></script>
 </head>
@@ -86,7 +86,7 @@ include('../database/HotelsData.php');
 
                     <div class="hotel-actions">
                         <input id="hotelSearch" class="hotel-search" type="text"
-                            placeholder="🔍 Search hotels by name or location..." />
+                            placeholder="Search hotels by name or location..." />
                         <button class="search-btn" type="button" id="searchBtn">
                             <i class="fa-solid fa-magnifying-glass"></i> Search
                         </button>

@@ -81,11 +81,7 @@ $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
         </aside>
 
         <!-- Main Content Area -->
-        <main class="main-content">
-            <header class="admin-header">
-                <h1>Welcome to the Admin Dashboard</h1>
-            </header>
-                        
+        <main class="main-content">                       
             <section class="admin-section">
                 <div class="admin-card">
                     <h3>Statistics Overview</h3>

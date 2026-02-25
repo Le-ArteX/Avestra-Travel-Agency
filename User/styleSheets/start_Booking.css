@@ -1,4 +1,34 @@
-/* Ticket card grid layout */
+/* Ensure the image container handles different photo sizes */
+.image-container {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* This prevents images from stretching */
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover img {
+    transform: scale(1.1);
+}
+
+.price-tag {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1976d2 !important;
+    margin-top: 10px;
+}
+
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

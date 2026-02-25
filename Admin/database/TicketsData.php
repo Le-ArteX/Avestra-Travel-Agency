@@ -4,12 +4,16 @@ include_once('dbconnection.php');
 function getBusTickets($q = '', $status = '') {
     global $conn;
     $tickets = [];
-    $sql = "SELECT * FROM tickets WHERE ticket_type = 'Bus'";
+    $sql = "SELECT * FROM tickets";
+    $where = [];
     if ($q !== '') {
-        $sql .= " AND (ticket_code LIKE '%" . $conn->real_escape_string($q) . "%' OR route LIKE '%" . $conn->real_escape_string($q) . "%')";
+        $where[] = "(ticket_code LIKE '%" . $conn->real_escape_string($q) . "%' OR route LIKE '%" . $conn->real_escape_string($q) . "%')";
     }
     if ($status !== '') {
-        $sql .= " AND status = '" . $conn->real_escape_string($status) . "'";
+        $where[] = "status = '" . $conn->real_escape_string($status) . "'";
+    }
+    if (!empty($where)) {
+        $sql .= " WHERE " . implode(' AND ', $where);
     }
     $sql .= " ORDER BY id DESC";
     $result = $conn->query($sql);
