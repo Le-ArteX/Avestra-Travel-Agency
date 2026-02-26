@@ -54,6 +54,8 @@ function setAddMode() {
 
   document.getElementById('formAction').value = 'add';
   document.getElementById('tourId').value = '';
+  document.getElementById('oldTourId').value = '';
+  document.getElementById('tourId').readOnly = false;
   document.getElementById('modalTitle').innerHTML =
     '<i class="fas fa-plus-circle"></i> Add Tour';
 
@@ -134,6 +136,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       document.getElementById('formAction').value = 'edit';
       document.getElementById('tourId').value = editBtn.dataset.id;
+      document.getElementById('oldTourId').value = editBtn.dataset.id;
+      document.getElementById('tourId').readOnly = true;
       document.getElementById('tourName').value = editBtn.dataset.name || '';
       document.getElementById('tourDestination').value = editBtn.dataset.destination || '';
       document.getElementById('tourDuration').value = editBtn.dataset.duration || '';

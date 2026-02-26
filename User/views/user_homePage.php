@@ -31,6 +31,7 @@ checkMaintenanceMode(false); // Set to true if you want admin bypass
             <nav>
                 <ul>
                     <li class="current"><a href="loader.php"> Home</a></li>
+                    <li><a href="user_dashboard.php" > Dashboard</a></li>
                     <li><a href="#services-section-tickets"><img src="../images/ticket-detailed-fill.svg"
                                 alt="Tickets Icon" class="ticket-icon"> Tickets</a></li>
                     <li><a href="#services-section-hotel"><img src="../images/house-add.svg" alt="Hotel Icon"
@@ -39,7 +40,7 @@ checkMaintenanceMode(false); // Set to true if you want admin bypass
                                 class="tour-icon"> Tour Packages</a></li>
                     <li><a href="#contact-section"> Contact Us</a></li>
                     <li><a href="#about-section"> About Us</a></li>
-                    <li><a href="user_dashboard.php"> Dashboard</a></li>
+                  
                 </ul>
             </nav>
         </div>

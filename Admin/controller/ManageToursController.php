@@ -22,14 +22,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $action = $_POST['action'] ?? '';
 
 if ($action === 'add') {
+  $id = trim($_POST['id'] ?? '');
   $name = trim($_POST['name'] ?? '');
   $destination = trim($_POST['destination'] ?? '');
   $duration = trim($_POST['duration'] ?? '');
-  $price = (float)($_POST['price'] ?? 0);
+  $price = trim($_POST['price'] ?? '0');
   $status = $_POST['status'] ?? 'Active';
   $includes_text = trim($_POST['includes_text'] ?? '');
 
-  if ($name === '' || $destination === '' || $duration === '' || $price <= 0) {
+  if ($id === '' || $name === '' || $destination === '' || $duration === '' || (float)$price <= 0) {
     redirect_back('', 'All fields are required and price must be greater than 0');
   }
 
@@ -46,30 +47,31 @@ if ($action === 'add') {
       }
   }
 
-  $stmt = $conn->prepare("INSERT INTO tours (name, destination, duration, price, status, includes_text, image) VALUES (?, ?, ?, ?, ?, ?, ?)");
-  $stmt->bind_param("sssdsss", $name, $destination, $duration, $price, $status, $includes_text, $image_name);
+  $stmt = $conn->prepare("INSERT INTO tours (id, name, destination, duration, price, status, includes_text, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+  $stmt->bind_param("ssssssss", $id, $name, $destination, $duration, $price, $status, $includes_text, $image_name);
 
   if ($stmt->execute()) redirect_back('Tour added successfully!');
   redirect_back('', 'Error adding tour');
 }
 
 if ($action === 'edit') {
-  $id = (int)($_POST['id'] ?? 0);
+  $old_id = trim($_POST['old_id'] ?? '');
+  $id = trim($_POST['id'] ?? '');
   $name = trim($_POST['name'] ?? '');
   $destination = trim($_POST['destination'] ?? '');
   $duration = trim($_POST['duration'] ?? '');
-  $price = (float)($_POST['price'] ?? 0);
+  $price = trim($_POST['price'] ?? '0');
   $status = $_POST['status'] ?? 'Active';
   $includes_text = trim($_POST['includes_text'] ?? '');
 
-  if ($id <= 0 || $name === '' || $destination === '' || $duration === '' || $price <= 0) {
+  if ($old_id === '' || $id === '' || $name === '' || $destination === '' || $duration === '' || (float)$price <= 0) {
     redirect_back('', 'Invalid data provided');
   }
 
   // Handle image upload if a new image is provided
   $image_q = "";
-  $types = "sssdssi";
-  $params = [&$name, &$destination, &$duration, &$price, &$status, &$includes_text, &$id];
+  $types = "sssssss"; // id, name, destination, duration, price, status, includes_text
+  $params = [&$id, &$name, &$destination, &$duration, &$price, &$status, &$includes_text];
   
   $image_name = '';
   if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
@@ -80,12 +82,15 @@ if ($action === 'edit') {
       
       if (move_uploaded_file($tmp_name, $target_path)) {
           $image_q = ", image=?";
-          $types = "sssdsssi"; // string for image parameter
-          $params = [&$name, &$destination, &$duration, &$price, &$status, &$includes_text, &$image_name, &$id];
+          $types = "ssssssss"; // + image
+          $params[] = &$image_name;
       }
   }
 
-  $stmt = $conn->prepare("UPDATE tours SET name=?, destination=?, duration=?, price=?, status=?, includes_text=? $image_q WHERE id=?");
+  $types .= "s"; // + old_id
+  $params[] = &$old_id;
+
+  $stmt = $conn->prepare("UPDATE tours SET id=?, name=?, destination=?, duration=?, price=?, status=?, includes_text=? $image_q WHERE id=?");
   
   // Use call_user_func_array to bind dynamic parameters
   $bind_names[] = $types;
@@ -99,23 +104,23 @@ if ($action === 'edit') {
 }
 
 if ($action === 'toggle') {
-  $id = (int)($_POST['id'] ?? 0);
-  if ($id <= 0) json_out(false, 'Invalid tour ID');
+  $id = trim($_POST['id'] ?? '');
+  if ($id === '') json_out(false, 'Invalid tour ID');
 
   $stmt = $conn->prepare("UPDATE tours SET status = IF(status='Active','Inactive','Active') WHERE id=?");
-  $stmt->bind_param("i", $id);
+  $stmt->bind_param("s", $id);
 
   if ($stmt->execute()) json_out(true, 'Tour status updated!');
   json_out(false, 'Error updating status');
 }
 
 if ($action === 'delete') {
-  $id = (int)($_POST['id'] ?? 0);
-  if ($id <= 0) json_out(false, 'Invalid tour ID');
+  $id = trim($_POST['id'] ?? '');
+  if ($id === '') json_out(false, 'Invalid tour ID');
 
   // Only inactive tours can be deleted
   $stmt = $conn->prepare("DELETE FROM tours WHERE id=? AND status='Inactive'");
-  $stmt->bind_param("i", $id);
+  $stmt->bind_param("s", $id);
 
   if ($stmt->execute() && $stmt->affected_rows > 0) {
     json_out(true, 'Tour deleted successfully!');

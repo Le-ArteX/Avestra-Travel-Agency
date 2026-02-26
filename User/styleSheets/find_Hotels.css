@@ -156,6 +156,19 @@ body {
 }
 
 /* ── Individual Card ─────────────────────────────────────── */
+/* Base Animation Keyframes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .fh-card {
     background: #fff;
     border-radius: 18px;
@@ -165,6 +178,43 @@ body {
         box-shadow 0.22s ease;
     display: flex;
     flex-direction: column;
+
+    /* Apply initial invisible state and animation */
+    opacity: 0;
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Create a staggered delay effect for child elements (assuming up to 10 cards visibly staggering) */
+.fh-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.fh-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.fh-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.fh-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.fh-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.fh-card:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+.fh-card:nth-child(7) {
+    animation-delay: 0.7s;
+}
+
+.fh-card:nth-child(8) {
+    animation-delay: 0.8s;
 }
 
 .fh-card:hover {

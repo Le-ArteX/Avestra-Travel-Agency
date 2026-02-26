@@ -100,14 +100,22 @@ $result = $stmt->get_result();
 </div>
 
 <!-- Results Info -->
-<div class="tk-meta">
+<div class="tk-meta" style="max-width: 1180px; margin: 24px auto 16px; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; background: transparent; border: none; box-shadow: none;">
     <?php if ($search !== ''): ?>
-        <span>Results for "<strong><?= htmlspecialchars($search) ?></strong>" — <?= $totalRows ?> ticket<?= $totalRows !== 1 ? 's' : '' ?> found</span>
-        <a class="tk-clear-search" href="start_Booking.php">✕ Clear</a>
+        <div style="background: white; padding: 8px 16px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: inline-flex; align-items: center; gap: 8px; color: #4a5568; font-weight: 500; font-size: 0.95rem;">
+            <i class="fas fa-ticket-alt" style="color: #3182ce;"></i>
+            <span>Results for "<strong><?= htmlspecialchars($search) ?></strong>" — <?= $totalRows ?> ticket<?= $totalRows !== 1 ? 's' : '' ?> found</span>
+            <a class="tk-clear-search" href="start_Booking.php" style="margin-left: 8px; text-decoration: none; color: #e53e3e; font-weight: 600;">✕ Clear</a>
+        </div>
     <?php else: ?>
-        <span><?= $totalRows ?> ticket<?= $totalRows !== 1 ? 's' : '' ?> available</span>
+        <div style="background: white; padding: 8px 16px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: inline-flex; align-items: center; gap: 8px; color: #4a5568; font-weight: 500; font-size: 0.95rem;">
+            <i class="fas fa-ticket-alt" style="color: #3182ce;"></i>
+            <span><?= $totalRows ?> ticket<?= $totalRows !== 1 ? 's' : '' ?> available</span>
+        </div>
     <?php endif; ?>
-    <span class="tk-page-info">Page <?= $currentPage ?> of <?= $totalPages ?></span>
+    <div style="background: white; padding: 8px 16px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); color: #718096; font-size: 0.9rem; font-weight: 500;">
+        Page <?= $currentPage ?> of <?= $totalPages ?>
+    </div>
 </div>
 
 <div class="ticket-container">
