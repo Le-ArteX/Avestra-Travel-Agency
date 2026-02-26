@@ -139,6 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('tourDuration').value = editBtn.dataset.duration || '';
       document.getElementById('tourPrice').value = editBtn.dataset.price || '';
       document.getElementById('tourStatus').value = editBtn.dataset.status || 'Active';
+      document.getElementById('tourIncludes').value = editBtn.dataset.includes || '';
+      document.getElementById('tourImage').value = ''; // Clear image input
 
       document.getElementById('modalTitle').innerHTML =
         '<i class="fas fa-pen-to-square"></i> Edit Tour';

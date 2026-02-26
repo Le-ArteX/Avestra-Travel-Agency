@@ -146,7 +146,7 @@ $tours_page   = array_slice($tours, $offset, $per_page);
           <button type="button" class="modal-close" id="closeTourFormBtn">✕</button>
         </div>
 
-        <form id="tourForm" method="POST" action="../controller/ManageToursController.php" class="form-container">
+        <form id="tourForm" method="POST" action="../controller/ManageToursController.php" class="form-container" enctype="multipart/form-data">
           <input type="hidden" name="action" id="formAction" value="add">
           <input type="hidden" name="id" id="tourId" value="">
 
@@ -176,6 +176,16 @@ $tours_page   = array_slice($tours, $offset, $per_page);
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
+          </div>
+
+          <div class="form-group" style="grid-column: 1/-1;">
+            <label>Includes (e.g. Breakfast, Guide, Transport)</label>
+            <input type="text" name="includes_text" id="tourIncludes" placeholder="Example: Breakfast, Guide, Transport">
+          </div>
+
+          <div class="form-group" style="grid-column: 1/-1;">
+            <label>Tour Image</label>
+            <input type="file" name="image" id="tourImage" accept="image/*">
           </div>
 
           <div class="form-actions" style="grid-column:1/-1; display:flex; gap:10px; justify-content:flex-end;">
@@ -208,6 +218,9 @@ $tours_page   = array_slice($tours, $offset, $per_page);
                 <div class="tour-card-body">
                   <div class="info-row"><i class="fas fa-location-dot"></i> Destination: <?= esc($tour['destination']) ?></div>
                   <div class="info-row"><i class="fas fa-calendar-days"></i> Duration: <?= esc($tour['duration']) ?></div>
+                  <?php if (!empty($tour['includes_text'])): ?>
+                    <div class="info-row"><i class="fas fa-check-circle"></i> Includes: <?= esc($tour['includes_text']) ?></div>
+                  <?php endif; ?>
                   <div class="info-row"><i class="fas fa-bangladeshi-taka-sign"></i> Price: <?= number_format((float)$tour['price'], 2) ?></div>
                 </div>
                 <div class="tour-card-actions">
@@ -217,7 +230,8 @@ $tours_page   = array_slice($tours, $offset, $per_page);
                      data-destination="<?= esc($tour['destination']) ?>"
                      data-duration="<?= esc($tour['duration']) ?>"
                      data-price="<?= esc($tour['price']) ?>"
-                     data-status="<?= esc($tour['status']) ?>">
+                     data-status="<?= esc($tour['status']) ?>"
+                     data-includes="<?= esc($tour['includes_text'] ?? '') ?>">
                     <i class="fas fa-pen-to-square"></i> Edit
                   </a>
                   <a href="#" class="btn btn-toggle toggle-btn" data-id="<?= (int)$tour['id'] ?>">
