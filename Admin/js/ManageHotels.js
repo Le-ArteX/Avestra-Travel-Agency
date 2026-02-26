@@ -6,6 +6,8 @@
   const hotelLocation = document.getElementById("hotelLocation");
   const hotelRooms = document.getElementById("hotelRooms");
   const hotelStatus = document.getElementById("hotelStatus");
+  const hotelPrice = document.getElementById("hotelPrice");
+  const hotelIncludes = document.getElementById("hotelIncludes");
 
   const openAddHotel = document.getElementById("openAddHotel");
   const cancelBtn = document.getElementById("cancelBtn");
@@ -24,14 +26,34 @@
 
   function resetForm() {
     formAction.value = "add";
-    hotelId.value = "";
     hotelName.value = "";
     hotelLocation.value = "";
     hotelRooms.value = "";
     hotelStatus.value = "Active";
+    if (hotelPrice) hotelPrice.value = "";
+    if (hotelIncludes) hotelIncludes.value = "";
 
     // clear star radios
     document.querySelectorAll('input[name="rating"]').forEach(r => r.checked = false);
+
+    // image is required when adding
+    const imgInput = document.getElementById('hotelImage');
+    if (imgInput) {
+      imgInput.required = true;
+      imgInput.value = '';
+    }
+
+    // ID field: editable, blank, required for Add
+    const idInput = document.getElementById('hotelId');
+    const idNote = document.getElementById('hotelIdNote');
+    if (idInput) {
+      idInput.value = '';
+      idInput.readOnly = false;
+      idInput.required = true;
+      idInput.style.background = '';
+      idInput.style.cursor = '';
+    }
+    if (idNote) idNote.textContent = 'Set a unique ID for this hotel. This ID links the image on the user page.';
   }
 
   function setStars(rating) {
@@ -60,12 +82,32 @@
   document.querySelectorAll(".edit-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       formAction.value = "edit";
-      hotelId.value = btn.dataset.id || "";
       hotelName.value = btn.dataset.name || "";
       hotelLocation.value = btn.dataset.location || "";
       hotelRooms.value = btn.dataset.rooms || "";
       hotelStatus.value = btn.dataset.status || "Active";
+      if (hotelPrice) hotelPrice.value = btn.dataset.price || "";
+      if (hotelIncludes) hotelIncludes.value = btn.dataset.includes || "";
       setStars(btn.dataset.rating || "1");
+
+      // ID field: read-only on edit (can't change existing hotel ID)
+      const idInput = document.getElementById('hotelId');
+      const idNote = document.getElementById('hotelIdNote');
+      if (idInput) {
+        idInput.value = btn.dataset.id || '';
+        idInput.readOnly = true;
+        idInput.required = false;
+        idInput.style.background = '#f0f0f0';
+        idInput.style.cursor = 'not-allowed';
+      }
+      if (idNote) idNote.textContent = 'Hotel ID cannot be changed after creation.';
+
+      // image is optional when editing (existing image is kept if none uploaded)
+      const imgInput = document.getElementById('hotelImage');
+      if (imgInput) {
+        imgInput.required = false;
+        imgInput.value = '';
+      }
     });
   });
 
@@ -113,7 +155,7 @@
 
     cards.forEach(card => {
       const name = (card.dataset.name || "").toLowerCase();
-      const loc  = (card.dataset.location || "").toLowerCase();
+      const loc = (card.dataset.location || "").toLowerCase();
       const match = name.includes(q) || loc.includes(q);
       card.style.display = match ? "" : "none";
     });

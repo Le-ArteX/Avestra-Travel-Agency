@@ -81,11 +81,14 @@ $tickets_page = array_slice($tickets, $offset, $per_page);
       <!-- MAIN CARD: action bar + form + grid + pagination -->
       <div class="admin-card">
         <div class="section-actions">
-          <form class="search-wrap" method="POST" action="ManageTickets.php">
+               <form class="search-wrap" method="POST" action="ManageTickets.php">
                  <input type="text" class="section-search" name="q"
                    placeholder="Search (Ticket ID)..."
                    value="<?= esc($q) ?>" />
-                 <button class="mini-btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                 <button class="search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                 <?php if ($q !== ''): ?>
+                     <a href="ManageTickets.php" class="clear-btn"><i class="fa-solid fa-xmark"></i> Clear</a>
+                 <?php endif; ?>
                </form>
           <button class="add-section-btn" type="button" id="openFormBtn"><i class="fa-solid fa-plus"></i> Add Ticket</button>
         </div>

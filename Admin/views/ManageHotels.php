@@ -85,11 +85,17 @@ include('../database/HotelsData.php');
                 <div class="admin-card">
 
                     <div class="hotel-actions">
-                        <input id="hotelSearch" class="hotel-search" type="text"
-                            placeholder="Search hotels by name or location..." />
-                        <button class="search-btn" type="button" id="searchBtn">
-                            <i class="fa-solid fa-magnifying-glass"></i> Search
-                        </button>
+                        <form method="GET" action="" style="display:flex;gap:8px;flex:1;">
+                            <input id="hotelSearch" class="hotel-search" type="text" name="search"
+                                placeholder="Search hotels by ID, name or location..."
+                                value="<?= htmlspecialchars($search) ?>" />
+                            <button class="search-btn" type="submit">
+                                <i class="fa-solid fa-magnifying-glass"></i> Search
+                            </button>
+                            <?php if ($search !== ''): ?>
+                                <a href="ManageHotels.php" class="clear-btn"><i class="fa-solid fa-xmark"></i> Clear</a>
+                            <?php endif; ?>
+                        </form>
                         <a class="add-hotel-btn" href="#hotelModal" id="openAddHotel">
                             <i class="fa-solid fa-plus"></i> Add Hotel
                         </a>
@@ -98,78 +104,76 @@ include('../database/HotelsData.php');
                     <div class="hotel-table-container">
                         <div class="hotel-cards-container" id="hotelGrid">
 
-
                             <?php
                             if (!empty($hotels)) {
                                 foreach ($hotels as $hotel) {
-                                    if (empty($hotel['id']) || !is_numeric($hotel['id']))
-                                        continue;
-                                    $isActive = isset($hotel['status']) && strcasecmp($hotel['status'], 'Active') === 0;
+                                    if (empty($hotel['id'])) continue;
+                                    $isActive    = strcasecmp($hotel['status'] ?? '', 'Active') === 0;
                                     $statusClass = $isActive ? 'active' : 'inactive';
-                                    $rating = (int) ($hotel['rating'] ?? 0);
-                                    $rating = max(0, min(5, $rating));
+                                    $rating      = max(0, min(5, (int)($hotel['rating'] ?? 0)));
+                                    $imgFile     = trim($hotel['image'] ?? '');
+                                    $imgSrc      = ($imgFile !== '' && file_exists(__DIR__ . '/../../User/images/hotels/' . $imgFile))
+                                                   ? '../../User/images/hotels/' . htmlspecialchars($imgFile)
+                                                   : '../images/logo.png';
                                     ?>
-                                    <div class="hotel-card" data-name="<?= htmlspecialchars($hotel['name']) ?>"
+                                    <div class="hotel-card"
+                                        data-name="<?= htmlspecialchars($hotel['name']) ?>"
                                         data-location="<?= htmlspecialchars($hotel['location']) ?>"
                                         data-status="<?= htmlspecialchars($hotel['status']) ?>">
+
+                                        <!-- Image -->
+                                        <div class="hotel-card-img-wrap">
+                                            <img src="<?= $imgSrc ?>" alt="<?= htmlspecialchars($hotel['name']) ?>" class="hotel-card-img" loading="lazy">
+                                            <span class="hotel-card-id-badge">ID: <?= htmlspecialchars($hotel['id']) ?></span>
+                                        </div>
+
                                         <div class="hotel-card-header">
                                             <h3><i class="fa-solid fa-hotel"></i> <?= htmlspecialchars($hotel['name']) ?></h3>
-                                            <span
-                                                class="status <?= $statusClass ?>"><?= htmlspecialchars($hotel['status']) ?></span>
+                                            <span class="status <?= $statusClass ?>"><?= htmlspecialchars($hotel['status']) ?></span>
                                         </div>
+
                                         <div class="hotel-card-body">
                                             <div class="hotel-info">
-                                                <p>
-                                                    <i class="fa-solid fa-location-dot"></i>
-                                                    <strong>Location:</strong>
-                                                    <?= htmlspecialchars($hotel['location']) ?>
-                                                </p>
-                                                <p>
-                                                    <i class="fa-solid fa-star"></i>
-                                                    <strong>Rating:</strong>
+                                                <p><i class="fa-solid fa-location-dot"></i> <strong>Location:</strong> <?= htmlspecialchars($hotel['location']) ?></p>
+                                                <p><i class="fa-solid fa-star"></i> <strong>Rating:</strong>
                                                     <span class="rating-stars">
-                                                        <?php for ($i = 1; $i <= 5; $i++)
-                                                            echo ($i <= $rating) ? '★' : '☆'; ?>
+                                                        <?php for ($i = 1; $i <= 5; $i++) echo ($i <= $rating) ? '★' : '☆'; ?>
                                                     </span>
                                                 </p>
-                                                <p>
-                                                    <i class="fa-solid fa-bed"></i>
-                                                    <strong>Rooms:</strong>
-                                                    <?= htmlspecialchars($hotel['rooms']) ?>
-                                                </p>
+                                                <p><i class="fa-solid fa-bed"></i> <strong>Rooms:</strong> <?= htmlspecialchars($hotel['rooms']) ?></p>
+                                                <?php if (!empty($hotel['price_per_night'])): ?>
+                                                <p><i class="fa-solid fa-bangladeshi-taka-sign"></i> <strong>Price:</strong> <?= number_format((float)$hotel['price_per_night'], 0) ?> ৳/night</p>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
+
                                         <div class="hotel-card-footer hotel-actions">
-                                            <a class="edit-btn" href="#hotelModal" data-id="<?= (int) $hotel['id'] ?>"
+                                            <a class="edit-btn" href="#hotelModal"
+                                                data-id="<?= htmlspecialchars($hotel['id']) ?>"
                                                 data-name="<?= htmlspecialchars($hotel['name']) ?>"
                                                 data-location="<?= htmlspecialchars($hotel['location']) ?>"
-                                                data-rating="<?= (int) $hotel['rating'] ?>"
-                                                data-rooms="<?= (int) $hotel['rooms'] ?>"
-                                                data-status="<?= htmlspecialchars($hotel['status']) ?>">
+                                                data-rating="<?= (int)$hotel['rating'] ?>"
+                                                data-rooms="<?= htmlspecialchars($hotel['rooms']) ?>"
+                                                data-status="<?= htmlspecialchars($hotel['status']) ?>"
+                                                data-price="<?= htmlspecialchars($hotel['price_per_night'] ?? '') ?>"
+                                                data-includes="<?= htmlspecialchars($hotel['includes_text'] ?? '') ?>">
                                                 <i class="fa-regular fa-pen-to-square"></i> Edit
                                             </a>
-                                            <form action="../controller/ManageHotelsController.php" method="POST"
-                                                class="inline-form toggleForm">
+                                            <form action="../controller/ManageHotelsController.php" method="POST" class="inline-form toggleForm">
                                                 <input type="hidden" name="action" value="toggle">
-                                                <input type="hidden" name="id" value="<?= (int) $hotel['id'] ?>">
-                                                <input type="hidden" name="current_status"
-                                                    value="<?= htmlspecialchars($hotel['status']) ?>">
-                                                <button type="submit" class="toggle-btn"
-                                                    data-confirm="Change hotel status?">
+                                                <input type="hidden" name="id" value="<?= htmlspecialchars($hotel['id']) ?>">
+                                                <input type="hidden" name="current_status" value="<?= htmlspecialchars($hotel['status']) ?>">
+                                                <button type="submit" class="toggle-btn" data-confirm="Change hotel status?">
                                                     <i class="fa-solid fa-arrows-rotate"></i>
                                                     <?= $isActive ? 'Make Inactive' : 'Make Active' ?>
                                                 </button>
                                             </form>
-                                            <!-- Delete (only inactive) -->
                                             <?php if (!$isActive): ?>
-                                                <form action="../controller/ManageHotelsController.php" method="POST"
-                                                    class="inline-form deleteForm">
+                                                <form action="../controller/ManageHotelsController.php" method="POST" class="inline-form deleteForm">
                                                     <input type="hidden" name="action" value="delete">
-                                                    <input type="hidden" name="id" value="<?= (int) $hotel['id'] ?>">
-                                                    <input type="hidden" name="status"
-                                                        value="<?= htmlspecialchars($hotel['status']) ?>">
-                                                    <button type="submit" class="delete-btn"
-                                                        data-confirm="Delete this hotel? This cannot be undone.">
+                                                    <input type="hidden" name="id" value="<?= htmlspecialchars($hotel['id']) ?>">
+                                                    <input type="hidden" name="status" value="<?= htmlspecialchars($hotel['status']) ?>">
+                                                    <button type="submit" class="delete-btn" data-confirm="Delete this hotel? This cannot be undone.">
                                                         <i class="fa-solid fa-trash"></i> Delete
                                                     </button>
                                                 </form>
@@ -183,20 +187,69 @@ include('../database/HotelsData.php');
                                     <?php
                                 }
                             } else {
-                                echo '<div class="no-hotels-message">No hotels available.</div>';
+                                echo '<div class="no-hotels-message">No hotels found.</div>';
                             }
                             ?>
 
-                        </div>
+                        </div><!-- /hotelGrid -->
                     </div>
+
+                    <!-- Pagination -->
+                    <?php if ($totalPages > 1): ?>
+                    <nav class="hotel-pagination">
+                        <?php $baseUrl = 'ManageHotels.php?' . ($search !== '' ? 'search=' . urlencode($search) . '&' : ''); ?>
+                        <?php if ($currentPage > 1): ?>
+                            <a class="page-btn page-nav" href="<?= $baseUrl ?>page=<?= $currentPage - 1 ?>">‹ Prev</a>
+                        <?php else: ?>
+                            <span class="page-btn page-nav disabled">‹ Prev</span>
+                        <?php endif; ?>
+
+                        <?php
+                        $start = max(1, $currentPage - 2);
+                        $end   = min($totalPages, $currentPage + 2);
+                        if ($start > 1): ?>
+                            <a class="page-btn" href="<?= $baseUrl ?>page=1">1</a>
+                            <?php if ($start > 2): ?><span class="page-dots">…</span><?php endif; ?>
+                        <?php endif;
+                        for ($p = $start; $p <= $end; $p++): ?>
+                            <?php if ($p === $currentPage): ?>
+                                <span class="page-btn active"><?= $p ?></span>
+                            <?php else: ?>
+                                <a class="page-btn" href="<?= $baseUrl ?>page=<?= $p ?>"><?= $p ?></a>
+                            <?php endif; ?>
+                        <?php endfor;
+                        if ($end < $totalPages): ?>
+                            <?php if ($end < $totalPages - 1): ?><span class="page-dots">…</span><?php endif; ?>
+                            <a class="page-btn" href="<?= $baseUrl ?>page=<?= $totalPages ?>"><?= $totalPages ?></a>
+                        <?php endif; ?>
+
+                        <?php if ($currentPage < $totalPages): ?>
+                            <a class="page-btn page-nav" href="<?= $baseUrl ?>page=<?= $currentPage + 1 ?>">Next ›</a>
+                        <?php else: ?>
+                            <span class="page-btn page-nav disabled">Next ›</span>
+                        <?php endif; ?>
+                    </nav>
+                    <?php endif; ?>
 
                 </div>
             </section>
 
         </main>
+
     </div>
 
 
+    <?php
+    if (isset($_SESSION['hotel_image_debug'])) {
+        echo '<div style="background:#fffbe6;color:#333;padding:10px;border:1px solid #e6c200;margin:10px 0;">';
+        echo '<strong>Image Upload Debug Info:</strong><br><pre>';
+        foreach ($_SESSION['hotel_image_debug'] as $dbg) {
+            echo htmlspecialchars($dbg) . "\n";
+        }
+        echo '</pre></div>';
+        unset($_SESSION['hotel_image_debug']);
+    }
+    ?>
     <div id="hotelModal" class="modal-overlay">
         <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="modal-header">
@@ -207,8 +260,12 @@ include('../database/HotelsData.php');
             <div class="modal-body">
                 <form class="hotel-form" id="hotelForm" action="../controller/ManageHotelsController.php" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="action" id="formAction" value="add">
-                    <input type="hidden" name="id" id="hotelId" value="">
 
+                    <div class="form-group full" id="hotelIdGroup">
+                        <label><i class="fa-solid fa-hashtag"></i> Hotel ID</label>
+                        <input type="text" name="id" id="hotelId" placeholder="e.g., H101" pattern="[A-Za-z][A-Za-z0-9]*" required />
+                        <small id="hotelIdNote" style="color:#888;font-size:0.8rem;">Set a unique ID for this hotel (e.g., H101). This ID links the image on the user page.</small>
+                    </div>
        
                     <div class="form-group full">
                         <label><i class="fa-solid fa-image"></i> Hotel Image</label>
@@ -251,6 +308,16 @@ include('../database/HotelsData.php');
                         <div class="form-group">
                             <label><i class="fa-solid fa-bed"></i> Rooms</label>
                             <input type="number" name="rooms" id="hotelRooms" placeholder="e.g., 150" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fa-solid fa-bangladeshi-taka-sign"></i> Price Per Night (৳)</label>
+                            <input type="number" name="price_per_night" id="hotelPrice" placeholder="e.g., 3500" min="0" step="0.01" />
+                        </div>
+
+                        <div class="form-group full">
+                            <label><i class="fa-solid fa-list-check"></i> Includes (Amenities)</label>
+                            <input type="text" name="includes_text" id="hotelIncludes" placeholder="e.g., Free WiFi, Breakfast, Pool" />
                         </div>
 
                         <div class="form-group full">

@@ -268,6 +268,33 @@ body {
   color: #22304a;
 }
 
+.clear-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  font-size: 0.95em;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.clear-btn:hover {
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+}
+
+.clear-btn i {
+  font-size: 0.95em;
+}
+
 /* ===============================
    FORM CARD
    =============================== */

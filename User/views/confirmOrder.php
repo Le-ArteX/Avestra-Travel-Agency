@@ -9,14 +9,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $email = $_SESSION['email'];
 $service_type = trim($_POST['service_type'] ?? '');
-$service_id   = (int)($_POST['service_id'] ?? 0);
 
-if ($service_type === '' || $service_id <= 0) {
+// For hotels, the ID is a string (e.g. H101). For others, it's typically an int.
+$service_id_raw = trim($_POST['service_id'] ?? '');
+
+if ($service_type === '' || empty($service_id_raw)) {
     die("Invalid booking request.");
 }
 
 /* Fetch service from DB based on service_type */
 if ($service_type === 'ticket') {
+    $service_id = (int)$service_id_raw;
+    if ($service_id <= 0) die("Invalid booking request.");
     $q = $conn->prepare("SELECT route, price FROM tickets WHERE id=? AND status='active'");
     $q->bind_param("i", $service_id);
     $q->execute();
@@ -30,8 +34,9 @@ if ($service_type === 'ticket') {
     }
 
 } elseif ($service_type === 'hotel') {
-    $q = $conn->prepare("SELECT name, price_per_night FROM hotels WHERE id=? AND status='active'");
-    $q->bind_param("i", $service_id);
+    $hotel_id = $service_id_raw; // String ID
+    $q = $conn->prepare("SELECT name, price_per_night FROM hotels WHERE id=? AND LOWER(status)='active'");
+    $q->bind_param("s", $hotel_id);
     $q->execute();
     $s = $q->get_result()->fetch_assoc();
     if (!$s) die("Hotel not found.");
