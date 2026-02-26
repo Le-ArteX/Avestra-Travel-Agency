@@ -180,7 +180,7 @@ $tickets_page = array_slice($tickets, $offset, $per_page);
               $busClass = esc($t['bus_class']);
               $statusText = ucfirst($t['status']);
             ?>
-            <div class="ticket-card card-responsive"
+            <div class="ticket-card card-responsive" style="padding:0; overflow:hidden; border-radius:12px; border:1px solid #e0e0e0; box-shadow:0 4px 12px rgba(0,0,0,0.05); display:flex; flex-direction:column; background:#fff;"
               data-id="<?= (int)$t['id'] ?>"
               data-ticket_code="<?= esc($t['ticket_code']) ?>"
               data-ticket_type="<?= esc($t['ticket_type'] ?? 'Bus') ?>"
@@ -189,46 +189,52 @@ $tickets_page = array_slice($tickets, $offset, $per_page);
               data-seat_count="<?= (int)$t['seat_count'] ?>"
               data-status="<?= esc($t['status']) ?>"
             >
-              <div class="ticket-card-header <?= $statusClass ?>">
-                <div class="ticket-card-title">
-                  <span class="ticket-card-icon">🚌</span> <?= esc($t['ticket_code']) ?>
+              <!-- IMAGE ON TOP -->
+              <div class="ticket-card-img-wrap" style="position: relative;">
+                <?php $imgSrc = !empty($t['image']) ? '../images/' . esc($t['image']) : null; ?>
+                <?php if ($imgSrc): ?>
+                  <img src="<?= $imgSrc ?>" alt="<?= esc($t['ticket_code']) ?>" style="width:100%; height:160px; object-fit:cover; display:block;" />
+                <?php else: ?>
+                  <div style="width:100%; height:160px; background:#f0f4f8; display:flex; align-items:center; justify-content:center; font-size:4rem; color:#ccc;">🚌</div>
+                <?php endif; ?>
+                <span style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.7); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 700;">ID: <?= esc($t['ticket_code']) ?></span>
+              </div>
+
+              <!-- BLUE HEADER -->
+              <div class="ticket-card-header" style="background:#2563eb; color:#fff; padding:12px 16px; display:flex; justify-content:space-between; align-items:center;">
+                <div class="ticket-card-title" style="font-weight:700; font-size:1.1rem; display:flex; align-items:center; gap:8px;">
+                  <span>🚌</span> <?= esc($t['ticket_type'] ?? 'Bus') ?>
                 </div>
-                <span class="ticket-status-badge <?= $statusClass ?>">
-                  <span class="ticket-status-dot <?= $statusClass ?>"></span> <?= $statusText ?>
+                <span style="background:rgba(255,255,255,0.2); color:#fff; padding:4px 12px; border-radius:20px; font-size:0.85rem; font-weight:600; display:flex; align-items:center; gap:6px;">
+                  <span style="width:8px; height:8px; border-radius:50%; background:<?= $statusClass === 'active' ? '#10b981' : '#ef4444' ?>;"></span> <?= $statusText ?>
                 </span>
               </div>
-              <?php $imgSrc = !empty($t['image']) ? '../images/' . esc($t['image']) : null; ?>
-              <?php if ($imgSrc): ?>
-                <div class="ticket-card-img-wrap">
-                  <img src="<?= $imgSrc ?>" alt="<?= esc($t['ticket_code']) ?>" class="ticket-card-img" />
-                </div>
-              <?php else: ?>
-                <div class="ticket-card-img-wrap ticket-card-img-placeholder">
-                  <span>🚌</span>
-                </div>
-              <?php endif; ?>
-              <div class="ticket-card-body">
-                <div class="ticket-card-row"><b>Route:</b> <?= esc($t['route']) ?></div>
-                <div class="ticket-card-row"><b>Bus Class:</b> <?= $busClass ?></div>
-                <div class="ticket-card-row"><b>Seats:</b> <?= (int)$t['seat_count'] ?></div>
-                <div class="ticket-card-row"><b>Price:</b> <?= isset($t['price']) ? (float)$t['price'] . ' ৳' : 'N/A' ?></div>
+
+              <!-- BODY INFO -->
+              <div class="ticket-card-body" style="padding: 16px; flex-grow:1; display:flex; flex-direction:column; gap:10px; font-size:0.95rem; color:#333;">
+                <div><i class="fas fa-route" style="width:20px; color:#4b5563;"></i> <b>Route:</b> <?= esc($t['route']) ?></div>
+                <div><i class="fas fa-bus" style="width:20px; color:#4b5563;"></i> <b>Bus Class:</b> <?= $busClass ?></div>
+                <div><i class="fas fa-chair" style="width:20px; color:#4b5563;"></i> <b>Seats:</b> <?= (int)$t['seat_count'] ?></div>
+                <div><i class="fas fa-bangladeshi-taka-sign" style="width:20px; color:#4b5563;"></i> <b>Price:</b> <?= isset($t['price']) ? (float)$t['price'] . ' ৳' : 'N/A' ?></div>
               </div>
-              <div class="ticket-card-actions">
-                <button class="edit-btn" type="button" data-action="edit"><i class="fa-regular fa-pen-to-square"></i> Edit</button>
-                <form method="POST" action="../controller/ManageTicketsController.php" class="ticket-action-form">
+
+              <!-- ACTIONS -->
+              <div class="ticket-card-actions" style="padding: 12px 16px 16px; display:flex; gap:8px; border-top:1px solid #f3f4f6;">
+                <button class="edit-btn" type="button" data-action="edit" style="flex:1; padding:8px; border-radius:6px; font-weight:600; font-size:0.9rem; background:#eff6ff; color:#2563eb; border:none; cursor:pointer;"><i class="fa-regular fa-pen-to-square"></i> Edit</button>
+                <form method="POST" action="../controller/ManageTicketsController.php" style="flex:1; margin:0;">
                   <input type="hidden" name="action" value="toggle_status">
                   <input type="hidden" name="id" value="<?= (int)$t['id'] ?>">
                   <input type="hidden" name="current_status" value="<?= esc($t['status']) ?>">
                   <?php if (strtolower($t['status']) === 'active'): ?>
-                    <button type="submit" class="make-inactive-btn"><i class="fa-solid fa-toggle-off"></i> Make Inactive</button>
+                    <button type="submit" style="width:100%; padding:8px; border-radius:6px; font-weight:600; font-size:0.9rem; background:#fef3c7; color:#d97706; border:none; cursor:pointer;"><i class="fa-solid fa-toggle-off"></i> Inactive</button>
                   <?php else: ?>
-                    <button type="submit" class="make-active-btn"><i class="fa-solid fa-toggle-on"></i> Make Active</button>
+                    <button type="submit" style="width:100%; padding:8px; border-radius:6px; font-weight:600; font-size:0.9rem; background:#dcfce7; color:#16a34a; border:none; cursor:pointer;"><i class="fa-solid fa-toggle-on"></i> Active</button>
                   <?php endif; ?>
                 </form>
-                <form method="POST" action="../controller/ManageTicketsController.php" class="ticket-action-form">
+                <form method="POST" action="../controller/ManageTicketsController.php" style="flex:1; margin:0;">
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="id" value="<?= (int)$t['id'] ?>">
-                  <button class="delete-btn" type="submit" <?php if (strtolower($t['status']) === 'active') echo 'disabled'; ?>><i class="fa-solid fa-trash"></i> Delete</button>
+                  <button type="submit" style="width:100%; padding:8px; border-radius:6px; font-weight:600; font-size:0.9rem; background:#fee2e2; color:#dc2626; border:none; cursor:pointer; <?php if (strtolower($t['status']) === 'active') echo 'opacity:0.5; cursor:not-allowed;'; ?>" <?php if (strtolower($t['status']) === 'active') echo 'disabled'; ?>><i class="fa-solid fa-trash"></i> Delete</button>
                 </form>
               </div>
             </div>

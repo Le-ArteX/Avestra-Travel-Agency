@@ -148,7 +148,13 @@ $tours_page   = array_slice($tours, $offset, $per_page);
 
         <form id="tourForm" method="POST" action="../controller/ManageToursController.php" class="form-container" enctype="multipart/form-data">
           <input type="hidden" name="action" id="formAction" value="add">
-          <input type="hidden" name="id" id="tourId" value="">
+          <input type="hidden" name="old_id" id="oldTourId" value="">
+
+          <div class="form-group">
+            <label>Tour ID (Package ID)</label>
+            <input type="text" name="id" id="tourId" placeholder="Example: TRV-001" required>
+          </div>
+
 
           <div class="form-group">
             <label>Tour Name</label>
@@ -206,8 +212,19 @@ $tours_page   = array_slice($tours, $offset, $per_page);
                 $toggleText = $isActive ? 'Inactive' : 'Active';
                 $toggleIcon = $isActive ? 'fa-toggle-off' : 'fa-toggle-on';
               ?>
-              <div class="tour-card">
-                <div class="tour-card-header">
+              <div class="tour-card" style="padding:0; overflow:hidden;">
+                <!-- IMAGE ON TOP -->
+                <div class="tour-card-img-wrap" style="position: relative;">
+                  <?php if (!empty($tour['image'])): ?>
+                    <img src="../../User/images/<?= esc($tour['image']) ?>" alt="Tour" style="width:100%; height:180px; object-fit:cover; display:block; border-radius:14px 14px 0 0;">
+                  <?php else: ?>
+                    <img src="../images/logo.png" alt="Default" style="width:100%; height:180px; object-fit:contain; background:#f0f4f8; display:block; border-radius:14px 14px 0 0;">
+                  <?php endif; ?>
+                  <span style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.65); color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px;">ID: <?= esc($tour['id']) ?></span>
+                </div>
+
+                <!-- BLUE HEADER -->
+                <div class="tour-card-header" style="border-radius:0;">
                   <div class="tour-title">
                     <i class="fas fa-tag"></i> <?= esc($tour['name']) ?>
                   </div>
@@ -215,7 +232,9 @@ $tours_page   = array_slice($tours, $offset, $per_page);
                     <span class="dot"></span> <?= esc($tour['status']) ?>
                   </span>
                 </div>
-                <div class="tour-card-body">
+
+                <!-- BODY INFO -->
+                <div class="tour-card-body" style="padding: 18px;">
                   <div class="info-row"><i class="fas fa-location-dot"></i> Destination: <?= esc($tour['destination']) ?></div>
                   <div class="info-row"><i class="fas fa-calendar-days"></i> Duration: <?= esc($tour['duration']) ?></div>
                   <?php if (!empty($tour['includes_text'])): ?>
@@ -223,7 +242,9 @@ $tours_page   = array_slice($tours, $offset, $per_page);
                   <?php endif; ?>
                   <div class="info-row"><i class="fas fa-bangladeshi-taka-sign"></i> Price: <?= number_format((float)$tour['price'], 2) ?></div>
                 </div>
-                <div class="tour-card-actions">
+
+                <!-- ACTIONS -->
+                <div class="tour-card-actions" style="padding: 0 18px 18px 18px;">
                   <a href="#" class="btn btn-edit edit-btn"
                      data-id="<?= (int)$tour['id'] ?>"
                      data-name="<?= esc($tour['name']) ?>"
