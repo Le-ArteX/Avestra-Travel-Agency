@@ -62,9 +62,10 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../styleSheets/user.css">
     <link rel="stylesheet" href="../styleSheets/find_Hotels.css">
     <link rel="stylesheet" href="../styleSheets/footer.css">
+    <link rel="stylesheet" href="../styleSheets/user-dark-mode.css?v=<?php echo time(); ?>">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
-<body>
+<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
 
 <?php include 'nav.php'; ?>
 

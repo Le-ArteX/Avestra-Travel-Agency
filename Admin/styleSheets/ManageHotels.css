@@ -49,12 +49,17 @@ html, body {
     flex: 1;
 }
 
+.sidebar-menu li {
+    margin: 0;
+}
+
 .sidebar-menu a {
     display: block;
     color: #fff;
     text-decoration: none;
     padding: 14px 32px;
     font-size: 1.08em;
+    letter-spacing: 0.5px;
     transition: background 0.18s, padding-left 0.18s, color 0.18s, box-shadow 0.18s;
     border-left: 4px solid transparent;
     border-radius: 0 20px 20px 0;

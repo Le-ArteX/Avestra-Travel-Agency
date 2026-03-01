@@ -1,5 +1,6 @@
 <?php
 include 'session_check.php';
+include 'dark_mode.php'; // Include user theme helper
 include '../database/dbconnection.php';
 
 $booking_id = (int)($_GET['id'] ?? 0);
@@ -54,10 +55,32 @@ $paid_date = $payment['payment_date'] ?? '—';
     <title>Invoice #<?= (int)$booking['id'] ?> | Avestra</title>
     <link rel="stylesheet" href="../styleSheets/user.css">
     <link rel="stylesheet" href="../styleSheets/invoice.css">
+    <link rel="stylesheet" href="../styleSheets/user-dark-mode.css">
     <link rel="stylesheet" href="../styleSheets/footer.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
+    <script>
+        // Intelligent theme application
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const sessionThemeSet = <?= $session_theme_set ? 'true' : 'false' ?>;
+            const currentTheme = '<?= $current_theme ?>';
+            
+            if (sessionThemeSet) {
+                localStorage.setItem('theme', currentTheme);
+                document.documentElement.setAttribute('data-theme', currentTheme);
+            } else if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        })();
+    </script>
 </head>
-<body>
+<body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">
+    <script>
+        if (!<?= $session_theme_set ? 'true' : 'false' ?>) {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(theme + '-mode');
+        }
+    </script>
 
 <?php include 'nav.php'; ?>
 

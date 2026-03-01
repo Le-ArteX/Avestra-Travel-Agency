@@ -52,9 +52,10 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../styleSheets/footer.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
     <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css"/>
+    <link rel="stylesheet" href="../styleSheets/user-dark-mode.css?v=<?php echo time(); ?>">
 
 </head>
-<body>
+<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
 
 <?php include 'nav.php'; ?>
 

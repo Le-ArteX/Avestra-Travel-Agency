@@ -1,30 +1,53 @@
 <?php
 
-function getAllPayments($conn) {
+function getAllPayments($conn, $limit = 20, $offset = 0) {
     $payments = [];
-    $result = $conn->query("SELECT * FROM payments ORDER BY id ASC");
+    $total = 0;
+    
+    // Get total count
+    $countResult = $conn->query("SELECT COUNT(*) as total FROM payments");
+    if ($countResult) {
+        $row = $countResult->fetch_assoc();
+        $total = $row['total'];
+    }
+    
+    $limit = (int)$limit;
+    $offset = (int)$offset;
+    $result = $conn->query("SELECT * FROM payments ORDER BY id DESC LIMIT $limit OFFSET $offset");
     if ($result) {
         while ($row = $result->fetch_assoc()) {
             $payments[] = $row;
         }
     }
-	return $payments;
+    return ['payments' => $payments, 'total' => $total];
 }
 
-function searchPayments($conn, $search) {
-	$payments = [];
-	$search = trim($search);
-	if (strpos($search, '#') === 0) {
-		$search = substr($search, 1);
-	}
-	$like = "%" . $conn->real_escape_string($search) . "%";
-	$sql = "SELECT * FROM payments WHERE CAST(booking_id AS CHAR) LIKE '$like' OR LOWER(user_email) LIKE LOWER('$like') ORDER BY id DESC";
-	$result = $conn->query($sql);
-	if ($result) {
-		while ($row = $result->fetch_assoc()) {
-			$payments[] = $row;
-		}
-	}
-	return $payments;
+function searchPayments($conn, $search, $limit = 20, $offset = 0) {
+    $payments = [];
+    $total = 0;
+    $search = trim($search);
+    if (strpos($search, '#') === 0) {
+        $search = substr($search, 1);
+    }
+    $like = "%" . $conn->real_escape_string($search) . "%";
+    
+    // Get total count
+    $countSql = "SELECT COUNT(*) as total FROM payments WHERE CAST(booking_id AS CHAR) LIKE '$like' OR LOWER(user_email) LIKE LOWER('$like')";
+    $countResult = $conn->query($countSql);
+    if ($countResult) {
+        $row = $countResult->fetch_assoc();
+        $total = $row['total'];
+    }
+    
+    $limit = (int)$limit;
+    $offset = (int)$offset;
+    $sql = "SELECT * FROM payments WHERE CAST(booking_id AS CHAR) LIKE '$like' OR LOWER(user_email) LIKE LOWER('$like') ORDER BY id DESC LIMIT $limit OFFSET $offset";
+    $result = $conn->query($sql);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $payments[] = $row;
+        }
+    }
+    return ['payments' => $payments, 'total' => $total];
 }
 

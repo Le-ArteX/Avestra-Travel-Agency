@@ -1,5 +1,5 @@
 <?php
-session_start();
+include('dark_mode.php');
 include('../database/dbconnection.php');
 
 include('../database/TicketsData.php');
@@ -35,12 +35,17 @@ $tickets_page = array_slice($tickets, $offset, $per_page);
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Manage Tickets - Avestra Travel Agency</title>
-  <link rel="stylesheet" href="../styleSheets/ManageTickets.css" />
+  <link rel="stylesheet" href="../styleSheets/ManageTickets.css?v=<?php echo time(); ?>" />
    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
   <link rel="icon" href="../images/logo.png" type="image/png" />
+  <link rel="stylesheet" href="../styleSheets/dark-mode.css?v=<?php echo time(); ?>" />
+  <script>
+    localStorage.setItem('theme', '<?= $current_theme ?>');
+    document.documentElement.setAttribute('data-theme', '<?= $current_theme ?>');
+  </script>
 </head>
 
-<body>
+<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
   <div class="admin-container">
     <aside class="sidebar">
       <div class="sidebar-logo-wrap">
@@ -52,16 +57,17 @@ $tickets_page = array_slice($tickets, $offset, $per_page);
 
       <nav>
         <ul class="sidebar-menu">
-          <li><a href="Admin.php">Dashboard</a></li>
-          <li><a href="ManageUsers.php">Manage Users</a></li>
-          <li><a href="ManageTickets.php" class="active">Tickets</a></li>
-          <li><a href="ManageHotels.php">Hotels</a></li>
-          <li><a href="ManageTours.php">Tours</a></li>
-          <li><a href="Payments.php">Payments</a></li>
-          <li><a href="Settings.php">Settings</a></li>
-          <li><a href="MyProfile.php">My Profile</a></li>
-          <li><a href="homePage.php">Logout</a></li>
-        </ul>
+                    <li><a href="Admin.php">Dashboard</a></li>
+                    <li><a href="ManageUsers.php">Manage Users</a></li>
+                    <li><a href="ManageTickets.php" class="active">Tickets</a></li>
+                    <li><a href="ManageHotels.php">Hotels</a></li>
+                    <li><a href="ManageTours.php">Tours</a></li>
+                    <li><a href="Payments.php">Payments</a></li>
+                    <li><a href="Reports.php">Reports</a></li>
+                    <li><a href="Settings.php">Settings</a></li>
+                    <li><a href="MyProfile.php">My Profile</a></li>
+                    <li><a href="homePage.php">Logout</a></li>
+                </ul>
       </nav>
     </aside>
 

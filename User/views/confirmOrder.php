@@ -48,8 +48,10 @@ if ($service_type === 'ticket') {
     }
 
 } elseif ($service_type === 'tour') {
+    $tour_id = trim($service_id_raw); // String ID like TRV-001
+    
     $q = $conn->prepare("SELECT name, price FROM tours WHERE id=? AND status='active'");
-    $q->bind_param("i", $service_id);
+    $q->bind_param("s", $tour_id);
     $q->execute();
     $s = $q->get_result()->fetch_assoc();
     if (!$s) die("Tour package not found.");

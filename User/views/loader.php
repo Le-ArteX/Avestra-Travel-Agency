@@ -24,9 +24,8 @@
         }
 
         setTimeout(function() {
-            window.location.href = 'homePage.php';
+            window.location.href = 'user_homePage.php';
         }, 1000);
     </script>
 </body>
-<?php include 'footer.php'; ?>
 </html>

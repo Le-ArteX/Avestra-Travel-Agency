@@ -1,5 +1,5 @@
 <?php
-session_start();
+include('dark_mode.php');
 
 // Check if user is logged in
 if (!isset($_SESSION['admin_email'])) {
@@ -16,10 +16,17 @@ include('../database/SettingsData.php');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - Avestra Travel Agency</title>
-    <link rel="stylesheet" href="../styleSheets/Settings.css">
+    <link rel="stylesheet" href="../styleSheets/Settings.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="../styleSheets/dark-mode.css?v=<?php echo time(); ?>">
     <link rel="icon" href="../images/logo.png" type="image/png">
+    <script>
+        // Sync PHP session theme to localStorage instantly in head
+        localStorage.setItem('theme', '<?= $current_theme ?>');
+        document.documentElement.setAttribute('data-theme', '<?= $current_theme ?>');
+    </script>
 </head>
-<body>
+<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
     <div class="admin-container">
         <aside class="sidebar">
             <div style="padding: 24px 32px;">
@@ -35,8 +42,8 @@ include('../database/SettingsData.php');
                     <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
-
                     <li><a href="Payments.php">Payments</a></li>
+                    <li><a href="Reports.php">Reports</a></li>
                     <li><a href="Settings.php" class="active">Settings</a></li>
                     <li><a href="MyProfile.php">My Profile</a></li>
                     <li><a href="homePage.php">Logout</a></li>
@@ -45,7 +52,7 @@ include('../database/SettingsData.php');
         </aside>
         <main class="main-content">
             <header class="admin-header">
-                <h1>Settings</h1>
+                <h1><i class="fa-solid fa-gear" style="color: #4fc3f7; margin-right: 12px;"></i>Settings</h1>
             </header>
             <section class="admin-section">
                 <?php if (isset($_SESSION['settings_updated'])): ?>
@@ -62,13 +69,13 @@ include('../database/SettingsData.php');
 
                 <!-- General Settings -->
                 <div class="admin-card">
-                    <h3>General Settings</h3>
+                    <h3><i class="fa-solid fa-sliders" style="color: #4fc3f7;"></i> General Settings</h3>
                     <form class="settings-form" action="../controller/SettingsController.php" method="POST">
                         <div class="settings-row">
                             <label for="site-theme">Site Theme:</label>
                             <select id="site-theme" name="site_theme">
-                                <option value="light" <?php echo $site_theme === 'light' ? 'selected' : ''; ?>>Light</option>
-                                
+                                <option value="light" <?php echo (!isset($_SESSION['settings']['dark_mode']) || $_SESSION['settings']['dark_mode'] !== 'dark') ? 'selected' : ''; ?>>Light</option>
+                                <option value="dark"  <?php echo (isset($_SESSION['settings']['dark_mode']) && $_SESSION['settings']['dark_mode'] === 'dark') ? 'selected' : ''; ?>>Dark</option>
                             </select>
                         </div>
                         <div class="settings-row">
@@ -99,7 +106,7 @@ include('../database/SettingsData.php');
 
                 <!-- Profile Settings -->
                 <div class="admin-card">
-                    <h3>Profile Settings</h3>
+                    <h3><i class="fa-solid fa-user-pen" style="color: #4fc3f7;"></i> Profile Settings</h3>
                     <form class="settings-form" action="../controller/SettingsController.php" method="POST">
                         <input type="hidden" name="form_type" value="profile">
                         <div class="settings-row">
@@ -118,7 +125,7 @@ include('../database/SettingsData.php');
 
                 <!-- Password Settings -->
                 <div class="admin-card">
-                    <h3>Change Password</h3>
+                    <h3><i class="fa-solid fa-lock" style="color: #4fc3f7;"></i> Change Password</h3>
                     <form class="settings-form" action="../controller/SettingsController.php" method="POST">
                         <input type="hidden" name="form_type" value="password">
                         <div class="settings-row">

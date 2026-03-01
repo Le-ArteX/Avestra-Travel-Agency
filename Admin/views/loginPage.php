@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('dark_mode.php'); // Include theme helper
 include '../controller/loginFormDataHandler.php';
 ?>
 <!DOCTYPE html>
@@ -9,11 +10,33 @@ include '../controller/loginFormDataHandler.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avestra Travel Agency</title>
-    <link rel="stylesheet" href="../styleSheets/loginPage.css">
+    <link rel="stylesheet" href="../styleSheets/loginPage.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../../User/styleSheets/user-dark-mode.css?v=<?php echo time(); ?>">
+    <script>
+        // Intelligent theme application
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const sessionThemeSet = <?= $session_theme_set ? 'true' : 'false' ?>;
+            const currentTheme = '<?= $current_theme ?>';
+            
+            if (sessionThemeSet) {
+                localStorage.setItem('theme', currentTheme);
+                document.documentElement.setAttribute('data-theme', currentTheme);
+            } else if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        })();
+    </script>
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 
-<body>
+<body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">
+    <script>
+        if (!<?= $session_theme_set ? 'true' : 'false' ?>) {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(theme + '-mode');
+        }
+    </script>
     <div class="login-container">
         <div class="logo-container">
             <a href="homePage.php">

@@ -20,7 +20,10 @@ $form_type = $_POST['form_type'] ?? 'general';
 
 if ($form_type === 'general') {
     // Save general settings to session
-    $_SESSION['settings']['site_theme'] = $_POST['site_theme'] ?? 'light';
+    $theme = $_POST['site_theme'] ?? 'light';
+    $_SESSION['settings']['site_theme'] = $theme;
+    $_SESSION['settings']['dark_mode'] = ($theme === 'dark') ? 'dark' : 'light';
+    
     $_SESSION['settings']['message_option'] = $_POST['message_option'] ?? 'enabled';
     $_SESSION['settings']['language'] = $_POST['language'] ?? 'en';
     $_SESSION['settings']['timezone'] = $_POST['timezone'] ?? 'UTC';

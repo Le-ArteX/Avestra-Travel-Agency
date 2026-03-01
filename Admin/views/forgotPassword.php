@@ -8,7 +8,7 @@ include '../controller/forgotPasswordFormDataHandler.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avestra Travel Agency</title>
-    <link rel="stylesheet" href="../styleSheets/forgotPassword.css">
+    <link rel="stylesheet" href="../styleSheets/forgotPassword.css?v=<?php echo time(); ?>">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 

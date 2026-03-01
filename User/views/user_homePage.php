@@ -1,6 +1,6 @@
 <?php
 // Maintenance check using Admin's MaintenanceCheck.php
-session_start();
+include('dark_mode.php'); // Include user theme helper
 require_once __DIR__ . '/../../Admin/database/MaintenanceCheck.php';
 checkMaintenanceMode(false); // Set to true if you want admin bypass
 ?>
@@ -12,15 +12,37 @@ checkMaintenanceMode(false); // Set to true if you want admin bypass
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avestra Travel Agency : Book Tickets, Hotels, Packages</title>
     <link rel="stylesheet" href="../styleSheets/homePage.css">
+    <link rel="stylesheet" href="../styleSheets/user-dark-mode.css">
+    <script>
+        // Intelligent theme application
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const sessionThemeSet = <?= $session_theme_set ? 'true' : 'false' ?>;
+            const currentTheme = '<?= $current_theme ?>';
+            
+            if (sessionThemeSet) {
+                localStorage.setItem('theme', currentTheme);
+                document.documentElement.setAttribute('data-theme', currentTheme);
+            } else if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        })();
+    </script>
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 
-<body>
+<body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">
+    <script>
+        if (!<?= $session_theme_set ? 'true' : 'false' ?>) {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(theme + '-mode');
+        }
+    </script>
     <header>
         <button id="mode-toggle">🌙</button>
         <div class="container">
             <div class="logo-container">
-                <a href="homePage.php">
+                <a href="user_homePage.php">
                     <img src="../images/logo.png" alt="Avestra Travel Agency Logo">
                 </a>
             </div>
@@ -30,7 +52,7 @@ checkMaintenanceMode(false); // Set to true if you want admin bypass
 
             <nav>
                 <ul>
-                    <li class="current"><a href="loader.php"> Home</a></li>
+                    <li class="current"><a href="user_homePage.php"> Home</a></li>
                     <li><a href="user_dashboard.php" > Dashboard</a></li>
                     <li><a href="#services-section-tickets"><img src="../images/ticket-detailed-fill.svg"
                                 alt="Tickets Icon" class="ticket-icon"> Tickets</a></li>
@@ -132,18 +154,21 @@ checkMaintenanceMode(false); // Set to true if you want admin bypass
                     <li><strong>Visit:</strong> Kuril,khilkhet, Dhaka, Bangladesh</li>
                 </ul>
             </div>
-            <form class="contact-form">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your name" required>
+            <div>
+                <div id="contact-message" style="display:none; margin-bottom:15px;" class="alert"></div>
+                <form class="contact-form" id="contactForm">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your name" required>
 
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
 
-                <label for="message">Message</label>
-                <textarea id="message" name="message" rows="4" placeholder="Tell us how we can help" required></textarea>
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="4" placeholder="Tell us how we can help" required></textarea>
 
-                <button type="submit" class="button_1">Send Message</button>
-            </form>
+                    <button type="submit" class="button_1">Send Message</button>
+                </form>
+            </div>
         </div>
     </section>
 
@@ -172,7 +197,7 @@ checkMaintenanceMode(false); // Set to true if you want admin bypass
     </section>
 
     <footer>
-        <p>&copy; 2025 Avestra Travel Agency. All rights reserved.</p>
+        <p>&copy; <?= date('Y') ?> Avestra Travel Agency. All rights reserved.</p>
     </footer>
 
 
@@ -187,6 +212,66 @@ checkMaintenanceMode(false); // Set to true if you want admin bypass
                 logoLink.addEventListener('click', function (e) {
                     e.preventDefault();
                     window.location.href = 'loader.php';
+                });
+            }
+
+            // AJAX Contact Form
+            const contactForm = document.getElementById('contactForm');
+            const contactMessage = document.getElementById('contact-message');
+            
+            if (contactForm && contactMessage) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(contactForm);
+                    const submitBtn = contactForm.querySelector('button[type="submit"]');
+                    
+                    // Disable button during submission
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Sending...';
+                    
+                    fetch('../../Admin/controller/ContactFormHandler.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            contactMessage.style.color = '#155724';
+                            contactMessage.style.backgroundColor = '#d4edda';
+                            contactMessage.style.borderColor = '#c3e6cb';
+                            contactMessage.style.padding = '15px';
+                            contactMessage.style.borderRadius = '5px';
+                            contactMessage.textContent = data.message;
+                            contactForm.reset();
+                        } else {
+                            contactMessage.style.color = '#721c24';
+                            contactMessage.style.backgroundColor = '#f8d7da';
+                            contactMessage.style.borderColor = '#f5c6cb';
+                            contactMessage.style.padding = '15px';
+                            contactMessage.style.borderRadius = '5px';
+                            contactMessage.textContent = data.message;
+                        }
+                        contactMessage.style.display = 'block';
+                        
+                        // Hide message after 5 seconds
+                        setTimeout(() => {
+                            contactMessage.style.display = 'none';
+                        }, 5000);
+                    })
+                    .catch(error => {
+                        contactMessage.style.color = '#721c24';
+                        contactMessage.style.backgroundColor = '#f8d7da';
+                        contactMessage.style.borderColor = '#f5c6cb';
+                        contactMessage.style.padding = '15px';
+                        contactMessage.style.borderRadius = '5px';
+                        contactMessage.textContent = 'Error sending message. Please try again.';
+                        contactMessage.style.display = 'block';
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Send Message';
+                    });
                 });
             }
         });

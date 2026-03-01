@@ -39,6 +39,7 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../styleSheets/footer.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
     <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css"/>
+    <link rel="stylesheet" href="../styleSheets/user-dark-mode.css?v=<?php echo time(); ?>">
     <style>
         body {
             background-color: #f7fafc;
@@ -190,7 +191,7 @@ $result = $stmt->get_result();
         }
     </style>
 </head>
-<body>
+<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
 
 <?php include 'nav.php'; ?>
 
@@ -253,7 +254,15 @@ $result = $stmt->get_result();
                             <td><?= (int)$row['quantity'] ?></td>
                             <td style="font-weight: 600; color: #2d3748;"><?= number_format((float)$row['total_price'], 0) ?> ৳</td>
                             <td><span class="bh-status bh-status-<?= $book_status ?>"><?= ucfirst($book_status) ?></span></td>
-                            <td><span class="bh-status bh-status-<?= $pay_status ?>"><?= ucfirst($pay_status) ?></span></td>
+                            <td><span class="bh-status bh-status-<?= $pay_status ?>">
+                                <?php
+                                    if ($pay_status === 'paid' || $pay_status === 'success') {
+                                        echo 'Confirmed';
+                                    } else {
+                                        echo ucfirst($pay_status);
+                                    }
+                                ?>
+                            </span></td>
                             <td style="color: #718096; font-size: 0.9rem;"><?= date("d M Y", strtotime($row['created_at'])) ?></td>
                             <td>
                                 <a href="invoice.php?id=<?= (int)$row['id'] ?>" class="bh-view-btn">

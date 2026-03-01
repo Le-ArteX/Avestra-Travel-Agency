@@ -1,5 +1,5 @@
 <?php
-session_start();
+include('dark_mode.php');
 include('../database/HotelsData.php');
 ?>
 <!DOCTYPE html>
@@ -10,16 +10,21 @@ include('../database/HotelsData.php');
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manage Hotels - Admin Panel</title>
 
-    <link rel="stylesheet" href="../styleSheets/ManageHotels.css" />
-    <link rel="stylesheet" href="../styleSheets/ManageHotelsExtra.css" />
+    <link rel="stylesheet" href="../styleSheets/ManageHotels.css?v=<?php echo time(); ?>" />
+    <link rel="stylesheet" href="../styleSheets/ManageHotelsExtra.css?v=<?php echo time(); ?>" />
 
     <link rel="icon" href="../images/logo.png" type="image/png" />
     <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
+    <link rel="stylesheet" href="../styleSheets/dark-mode.css?v=<?php echo time(); ?>" />
+    <script>
+        localStorage.setItem('theme', '<?= $current_theme ?>');
+        document.documentElement.setAttribute('data-theme', '<?= $current_theme ?>');
+    </script>
 
     <script src="../js/ManageHotels.js" defer></script>
 </head>
 
-<body>
+<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
 
     <!-- Custom confirm modal (UI only) -->
     <div id="confirmModal" class="confirm-overlay" aria-hidden="true">
@@ -48,9 +53,10 @@ include('../database/HotelsData.php');
                     <li><a href="Admin.php">Dashboard</a></li>
                     <li><a href="ManageUsers.php">Manage Users</a></li>
                     <li><a href="ManageTickets.php">Tickets</a></li>
-                    <li><a class="active" href="ManageHotels.php">Hotels</a></li>
+                    <li><a href="ManageHotels.php" class="active">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
                     <li><a href="Payments.php">Payments</a></li>
+                    <li><a href="Reports.php">Reports</a></li>
                     <li><a href="Settings.php">Settings</a></li>
                     <li><a href="MyProfile.php">My Profile</a></li>
                     <li><a href="homePage.php">Logout</a></li>

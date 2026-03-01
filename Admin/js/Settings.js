@@ -1,17 +1,21 @@
 // Settings page functionality
 document.addEventListener('DOMContentLoaded', function () {
-    // Apply stored theme
-    applyStoredTheme();
-    
     // Initialize settings page
     initializeSettings();
 });
 
 // Initialize settings functionality
 function initializeSettings() {
+    // Sync the theme dropdown with current state if it exists
+    const themeSelect = document.querySelector('#site-theme');
+    if (themeSelect) {
+        const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+        themeSelect.value = currentTheme;
+    }
+
     // Add event listeners for form submissions
     const settingsForms = document.querySelectorAll('.settings-form');
-    
+
     settingsForms.forEach(form => {
         form.addEventListener('submit', function (e) {
             const submitBtn = form.querySelector('.save-settings-btn');
@@ -21,7 +25,7 @@ function initializeSettings() {
             }
         });
     });
-    
+
     // Show alerts
     showAlerts();
 }
@@ -30,13 +34,13 @@ function initializeSettings() {
 function showAlerts() {
     const alertSuccess = document.querySelector('.alert-success');
     const alertError = document.querySelector('.alert-error');
-    
+
     if (alertSuccess) {
         alertSuccess.style.display = 'block';
         setTimeout(() => {
             alertSuccess.style.opacity = '1';
         }, 50);
-        
+
         // Auto hide after 6 seconds with fade animation
         setTimeout(() => {
             alertSuccess.style.opacity = '0';
@@ -46,13 +50,13 @@ function showAlerts() {
             }, 400);
         }, 6000);
     }
-    
+
     if (alertError) {
         alertError.style.display = 'block';
         setTimeout(() => {
             alertError.style.opacity = '1';
         }, 50);
-        
+
         // Auto hide after 6 seconds with fade animation
         setTimeout(() => {
             alertError.style.opacity = '0';
@@ -64,13 +68,3 @@ function showAlerts() {
     }
 }
 
-// Apply stored theme from localStorage
-function applyStoredTheme() {
-    const theme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', theme);
-    
-    const themeSelect = document.querySelector('#site-theme');
-    if (themeSelect) {
-        themeSelect.value = theme;
-    }
-}

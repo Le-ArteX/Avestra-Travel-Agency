@@ -30,7 +30,7 @@ $txn = strtoupper(uniqid("TXN"));
 $pay = $conn->prepare("
     INSERT INTO payments
     (booking_id, user_email, amount, payment_method, transaction_id, payment_status, payment_date)
-    VALUES (?, ?, ?, ?, ?, 'paid', NOW())
+    VALUES (?, ?, ?, ?, ?, 'pending', NOW())
 ");
 
 $pay->bind_param("isdss", $booking_id, $email, $amount, $method, $txn);
@@ -42,8 +42,8 @@ if (!$pay->execute()) {
 /* Update booking */
 $upd = $conn->prepare("
     UPDATE bookings
-    SET payment_status='paid',
-        booking_status='confirmed',
+    SET payment_status='pending',
+        booking_status='pending',
         payment_method=?
     WHERE id=? AND user_email=?
 ");

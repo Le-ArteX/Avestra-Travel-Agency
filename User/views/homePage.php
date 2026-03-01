@@ -165,7 +165,7 @@ exit();
     </section>
 
     <footer>
-        <p>&copy; 2025 Avestra Travel Agency. All rights reserved.</p>
+        <p>&copy; <?= date('Y') ?> Avestra Travel Agency. All rights reserved.</p>
     </footer>
 
 

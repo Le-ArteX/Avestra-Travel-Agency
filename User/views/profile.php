@@ -92,6 +92,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $update->bind_param("sssss", $username, $new_email, $phone, $image_path, $old_email);
                 }
 
+                // Save theme preference to session immediately
+                if (isset($_POST['user_theme'])) {
+                    $_SESSION['user_theme'] = $_POST['user_theme'];
+                }
+
                 if (empty($error) && isset($update)) {
                     if ($update->execute()) {
                         $_SESSION['username'] = $username;
@@ -123,54 +128,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../styleSheets/user.css">
     <link rel="stylesheet" href="../styleSheets/profile.css">
     <link rel="stylesheet" href="../styleSheets/footer.css">
+    <link rel="stylesheet" href="../styleSheets/user-dark-mode.css?v=<?php echo time(); ?>">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
-<body>
+<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
 
 <?php include 'nav.php'; ?>
 
 <div class="profile-container">
-    <h2 class="profile-title">👤 My Profile</h2>
-
     <?php if ($success): ?><p class="message success"><?= $success ?></p><?php endif; ?>
     <?php if ($error): ?><p class="message error"><?= $error ?></p><?php endif; ?>
 
-    <form method="post" enctype="multipart/form-data" class="profile-info" id="profileForm">
+    <div class="profile-cover">
+         <h2 class="profile-title">My Profile</h2>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="profile-form-wrapper" id="profileForm">
         
-        <div class="profile-image-container">
-            <img src="../images/<?= htmlspecialchars($current_image) ?>" alt="Profile Picture" class="profile-avatar" id="avatarPreview" onerror="this.src='../images/logo.png'">
-            <div class="profile-image-upload">
-                <label for="profile_picture" class="upload-btn">📷 Change Picture</label>
-                <input type="file" name="profile_picture" id="profile_picture" accept="image/*" style="display: none;" onchange="previewImage(event)">
+        <div class="profile-header-section">
+            <div class="profile-image-container">
+                <img src="../images/<?= htmlspecialchars($current_image) ?>" alt="Profile Picture" class="profile-avatar" id="avatarPreview" onerror="this.src='../images/logo.png'">
+                <div class="profile-image-upload">
+                    <label for="profile_picture" class="upload-btn" title="Change Picture">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    </label>
+                    <input type="file" name="profile_picture" id="profile_picture" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                </div>
+            </div>
+            <div class="profile-user-info">
+                <h3><?= htmlspecialchars($user['username']) ?></h3>
+                <span class="role-badge"><?= ucfirst($user['role']) ?></span>
             </div>
         </div>
 
-        <div class="profile-info-row">
-            <label>Full Name</label>
-            <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" required>
+        <div class="profile-info-grid">
+            <div class="profile-info-row">
+                <label>Full Name</label>
+                <div class="input-wrapper">
+                    <input type="text" name="username" value="<?= htmlspecialchars($user['username']) ?>" required>
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <label>Email Address</label>
+                <div class="input-wrapper">
+                    <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <label>Phone Number</label>
+                <div class="input-wrapper">
+                    <input type="text" name="phoneNumber" value="<?= htmlspecialchars($user['phoneNumber']) ?>" required>
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <label>Account Type</label>
+                <div class="input-wrapper">
+                    <input type="text" value="<?= ucfirst($user['role']) ?>" readonly>
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <label>Site Theme</label>
+                <div class="input-wrapper">
+                    <select name="user_theme" id="user_theme_select" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1.5px solid #e2e8f0; background: #f8fafc; font-family: inherit; font-weight: 500; appearance: none; cursor: pointer;">
+                        <option value="light" <?= !$is_dark ? 'selected' : '' ?>>Light Mode</option>
+                        <option value="dark" <?= $is_dark ? 'selected' : '' ?>>Dark Mode</option>
+                    </select>
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <label>New Password <span class="optional-text">(Optional)</span></label>
+                <div class="input-wrapper">
+                    <input type="password" name="password" placeholder="Enter new password">
+                </div>
+            </div>
+            <div class="profile-info-row">
+                <label>Confirm Password</label>
+                <div class="input-wrapper">
+                    <input type="password" name="confirm_password" placeholder="Confirm new password">
+                </div>
+            </div>
         </div>
-        <div class="profile-info-row">
-            <label>Email</label>
-            <input type="email" name="email" value="<?= htmlspecialchars($user['email']) ?>" required>
-        </div>
-        <div class="profile-info-row">
-            <label>Phone Number</label>
-            <input type="text" name="phoneNumber" value="<?= htmlspecialchars($user['phoneNumber']) ?>" required>
-        </div>
-        <div class="profile-info-row">
-            <label>Account Type</label>
-            <input type="text" value="<?= ucfirst($user['role']) ?>" readonly>
-        </div>
-        <div class="profile-info-row">
-            <label>New Password (Optional)</label>
-            <input type="password" name="password" placeholder="New password">
-        </div>
-        <div class="profile-info-row">
-            <label>Confirm New Password</label>
-            <input type="password" name="confirm_password" placeholder="Confirm your new password">
-        </div>
+
         <div class="profile-actions">
-            <button type="submit">Update Profile</button>
+            <button type="submit" class="save-changes-btn">Save Changes</button>
         </div>
     </form>
 </div>
@@ -224,9 +264,12 @@ profileForm.addEventListener('submit', function(e) {
 function closeConfirmModal() {
     confirmModal.classList.remove('active');
 }
-
-function submitProfileForm() {
-    // Hide modal and submit programmatically
+// Hide modal and submit programmatically
+function submitProfileForm() {  
+    const themeSelect = document.getElementById('user_theme_select');
+    if (themeSelect) {
+        localStorage.setItem('theme', themeSelect.value);
+    }
     confirmModal.classList.remove('active');
     profileForm.submit();
 }

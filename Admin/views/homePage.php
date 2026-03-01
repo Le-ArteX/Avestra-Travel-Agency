@@ -1,5 +1,5 @@
 <?php
-session_start();
+include('dark_mode.php');
 include('../database/MaintenanceCheck.php');
 
 include('../database/ToursData.php');
@@ -24,7 +24,27 @@ $activeToursCount = getActiveToursCount($tours);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avestra Travel Agency : Book Tickets, Hotel, Transport</title>
-    <link rel="stylesheet" href="../styleSheets/homePage.css">
+    <link rel="stylesheet" href="../styleSheets/homePage.css?v=<?php echo time(); ?>">
+    <script>
+        // Intelligent theme application: trust session if set, fallback to localStorage for guests
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const sessionThemeSet = <?= $session_theme_set ? 'true' : 'false' ?>;
+            const currentTheme = '<?= $current_theme ?>';
+            
+            if (sessionThemeSet) {
+                localStorage.setItem('theme', currentTheme);
+                document.documentElement.setAttribute('data-theme', currentTheme);
+            } else if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                // Also update body class immediately if possible, or theme.js will handle it
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.body.classList.remove('light-mode', 'dark-mode');
+                    document.body.classList.add(savedTheme + '-mode');
+                });
+            }
+        })();
+    </script>
     <link rel="icon" href="../images/logo.png" type="image/png">
     <style>
         .alert {
@@ -48,7 +68,14 @@ $activeToursCount = getActiveToursCount($tours);
     </style>
 </head>
 
-<body>
+<body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">
+    <script>
+        // Apply localStorage theme to body class immediately to prevent flicker if session isn't set
+        if (!<?= $session_theme_set ? 'true' : 'false' ?>) {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(theme + '-mode');
+        }
+    </script>
     <?php
     if (isset($_SESSION['contact_success'])) {
         echo '<div class="alert alert-success">' . htmlspecialchars($_SESSION['contact_success']) . '</div>';
@@ -214,7 +241,7 @@ $activeToursCount = getActiveToursCount($tours);
     </section>
 
     <footer>
-        <p>&copy; 2025 Avestra Travel Agency. All rights reserved.</p>
+        <p>&copy; <?= date('Y') ?> Avestra Travel Agency. All rights reserved.</p>
     </footer>
 
 

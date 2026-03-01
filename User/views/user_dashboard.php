@@ -1,5 +1,6 @@
 <?php
 include 'session_check.php';
+include 'dark_mode.php'; // Include dark mode helper
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,6 +12,22 @@ include 'session_check.php';
     <link rel="stylesheet" href="../styleSheets/footer.css">
     <link rel="icon" href="../images/logo.png" type="image/png">
     <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css"/>
+    <link rel="stylesheet" href="../styleSheets/user-dark-mode.css?v=<?php echo time(); ?>">
+    <script>
+        // High-performance theme synchronization
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const sessionThemeSet = <?= $session_theme_set ? 'true' : 'false' ?>;
+            const currentTheme = '<?= $current_theme ?>';
+            
+            if (sessionThemeSet) {
+                localStorage.setItem('theme', currentTheme);
+                document.documentElement.setAttribute('data-theme', currentTheme);
+            } else if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        })();
+    </script>
     <style>
         body {
             background-color: #f7fafc;
@@ -192,7 +209,14 @@ include 'session_check.php';
 
     </style>
 </head>
-<body>
+<body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">
+    <script>
+        // Fallback for session-less theme application
+        if (!<?= $session_theme_set ? 'true' : 'false' ?>) {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(theme + '-mode');
+        }
+    </script>
 
 <?php include 'nav.php'; ?>
 
