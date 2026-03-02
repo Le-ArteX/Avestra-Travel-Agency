@@ -26,7 +26,12 @@ function searchPayments($conn, $search, $limit = 20, $offset = 0) {
     $payments = [];
     $total = 0;
     $search = trim($search);
-    if (strpos($search, '#') === 0) {
+    if (strpos(strtoupper($search), 'TX') === 0) {
+        $search = substr($search, 2);
+        if (is_numeric($search)) {
+            $search = (int)$search - 100;
+        }
+    } elseif (strpos($search, '#') === 0) {
         $search = substr($search, 1);
     }
     $like = "%" . $conn->real_escape_string($search) . "%";

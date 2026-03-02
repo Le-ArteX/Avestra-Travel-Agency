@@ -1,5 +1,6 @@
 <?php
 include 'session_check.php';
+include 'dark_mode.php';
 include '../database/dbconnection.php';
 
 
@@ -72,7 +73,14 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../styleSheets/user-dark-mode.css?v=<?php echo time(); ?>">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
-<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
+<body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">
+    <script>
+        // Fallback for session-less theme application
+        if (!<?= $session_theme_set ? 'true' : 'false' ?>) {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(theme + '-mode');
+        }
+    </script>
 
 <?php include 'nav.php'; ?>
 
@@ -167,12 +175,27 @@ $result = $stmt->get_result();
                             <span class="price-amount"><?= number_format((float)$row['price'], 0) ?> <span>৳</span></span>
                         </div>
 
-                        <form action="confirmOrder.php" method="post" class="start-booking-form">
+                        <form action="cart_action.php" method="post" class="tk-cart-form">
+                            <input type="hidden" name="action" value="add">
                             <input type="hidden" name="service_type" value="ticket">
                             <input type="hidden" name="service_id" value="<?= (int)$row['id'] ?>">
-                            <button type="submit" class="book-btn">
-                                Book Now →
-                            </button>
+                            <input type="hidden" name="name" value="<?= htmlspecialchars($row['route']) ?>">
+                            <input type="hidden" name="price" value="<?= (float)$row['price'] ?>">
+                            <input type="hidden" name="image" value="<?= htmlspecialchars($row['image']) ?>">
+                            
+                            <div class="qt-selector" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; justify-content: center;">
+                                <label for="qt_<?= $row['id'] ?>" style="font-weight: 600; color: #4a5568;">Seats:</label>
+                                <input type="number" id="qt_<?= $row['id'] ?>" name="quantity" value="1" min="1" max="<?= (int)$row['seat_count'] ?>" style="width: 60px; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e0; text-align: center;">
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <button type="submit" class="cart-btn">
+                                    🛒 +Cart
+                                </button>
+                                <button type="submit" name="direct_book" value="1" class="book-btn">
+                                    Book Now
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

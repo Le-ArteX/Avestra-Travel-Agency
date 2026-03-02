@@ -1,5 +1,6 @@
 <?php
 include 'session_check.php';
+include 'dark_mode.php';
 include '../database/dbconnection.php';
 
 // --- Pagination & Search Setup ---
@@ -65,7 +66,14 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../styleSheets/user-dark-mode.css?v=<?php echo time(); ?>">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
-<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
+<body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">
+    <script>
+        // Fallback for session-less theme application
+        if (!<?= $session_theme_set ? 'true' : 'false' ?>) {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(theme + '-mode');
+        }
+    </script>
 
 <?php include 'nav.php'; ?>
 
@@ -178,12 +186,27 @@ $result = $stmt->get_result();
                         </p>
                     <?php endif; ?>
 
-                    <form action="confirmOrder.php" method="post" class="fh-book-form">
+                    <form action="cart_action.php" method="post" class="fh-cart-form">
+                        <input type="hidden" name="action" value="add">
                         <input type="hidden" name="service_type" value="hotel">
                         <input type="hidden" name="service_id" value="<?= htmlspecialchars($row['id']) ?>">
-                        <button type="submit" class="fh-book-btn">
-                            Book Now →
-                        </button>
+                        <input type="hidden" name="name" value="<?= htmlspecialchars($row['name']) ?>">
+                        <input type="hidden" name="price" value="<?= (float)$row['price_per_night'] ?>">
+                        <input type="hidden" name="image" value="hotels/<?= htmlspecialchars($row['image']) ?>">
+                        
+                        <div class="qt-selector" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; justify-content: center;">
+                            <label for="qt_<?= $row['id'] ?>" style="font-weight: 600; color: #4a5568;">Rooms:</label>
+                            <input type="number" id="qt_<?= $row['id'] ?>" name="quantity" value="1" min="1" max="10" style="width: 60px; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e0; text-align: center;">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <button type="submit" class="cart-btn">
+                                🛒 +Cart
+                            </button>
+                            <button type="submit" name="direct_book" value="1" class="fh-book-btn">
+                                Book Now
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

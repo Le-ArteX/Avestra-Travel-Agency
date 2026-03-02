@@ -31,6 +31,8 @@ $totalPages = ceil($totalRecords / $limit);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payments - Avestra Travel Agency</title>
     <link rel="stylesheet" href="../styleSheets/Payment.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../styleSheets/Admin.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../styleSheets/dark-mode.css?v=<?php echo time(); ?>">
     <script>
         localStorage.setItem('theme', '<?= $current_theme ?>');
         document.documentElement.setAttribute('data-theme', '<?= $current_theme ?>');
@@ -92,6 +94,7 @@ $totalPages = ceil($totalRecords / $limit);
                     <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
+                    <li><a href="ManageBookings.php">Manage Bookings</a></li>
                     <li><a href="Payments.php" class="active">Payments</a></li>
                     <li><a href="Reports.php">Reports</a></li>
                     <li><a href="Settings.php">Settings</a></li>
@@ -122,8 +125,8 @@ $totalPages = ceil($totalRecords / $limit);
             <div class="admin-card">
                 <h3>Customer Payment History</h3>
                 <form method="post" action="Payments.php" class="payment-search-bar" style="margin-bottom: 18px; display: flex; gap: 12px; align-items: center;">
-                    <input type="text" name="search" value="<?= htmlspecialchars($search ?? '') ?>" placeholder="Search by Booking ID or Email" class="search-input" style="padding: 10px 16px; border-radius: 7px; border: 1px solid #dbe6f3; font-size: 1em; min-width: 220px;">
-                    <button type="submit" class="search-btn" style="background: #0ecb81; color: #fff; border: none; border-radius: 7px; padding: 10px 28px; font-weight: 600; font-size: 1em; cursor: pointer;">Search</button>
+                    <input type="text" name="search" value="<?= htmlspecialchars($search ?? '') ?>" placeholder="Search Email or ID..." class="search-input" style="padding: 10px 16px; border-radius: 7px; border: 1px solid #dbe6f3; font-size: 1em; min-width: 220px;">
+                    <button type="submit" class="search-btn" style="background: #0ecb81; color: #fff; border: none; border-radius: 7px; padding: 10px 28px; font-weight: 600; font-size: 1em; cursor: pointer;"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
                     <?php if ($search): ?>
                         <a href="Payments.php" class="reset-btn" style="background: #f87171; color: #fff; border: none; border-radius: 7px; padding: 10px 18px; font-weight: 600; font-size: 1em; text-decoration: none; margin-left: 4px;">Reset</a>
                     <?php endif; ?>
@@ -151,7 +154,7 @@ $totalPages = ceil($totalRecords / $limit);
                         <?php else: ?>
                             <?php foreach ($payments as $p): ?>
                                 <tr>
-                                    <td class="payment-id">#<?= htmlspecialchars($p['booking_id']) ?></td>
+                                    <td class="payment-id">TX<?= 100 + (int)$p['booking_id'] ?></td>
                                     <td><?= htmlspecialchars($p['user_email']) ?></td>
                                     <td><b>$<?= number_format($p['amount'], 2) ?></b></td>
                                     <td><?= htmlspecialchars($p['payment_method']) ?></td>

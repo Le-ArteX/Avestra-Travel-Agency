@@ -1,6 +1,13 @@
 <?php
 include 'session_check.php';
+include 'dark_mode.php';
 include '../database/dbconnection.php';
+
+// Redirect admins to their specific profile page
+if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    header("Location: ../../Admin/views/MyProfile.php");
+    exit();
+}
 
 $old_email = $_SESSION['email'];
 
@@ -10,7 +17,10 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows !== 1) {
-    die("User not found.");
+    // If user not in customer table, it might be an admin that wasn't redirected above 
+    // or a session mismatch. Redirect to home as a safety.
+    header("Location: user_dashboard.php");
+    exit();
 }
 $user = $result->fetch_assoc();
 $current_image = !empty($user['image']) ? $user['image'] : 'logo.png';
@@ -131,7 +141,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../styleSheets/user-dark-mode.css?v=<?php echo time(); ?>">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
-<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
+<body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">
+    <script>
+        // Fallback for session-less theme application
+        if (!<?= $session_theme_set ? 'true' : 'false' ?>) {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(theme + '-mode');
+        }
+    </script>
 
 <?php include 'nav.php'; ?>
 

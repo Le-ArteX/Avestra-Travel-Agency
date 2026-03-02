@@ -1,8 +1,6 @@
 <?php
-// Maintenance check using Admin's MaintenanceCheck.php
-include('dark_mode.php'); // Include user theme helper
-require_once __DIR__ . '/../../Admin/database/MaintenanceCheck.php';
-checkMaintenanceMode(false); // Set to true if you want admin bypass
+header("Location: user_dashboard.php");
+exit();
 ?>
 <!DOCTYPE html>
 <html lang="en">

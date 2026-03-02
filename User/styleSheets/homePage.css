@@ -1,9 +1,14 @@
-/* DARK MODE*/
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background-color: #222831;
+    background-color: #f4f6f8;
+    color: #222;
     line-height: 1.6;
     scroll-behavior: smooth;
+}
+
+body.dark-mode {
+    background-color: #222831;
+    color: #EEEEEE;
 }
 
 #mode-toggle {
@@ -67,10 +72,15 @@ header .container {
 
 /* Header */
 header {
-    background: #222831;
-    color: #EEEEEE;
+    background: #f0f2f5;
+    color: #22304a;
     padding: 20px 0 10px 0;
     border-bottom: 4px solid #00ADB5;
+}
+
+body.dark-mode header {
+    background: #222831;
+    color: #EEEEEE;
 }
 
 header .container {
@@ -99,9 +109,15 @@ nav {
     width: 100%;
     flex-basis: 100%;
     margin-top: 10px;
-    background: #393E46;
+    background: #ffffff;
     border-radius: 6px;
     padding: 8px 0;
+    box-shadow: 0 4px 15px rgba(34, 48, 74, 0.04);
+}
+
+body.dark-mode nav {
+    background: #393E46;
+    box-shadow: none;
 }
 
 nav ul {
@@ -129,14 +145,18 @@ nav ul li a:hover {
 
 /* Showcase */
 #showcase {
-    background: #393E46;
+    background: #f0f2f5;
     min-height: 300px;
-    color: #EEEEEE;
+    color: #4a5a6a;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
+}
 
+body.dark-mode #showcase {
+    background: #393E46;
+    color: #EEEEEE;
 }
 
 #showcase .container {
@@ -182,6 +202,10 @@ nav ul li a:hover {
 /* Boxes */
 #boxes {
     padding: 40px 0;
+    background: #f0f2f5;
+}
+
+body.dark-mode #boxes {
     background: #222831;
 }
 
@@ -193,17 +217,23 @@ nav ul li a:hover {
 }
 
 .box {
-    background: #393E46;
+    background: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 24px rgba(34, 48, 74, 0.06);
     flex: 1 1 250px;
     max-width: 340px;
     padding: 25px 20px;
     text-align: center;
     transition: transform 0.2s;
-    color: #EEEEEE;
+    color: #4a5a6a;
     position: relative;
     overflow: hidden;
+}
+
+body.dark-mode .box {
+    background: #393E46;
+    color: #EEEEEE;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .box img {
@@ -230,20 +260,31 @@ nav ul li a:hover {
 
 /* Footer */
 footer {
-    background: #222831;
-    color: #EEEEEE;
+    background: #ffffff;
+    color: #4a5a6a;
     text-align: center;
     padding: 18px 0;
     margin-top: 30px;
     font-size: 1em;
+    border-top: 1px solid rgba(34, 48, 74, 0.05);
+}
+
+body.dark-mode footer {
+    background: #222831;
+    color: #EEEEEE;
     border-top: 2px solid #393E46;
 }
 
 #travel-cards {
-    background: #393E46;
+    background: #f0f2f5;
     padding: 50px 0;
-    color: #EEEEEE;
+    color: #4a5a6a;
     text-align: center;
+}
+
+body.dark-mode #travel-cards {
+    background: #393E46;
+    color: #EEEEEE;
 }
 
 #travel-cards h2 {
@@ -265,10 +306,16 @@ footer {
     height: 340px;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 4px 20px rgba(34, 48, 74, 0.08);
+    /* Light mode shadow */
     cursor: pointer;
     transition: transform 0.2s;
+    background: #ffffff;
+}
+
+body.dark-mode .travel-card {
     background: #222831;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
 }
 
 .travel-card img {
@@ -318,16 +365,27 @@ footer {
 }
 
 #contact-section {
+    background: #f0f2f5;
+    color: #4a5a6a;
+    padding: 50px 0 60px;
+}
+
+body.dark-mode #contact-section {
     background: #222831;
     color: #EEEEEE;
-    padding: 50px 0 60px;
 }
 
 /* Unified Services Section */
 #services-section {
+    background: #ffffff;
+    color: #4a5a6a;
+    padding: 50px 0 60px;
+    border-top: 1px solid rgba(34, 48, 74, 0.05);
+}
+
+body.dark-mode #services-section {
     background: #393E46;
     color: #EEEEEE;
-    padding: 50px 0 60px;
     border-top: 2px solid rgba(0, 0, 0, 0.15);
 }
 
@@ -338,12 +396,17 @@ footer {
 }
 
 .service-card {
-    background: #222831;
-    border-radius: 10px;
+    background: #ffffff;
+    border-radius: 12px;
     padding: 20px;
+    box-shadow: 0 4px 20px rgba(34, 48, 74, 0.06);
+    text-align: left;
+}
+
+body.dark-mode .service-card {
+    background: #222831;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    text-align: left;
 }
 
 .service-card h3 {
@@ -417,9 +480,14 @@ footer {
 }
 
 #about-section {
+    background: #f0f2f5;
+    color: #4a5a6a;
+    padding: 50px 0 60px;
+}
+
+body.dark-mode #about-section {
     background: #393E46;
     color: #EEEEEE;
-    padding: 50px 0 60px;
 }
 
 .about-grid {
@@ -445,9 +513,16 @@ footer {
 }
 
 .highlight-card {
-    background: #222831;
-    border-radius: 10px;
+    background: #ffffff;
+    border-radius: 12px;
     padding: 18px;
+    box-shadow: 0 4px 20px rgba(34, 48, 74, 0.06);
+    color: #4a5a6a;
+}
+
+body.dark-mode .highlight-card {
+    background: #222831;
+    color: #EEEEEE;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     border: 1px solid rgba(255, 255, 255, 0.06);
 }

@@ -62,6 +62,7 @@ $tickets_page = array_slice($tickets, $offset, $per_page);
                     <li><a href="ManageTickets.php" class="active">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
+                    <li><a href="ManageBookings.php">Manage Bookings</a></li>
                     <li><a href="Payments.php">Payments</a></li>
                     <li><a href="Reports.php">Reports</a></li>
                     <li><a href="Settings.php">Settings</a></li>

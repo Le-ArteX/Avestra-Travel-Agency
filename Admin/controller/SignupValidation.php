@@ -62,72 +62,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
    
     if (empty($username_error) && empty($email_error) && empty($phoneNumber_error) && empty($role_error) && empty($password_error) && empty($confirmPassword_error) && empty($general_error)) {
-      
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
-     
-        $date = date('Y-m-d H:i:s');
+        // --- OTP IMPLEMENTATION ---
+        require_once __DIR__ . '/../utils/OTPUtility.php';
+        require_once __DIR__ . '/../utils/MailUtility.php';
         
-     
-        if (strtolower($role) === 'admin') {
-            // Check if email already exists in admin table
-            $check_email = $conn->prepare("SELECT email FROM admin WHERE email = ?");
-            $check_email->bind_param("s", $email);
-            $check_email->execute();
-            $result = $check_email->get_result();
-            
-            if ($result->num_rows > 0) {
-                $_SESSION['signup_error_message'] = "Email already exists. Please use a different email.";
-            } else {
-                // Insert into admin table with Pending status
-                $status = 'Pending';
-                $insert = $conn->prepare("INSERT INTO admin (username, email, phoneNumber, role, password, date, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                $insert->bind_param("sssssss", $username, $email, $phoneNumber, $role, $hashed_password, $date, $status);
-                
-                if ($insert->execute()) {
-                    $_SESSION['signup_success_message'] = "Admin request submitted successfully! Your request will be reviewed by the system administrator.";
-                    // Clear form data
-                    unset($_SESSION['form_data']);
-                    unset($_SESSION['form_errors']);
-                    // Redirect back to signup page to show success message
-                    header("Location: ../views/Signup.php");
-                    exit();
-                } else {
-                    $_SESSION['signup_error_message'] = "Error submitting admin request. Please try again.";
-                }
-                $insert->close();
-            }
-            $check_email->close();
-        } else {
-            // For customer role, check if email exists in customer table
-            $check_email = $conn->prepare("SELECT email FROM customer WHERE email = ?");
-            $check_email->bind_param("s", $email);
-            $check_email->execute();
-            $result = $check_email->get_result();
-            
-            if ($result->num_rows > 0) {
-                $_SESSION['signup_error_message'] = "Email already registered. Please use a different email.";
-            } else {
-                // For customer role, insert directly into customer table
-                $insert = $conn->prepare("INSERT INTO customer (username, email, phoneNumber, role, password, date, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                $insert->bind_param("sssssss", $username, $email, $phoneNumber, $role, $hashed_password, $date, $status);
-                $status = 'Active';
-                
-                if ($insert->execute()) {
-                    $_SESSION['signup_success_message'] = "Account created successfully!";
-                    // Clear form data
-                    unset($_SESSION['form_data']);
-                    unset($_SESSION['form_errors']);
-                    // Redirect back to signup page to show success message
-                    header("Location: ../views/Signup.php");
-                    exit();
-                } else {
-                    $_SESSION['signup_error_message'] = "Error creating account. Please try again.";
-                }
-                $insert->close();
-            }
-            $check_email->close();
-        }
+        $otp = \Admin\Utils\OTPUtility::generateOTP();
+        \Admin\Utils\OTPUtility::storeOTP($otp);
+        
+        // Store session data specifically for OTP verification
+        $_SESSION['otp_action'] = 'signup';
+        $_SESSION['otp_signup_data'] = [
+            'username' => $username,
+            'email' => $email,
+            'phoneNumber' => $phoneNumber,
+            'role' => $role,
+            'password' => password_hash($password, PASSWORD_DEFAULT),
+            'date' => date('Y-m-d H:i:s')
+        ];
+        
+        // Send OTP
+        \Admin\Utils\MailUtility::sendOTPMail($email, $otp);
+        $_SESSION['otp_success'] = "Verification code sent successfully!";
+        
+        // Redirect to OTP verification page
+        header("Location: ../views/verifyOTP.php");
+        exit();
+        // --- END OTP IMPLEMENTATION ---
     }
 
     // Redirect back to signup form with errors/data in session

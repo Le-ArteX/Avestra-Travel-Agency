@@ -1,5 +1,6 @@
 <?php
 include 'session_check.php';
+include 'dark_mode.php';
 include '../database/dbconnection.php';
 
 $email = $_SESSION['email'];
@@ -99,24 +100,34 @@ $result = $stmt->get_result();
             background-color: #f8fafc;
         }
         .bh-status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-block;
-            text-transform: capitalize;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .bh-status-confirmed, .bh-status-completed, .bh-status-paid {
-            background-color: #def7ec;
-            color: #03543f;
+        .bh-status i {
+            font-size: 0.85rem;
+        }
+        .bh-status-confirmed, .bh-status-completed, .bh-status-paid, .bh-status-success {
+            background-color: #ecfdf5;
+            color: #059669;
+            border: 1px solid #d1fae5;
         }
         .bh-status-pending {
-            background-color: #fef3c7;
-            color: #92400e;
+            background-color: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fef3c7;
         }
-        .bh-status-cancelled, .bh-status-failed {
-            background-color: #fde8e8;
-            color: #9b1c1c;
+        .bh-status-cancelled, .bh-status-failed, .bh-status-rejected, .bh-status-unpaid {
+            background-color: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fee2e2;
         }
         .bh-view-btn {
             display: inline-flex;
@@ -191,7 +202,14 @@ $result = $stmt->get_result();
         }
     </style>
 </head>
-<body class="<?= $is_dark ? 'dark-mode' : '' ?>">
+<body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">
+    <script>
+        // Fallback for session-less theme application
+        if (!<?= $session_theme_set ? 'true' : 'false' ?>) {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.classList.add(theme + '-mode');
+        }
+    </script>
 
 <?php include 'nav.php'; ?>
 
@@ -223,7 +241,7 @@ $result = $stmt->get_result();
                         <th>Service</th>
                         <th>Type</th>
                         <th>Travel Date</th>
-                        <th>Qty</th>
+                        <th>Quantity</th>
                         <th>Total</th>
                         <th>Booking</th>
                         <th>Payment</th>
@@ -238,7 +256,7 @@ $result = $stmt->get_result();
                         $pay_status = strtolower($row['payment_status']);
                     ?>
                         <tr>
-                            <td><span style="color: #a0aec0; font-weight: 600;"><?= $i++ ?></span></td>
+                            <td><span style="color: #a0aec0; font-weight: 600;">TX<?= 100 + (int)$row['id'] ?></span></td>
                             <td style="font-weight: 600;"><?= htmlspecialchars($row['service_name']) ?></td>
                             <td>
                                 <?php
@@ -253,16 +271,29 @@ $result = $stmt->get_result();
                             <td style="color: #4a5568;"><?= htmlspecialchars($row['travel_date']) ?></td>
                             <td><?= (int)$row['quantity'] ?></td>
                             <td style="font-weight: 600; color: #2d3748;"><?= number_format((float)$row['total_price'], 0) ?> ৳</td>
-                            <td><span class="bh-status bh-status-<?= $book_status ?>"><?= ucfirst($book_status) ?></span></td>
-                            <td><span class="bh-status bh-status-<?= $pay_status ?>">
-                                <?php
-                                    if ($pay_status === 'paid' || $pay_status === 'success') {
-                                        echo 'Confirmed';
-                                    } else {
-                                        echo ucfirst($pay_status);
-                                    }
-                                ?>
-                            </span></td>
+                            <td>
+                                <span class="bh-status bh-status-<?= $book_status ?>">
+                                    <?php if ($book_status === 'confirmed'): ?>
+                                        <i class="fas fa-check-circle"></i>
+                                    <?php elseif ($book_status === 'pending'): ?>
+                                        <i class="fas fa-clock"></i>
+                                    <?php elseif ($book_status === 'rejected' || $book_status === 'cancelled'): ?>
+                                        <i class="fas fa-times-circle"></i>
+                                    <?php endif; ?>
+                                    <?= ucfirst($book_status) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="bh-status bh-status-<?= $pay_status ?>">
+                                    <?php if ($pay_status === 'paid' || $pay_status === 'success'): ?>
+                                        <i class="fas fa-check-double"></i> Confirmed
+                                    <?php elseif ($pay_status === 'pending'): ?>
+                                        <i class="fas fa-hourglass-half"></i> Pending
+                                    <?php else: ?>
+                                        <i class="fas fa-exclamation-circle"></i> <?= ucfirst($pay_status) ?>
+                                    <?php endif; ?>
+                                </span>
+                            </td>
                             <td style="color: #718096; font-size: 0.9rem;"><?= date("d M Y", strtotime($row['created_at'])) ?></td>
                             <td>
                                 <a href="invoice.php?id=<?= (int)$row['id'] ?>" class="bh-view-btn">

@@ -1,68 +1,28 @@
 <?php
 include('dark_mode.php');
 include('../database/dbconnection.php');
+include('../database/ReportsData.php');
 
 // Security check: Only admins can view this page
 if (!isset($_SESSION['admin_email'])) {
-    if (isset($_SESSION['email']) && isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
-        // Fallback for older sessions
-    } else {
-        header("Location: loginPage.php");
-        exit();
-    }
+    header("Location: loginPage.php");
+    exit();
 }
 
-// Fetch some basic statistics for the report dashboard
-$stats = [
-    'total_users' => 0,
-    'total_revenue' => 0,
-    'total_bookings' => 0,
-    'total_tickets' => 0
-];
+// Fetch basic statistics
+$stats = getReportStats($conn);
 
-// 1. Total active users (Customers and Admins)
-$userQuery = $conn->query("SELECT COUNT(*) as count FROM customer WHERE status='Active'");
-if ($userQuery) $stats['total_users'] += $userQuery->fetch_assoc()['count'];
+// Monthly Revenue Data
+$monthlyRevenue = getMonthlyRevenue($conn, 6);
 
-$adminQuery = $conn->query("SELECT COUNT(*) as count FROM admin WHERE status='Active'");
-if ($adminQuery) $stats['total_users'] += $adminQuery->fetch_assoc()['count'];
+// Service Breakdown
+$serviceRevenue = getServiceRevenue($conn);
 
-// 2. Total revenue & bookings from payments table
-$revenueQuery = $conn->query("SELECT SUM(amount) as total_revenue, COUNT(*) as total_bookings FROM payments WHERE payment_status='completed'");
-if ($revenueQuery) {
-    $row = $revenueQuery->fetch_assoc();
-    $stats['total_revenue'] = $row['total_revenue'] ?? 0;
-    $stats['total_bookings'] = $row['total_bookings'] ?? 0;
-}
+// Most Popular Services
+$popularServices = getMostPopularServices($conn, 5);
 
-// 3. Total active ticket routes
-$ticketsQuery = $conn->query("SELECT COUNT(*) as count FROM tickets WHERE status='active'");
-if ($ticketsQuery) $stats['total_tickets'] = $ticketsQuery->fetch_assoc()['count'];
-
-// 4. Monthly Revenue Data for Chart/Table mapping
-$monthlyRevenue = [];
-$monthlyQuery = $conn->query("
-    SELECT DATE_FORMAT(payment_date, '%M %Y') as month, SUM(amount) as revenue 
-    FROM payments 
-    WHERE payment_status='completed' 
-    GROUP BY DATE_FORMAT(payment_date, '%M %Y') 
-    ORDER BY MIN(payment_date) DESC
-    LIMIT 6
-");
-if ($monthlyQuery) {
-    while($row = $monthlyQuery->fetch_assoc()) {
-        $monthlyRevenue[] = $row;
-    }
-}
-
-// 5. Recent Bookings (Last 5)
-$recentBookings = [];
-$recentBookingQuery = $conn->query("SELECT booking_id, user_email, amount, payment_date, payment_status FROM payments ORDER BY payment_date DESC LIMIT 5");
-if ($recentBookingQuery) {
-    while($row = $recentBookingQuery->fetch_assoc()) {
-        $recentBookings[] = $row;
-    }
-}
+// Recent Transactions
+$recentBookings = getRecentTransactions($conn, 5);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,6 +31,7 @@ if ($recentBookingQuery) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reports &amp; Analytics Dashboard</title>
     <link rel="stylesheet" href="../styleSheets/Reports.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../styleSheets/Admin.css?v=<?php echo time(); ?>">
     <link rel="stylesheet" href="../styleSheets/dark-mode.css?v=<?php echo time(); ?>">
     <script>
         localStorage.setItem('theme', '<?= $current_theme ?>');
@@ -95,6 +56,7 @@ if ($recentBookingQuery) {
                     <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
+                    <li><a href="ManageBookings.php">Manage Bookings</a></li>
                     <li><a href="Payments.php">Payments</a></li>
                     <li><a href="Reports.php" class="active">Reports</a></li>
                     <li><a href="Settings.php">Settings</a></li>
@@ -117,7 +79,7 @@ if ($recentBookingQuery) {
                     <div class="stat-card">
                         <div class="stat-icon rev-icon">💰</div>
                         <div class="stat-info">
-                            <span class="stat-number">$<?= number_format($stats['total_revenue'], 2) ?></span>
+                            <span class="stat-number"><?= number_format($stats['total_revenue'], 0) ?> ৳</span>
                             <span class="stat-label">Total Revenue</span>
                         </div>
                     </div>
@@ -125,9 +87,18 @@ if ($recentBookingQuery) {
                         <div class="stat-icon bk-icon">🎫</div>
                         <div class="stat-info">
                             <span class="stat-number"><?= number_format($stats['total_bookings']) ?></span>
-                            <span class="stat-label">Successful Bookings</span>
+                            <span class="stat-label">Total Bookings</span>
                         </div>
                     </div>
+                    <?php if ($stats['pending_bookings'] > 0 || $stats['pending_payments'] > 0): ?>
+                    <div class="stat-card" style="border-left: 4px solid #f59e0b;">
+                        <div class="stat-icon" style="background: #fff7ed; color: #f59e0b;">⚠️</div>
+                        <div class="stat-info">
+                            <span class="stat-number"><?= $stats['pending_bookings'] + $stats['pending_payments'] ?></span>
+                            <span class="stat-label">Pending Actions</span>
+                        </div>
+                    </div>
+                    <?php else: ?>
                     <div class="stat-card">
                         <div class="stat-icon us-icon">👥</div>
                         <div class="stat-info">
@@ -135,11 +106,12 @@ if ($recentBookingQuery) {
                             <span class="stat-label">Active Users</span>
                         </div>
                     </div>
+                    <?php endif; ?>
                     <div class="stat-card">
                         <div class="stat-icon tk-icon">🛣️</div>
                         <div class="stat-info">
                             <span class="stat-number"><?= number_format($stats['total_tickets']) ?></span>
-                            <span class="stat-label">Active Ticket Routes</span>
+                            <span class="stat-label">Live Routes</span>
                         </div>
                     </div>
                 </div>
@@ -147,7 +119,7 @@ if ($recentBookingQuery) {
                 <div class="report-grid">
                     <!-- Monthly Revenue Table -->
                     <div class="report-card">
-                        <h3>Monthly Revenue (Past 6 Months)</h3>
+                        <h3>Monthly Revenue Trends</h3>
                         <table class="report-table">
                             <thead>
                                 <tr>
@@ -162,7 +134,60 @@ if ($recentBookingQuery) {
                                     <?php foreach($monthlyRevenue as $m): ?>
                                     <tr>
                                         <td><strong><?= htmlspecialchars($m['month']) ?></strong></td>
-                                        <td style="text-align: right; color: #0f172a; font-weight: 600;">$<?= number_format($m['revenue'], 2) ?></td>
+                                        <td style="text-align: right; color: #0f172a; font-weight: 600;"><?= number_format($m['revenue'], 0) ?> ৳</td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Service Breakdown -->
+                    <div class="report-card">
+                        <h3>Revenue by Service</h3>
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>Service Type</th>
+                                    <th style="text-align: right;">Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if(empty($serviceRevenue)): ?>
+                                    <tr><td colspan="2" style="text-align: center; color: #64748b;">No service data available.</td></tr>
+                                <?php else: ?>
+                                    <?php foreach($serviceRevenue as $s): ?>
+                                    <tr>
+                                        <td><span class="booking-type" style="padding: 4px 10px; border-radius: 6px; background: #f1f5f9; color: #475569; font-size: 0.8em;"><?= strtoupper($s['service_type']) ?></span></td>
+                                        <td style="text-align: right; font-weight: 600;"><?= number_format($s['revenue'], 0) ?> ৳</td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Most Popular Services -->
+                    <div class="report-card">
+                        <h3>Most Popular Services</h3>
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>Service Name</th>
+                                    <th style="text-align: right;">Bookings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if(empty($popularServices)): ?>
+                                    <tr><td colspan="2" style="text-align: center; color: #64748b;">No popular items yet.</td></tr>
+                                <?php else: ?>
+                                    <?php foreach($popularServices as $p): ?>
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight: 500; color: #1e293b;"><?= htmlspecialchars($p['service_name']) ?></div>
+                                            <small style="color: #64748b; font-size: 0.8em;"><?= ucfirst($p['service_type']) ?></small>
+                                        </td>
+                                        <td style="text-align: right; font-weight: 600;"><?= number_format($p['booking_count']) ?></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -177,7 +202,7 @@ if ($recentBookingQuery) {
                             <thead>
                                 <tr>
                                     <th>Booking ID</th>
-                                    <th>Date</th>
+                                    <th>Status</th>
                                     <th style="text-align: right;">Amount</th>
                                 </tr>
                             </thead>
@@ -187,9 +212,13 @@ if ($recentBookingQuery) {
                                 <?php else: ?>
                                     <?php foreach($recentBookings as $b): ?>
                                     <tr>
-                                        <td style="color: #3b82f6; font-weight: 500;">#<?= htmlspecialchars($b['booking_id']) ?></td>
-                                        <td style="font-size: 0.9em; color: #64748b;"><?= date('M d, Y', strtotime($b['payment_date'])) ?></td>
-                                        <td style="text-align: right; font-weight: 600;">$<?= number_format($b['amount'], 2) ?></td>
+                                        <td style="color: #3b82f6; font-weight: 500;">TX<?= 100 + (int)$b['booking_id'] ?></td>
+                                        <td>
+                                            <span class="status-badge <?= strtolower($b['payment_status']) ?>" style="padding: 4px 10px; border-radius: 20px; font-size: 0.75em; font-weight: 700;">
+                                                <?= ucfirst($b['payment_status']) ?>
+                                            </span>
+                                        </td>
+                                        <td style="text-align: right; font-weight: 600;"><?= number_format($b['amount'], 0) ?> ৳</td>
                                     </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>

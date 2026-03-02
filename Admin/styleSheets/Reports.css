@@ -41,7 +41,7 @@ body {
     font-size: 1.3em;
     font-weight: 700;
     letter-spacing: 1px;
-    border-bottom: 1px solid rgba(255,255,255,0.10);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
     padding-bottom: 16px;
 }
 
@@ -272,6 +272,82 @@ body {
     border-radius: 4px;
 }
 
-.main-content::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.success,
+.status-badge.paid {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.status-badge.pending {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.status-badge.failed,
+.status-badge.rejected {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Service Type Tags */
+.booking-type {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Scrollbar and Table spacing */
+.report-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.report-table td {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Dark Mode Adjustments */
+[data-theme='dark'] .stat-card,
+[data-theme='dark'] .report-card {
+    background: #1e293b;
+    color: #f1f5f9;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='dark'] .report-card h3 {
+    color: #f1f5f9;
+    border-bottom-color: #334155;
+}
+
+[data-theme='dark'] .stat-number {
+    color: #f8fafc;
+}
+
+[data-theme='dark'] .report-table td {
+    color: #cbd5e1;
+    border-bottom-color: #334155;
+}
+
+[data-theme='dark'] .report-table th {
+    color: #64748b;
+    border-bottom-color: #334155;
+}
+
+[data-theme='dark'] .report-table tbody tr:hover td {
+    background: #1a2230;
 }

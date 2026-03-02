@@ -179,7 +179,7 @@ body {
 .profile-role {
     display: inline-block;
     background: linear-gradient(135deg, #4fc3f7 0%, #2196f3 100%);
-    color: white;
+    color: white !important;
     padding: 6px 16px;
     border-radius: 20px;
     font-size: 0.95rem;

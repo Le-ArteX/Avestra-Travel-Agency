@@ -174,20 +174,38 @@ body {
 }
 
 .invoice-status p span {
-    font-size: 1.15rem;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 800;
     padding: 6px 16px;
-    border-radius: 20px;
+    border-radius: 100px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
-.invoice-status p span[style*="color:#1976d2"] {
-    color: #0284c7 !important;
-    background: #e0f2fe;
-}
-
-.invoice-status p span[style*="color:#43a047"] {
+.invoice-status p span.status-confirmed,
+.invoice-status p span.status-paid,
+.invoice-status p span.status-success {
     color: #059669 !important;
-    background: #ecfdf5;
+    background: #ecfdf5 !important;
+    border: 1px solid #d1fae5;
+}
+
+.invoice-status p span.status-pending {
+    color: #d97706 !important;
+    background: #fffbeb !important;
+    border: 1px solid #fef3c7;
+}
+
+.invoice-status p span.status-rejected,
+.invoice-status p span.status-unpaid,
+.invoice-status p span.status-cancelled {
+    color: #dc2626 !important;
+    background: #fef2f2 !important;
+    border: 1px solid #fee2e2;
 }
 
 .invoice-btn {

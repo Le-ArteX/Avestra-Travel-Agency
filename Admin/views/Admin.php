@@ -42,6 +42,12 @@ include('../database/ToursData.php');
 $totalToursCount = isset($tours) ? getTotalToursCount($tours) : 0;
 $activeToursCount = isset($tours) ? getActiveToursCount($tours) : 0;
 
+$pendingBookingsCount = 0;
+$pbQuery = $conn->query("SELECT COUNT(*) as count FROM bookings WHERE booking_status = 'pending'");
+if ($pbQuery) {
+    $pendingBookingsCount = $pbQuery->fetch_assoc()['count'];
+}
+
 $message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
 $is_dark = isset($_SESSION['settings']['dark_mode']) && $_SESSION['settings']['dark_mode'] === 'dark';
 ?>
@@ -75,6 +81,7 @@ $is_dark = isset($_SESSION['settings']['dark_mode']) && $_SESSION['settings']['d
                     <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
+                    <li><a href="ManageBookings.php">Manage Bookings</a></li>
                     <li><a href="Payments.php">Payments</a></li>
                     <li><a href="Reports.php">Reports</a></li>
                     <li><a href="Settings.php">Settings</a></li>
@@ -112,6 +119,10 @@ $is_dark = isset($_SESSION['settings']['dark_mode']) && $_SESSION['settings']['d
                         <div class="stat-box">
                             <span class="stat-number"><?php echo $activeHotelsCount; ?></span>
                             <span class="stat-label">Active Hotels</span>
+                        </div>
+                        <div class="stat-box" style="background: #fffbeb; border: 1px solid #fef3c7;">
+                            <span class="stat-number" style="color: #b45309;"><?php echo $pendingBookingsCount; ?></span>
+                            <span class="stat-label" style="color: #92400e;">Pending Bookings</span>
                         </div>
                     </div>
                 </div>

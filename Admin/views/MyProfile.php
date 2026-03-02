@@ -36,6 +36,7 @@ include('dark_mode.php');
                     <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
+                    <li><a href="ManageBookings.php">Manage Bookings</a></li>
                     <li><a href="Payments.php">Payments</a></li>
                     <li><a href="Reports.php">Reports</a></li>
                     <li><a href="Settings.php">Settings</a></li>
@@ -119,7 +120,6 @@ include('dark_mode.php');
                             <label for="profile-password">Password:</label>
                             <input type="password" id="profile-password" name="profile-password" value="********"
                                 placeholder="Enter password" disabled>
-                            <small style="color: #888;">To change your password, use the section below.</small>
                         </div>
                         <div class="form-row">
                             <button type="submit" class="update-profile-btn">Update Profile</button>

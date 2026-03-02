@@ -51,7 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $conn->commit();
             
-            $_SESSION['payment_msg'] = "Payment #" . $payment_id . " marked as " . ucfirst($new_status) . ".";
+            $formatted_booking_id = "TX" . (100 + $booking_id);
+            $_SESSION['payment_msg'] = "Payment for booking " . $formatted_booking_id . " marked as " . ucfirst($new_status) . ".";
             $_SESSION['payment_msg_type'] = "success";
             
         } catch (Exception $e) {

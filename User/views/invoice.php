@@ -52,7 +52,7 @@ $paid_date = $payment['payment_date'] ?? '—';
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Invoice #<?= (int)$booking['id'] ?> | Avestra</title>
+    <title>Invoice #TX<?= 100 + (int)$booking['id'] ?> | Avestra</title>
     <link rel="stylesheet" href="../styleSheets/user.css">
     <link rel="stylesheet" href="../styleSheets/invoice.css">
     <link rel="stylesheet" href="../styleSheets/user-dark-mode.css">
@@ -87,7 +87,7 @@ $paid_date = $payment['payment_date'] ?? '—';
 <div class="invoice-container">
     <div class="invoice-header">
         <h2>🧾 Invoice</h2>
-        <div class="invoice-id">Invoice ID: #<?= (int)$booking['id'] ?></div>
+        <div class="invoice-id">Invoice ID: #TX<?= 100 + (int)$booking['id'] ?></div>
         <div class="invoice-date">Booked On: <?= htmlspecialchars(date("d M Y, h:i A", strtotime($booking['created_at']))) ?></div>
     </div>
 
@@ -102,10 +102,31 @@ $paid_date = $payment['payment_date'] ?? '—';
 
     <div class="invoice-section invoice-status">
         <div>
-            <p><b>Booking Status:</b> <span style="color:#1976d2;"><?= htmlspecialchars(ucfirst($booking_status)) ?></span></p>
+            <p><b>Booking Status:</b> 
+                <span class="status-<?= strtolower($booking_status) ?>">
+                    <?php if (strtolower($booking_status) === 'confirmed'): ?>
+                        <i class="fas fa-check-circle"></i>
+                    <?php elseif (strtolower($booking_status) === 'pending'): ?>
+                        <i class="fas fa-clock"></i>
+                    <?php else: ?>
+                        <i class="fas fa-times-circle"></i>
+                    <?php endif; ?>
+                    <?= htmlspecialchars(ucfirst($booking_status)) ?>
+                </span>
+            </p>
         </div>
         <div>
-            <p><b>Payment Status:</b> <span style="color:#43a047;"><?= htmlspecialchars(ucfirst($payment_status)) ?></span></p>
+            <p><b>Payment Status:</b> 
+                <span class="status-<?= strtolower($payment_status) ?>">
+                    <?php if (strtolower($payment_status) === 'paid' || strtolower($payment_status) === 'success'): ?>
+                        <i class="fas fa-check-double"></i> Confirmed
+                    <?php elseif (strtolower($payment_status) === 'pending'): ?>
+                        <i class="fas fa-hourglass-half"></i> Pending
+                    <?php else: ?>
+                        <i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars(ucfirst($payment_status)) ?>
+                    <?php endif; ?>
+                </span>
+            </p>
         </div>
     </div>
 

@@ -68,7 +68,10 @@ if ($service_type === 'ticket') {
 
 /* Default booking values */
 $travel_date = date("Y-m-d"); // user can edit later if you want
-$quantity = 1;
+$quantity = (int)($_POST['quantity'] ?? 1);
+if ($quantity <= 0) $quantity = 1;
+
+$total_price = $total_price * $quantity;
 
 /* Insert booking */
 $ins = $conn->prepare("

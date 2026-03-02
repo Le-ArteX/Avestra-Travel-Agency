@@ -42,6 +42,7 @@ $is_dark = isset($_SESSION['settings']['dark_mode']) && $_SESSION['settings']['d
                     <li><a href="ManageTickets.php">Tickets</a></li>
                     <li><a href="ManageHotels.php">Hotels</a></li>
                     <li><a href="ManageTours.php">Tours</a></li>
+                    <li><a href="ManageBookings.php">Manage Bookings</a></li>
                     <li><a href="Payments.php">Payments</a></li>
                     <li><a href="Reports.php">Reports</a></li>
                     <li><a href="Settings.php">Settings</a></li>
