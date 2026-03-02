@@ -1,22 +1,23 @@
 <?php
 /**
  * SMTP Configuration - Avestra Travel Agency
- * 
- * To send real emails from localhost:
- * 1. If using GMAIL: 
- *    - Enable 2-Step Verification in your Google Account.
- *    - Generate an "App Password" (Search for 'App Passwords' in Google Account settings).
- *    - Use that 16-character code as SMTP_PASS.
+ *
+ * Set the environment variables below (see .env.example) or edit the
+ * fallback defaults to configure outgoing email.
+ *
+ * For Gmail:
+ *   1. Enable 2-Step Verification in your Google Account.
+ *   2. Generate an "App Password" (search 'App Passwords' in Google Account settings).
+ *   3. Set SMTP_PASS to that 16-character code.
  */
 
-// SMTP server settings
-define('SMTP_ENABLED', false); // Set to true once credentials are filled
-define('LOCAL_DEBUG_MODE', true); // SET TO TRUE TO SEE OTP ON SCREEN FOR LOCALHOST TESTING
-define('SMTP_HOST', 'smtp.gmail.com');
-define('SMTP_PORT', 465); // Standard SSL port for Gmail
-define('SMTP_SSL', true); // Enable SSL for Gmail/secure servers
-define('SMTP_USER', 'your-email@gmail.com');
-define('SMTP_PASS', 'your-app-password'); 
-define('SMTP_FROM', 'noreply@avestra-travel.com');
-define('SMTP_FROM_NAME', 'Avestra Travel Agency');
+define('SMTP_ENABLED',    filter_var(getenv('SMTP_ENABLED')      ?: false, FILTER_VALIDATE_BOOLEAN));
+define('LOCAL_DEBUG_MODE', filter_var(getenv('LOCAL_DEBUG_MODE') ?: false, FILTER_VALIDATE_BOOLEAN));
+define('SMTP_HOST',      getenv('SMTP_HOST')      ?: 'smtp.gmail.com');
+define('SMTP_PORT',      (int)(getenv('SMTP_PORT') ?: 465));
+define('SMTP_SSL',       true);
+define('SMTP_USER',      getenv('SMTP_USER')      ?: 'your-email@gmail.com');
+define('SMTP_PASS',      getenv('SMTP_PASS')      ?: 'your-app-password');
+define('SMTP_FROM',      getenv('SMTP_FROM')      ?: 'noreply@avestra-travel.com');
+define('SMTP_FROM_NAME', getenv('SMTP_FROM_NAME') ?: 'Avestra Travel Agency');
 ?>
