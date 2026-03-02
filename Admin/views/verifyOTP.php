@@ -24,8 +24,8 @@ if (empty($otp_email)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify OTP - Avestra Travel Agency</title>
-    <link rel="stylesheet" href="../styleSheets/Signup.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="../styleSheets/dark-mode.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../styleSheets/Signup.css?v=<?php echo filemtime(__DIR__ . '/../styleSheets/Signup.css'); ?>">
+    <link rel="stylesheet" href="../styleSheets/dark-mode.css?v=<?php echo filemtime(__DIR__ . '/../styleSheets/dark-mode.css'); ?>">
     <link rel="icon" href="../images/logo.png" type="image/png">
     <style>
         /* OTP Specific Styles that were inline */
@@ -106,13 +106,13 @@ if (empty($otp_email)) {
         </div>
 
         <?php if (isset($_SESSION['otp_error'])): ?>
-            <div class="error-message" style="display: block; text-align: center; margin-bottom: 15px; background: #fee2e2; border: 1px solid #ef4444; padding: 10px; border-radius: 8px; color: #b91c1c;">
+            <div id="otpBanner" class="error-message" style="display: block; text-align: center; margin-bottom: 15px; background: #fee2e2; border: 1px solid #ef4444; padding: 10px; border-radius: 8px; color: #b91c1c; transition: opacity 0.6s ease;">
                 <?= $_SESSION['otp_error']; unset($_SESSION['otp_error']); ?>
             </div>
         <?php endif; ?>
 
         <?php if (isset($_SESSION['otp_success'])): ?>
-            <div class="success-message" style="display: block; text-align: center; margin-bottom: 15px; background: #dcfce7; border: 1px solid #22c55e; padding: 10px; border-radius: 8px; color: #166534;">
+            <div id="otpBanner" class="success-message" style="display: block; text-align: center; margin-bottom: 15px; background: #dcfce7; border: 1px solid #22c55e; padding: 10px; border-radius: 8px; color: #166534; transition: opacity 0.6s ease;">
                 <?= $_SESSION['otp_success']; unset($_SESSION['otp_success']); ?>
             </div>
         <?php endif; ?>
@@ -194,6 +194,15 @@ if (empty($otp_email)) {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             applyStoredTheme();
+
+            // Auto-dismiss success/error banner after 8 seconds with fade-out
+            const banner = document.getElementById('otpBanner');
+            if (banner) {
+                setTimeout(() => {
+                    banner.style.opacity = '0';
+                    setTimeout(() => { banner.style.display = 'none'; }, 600);
+                }, 8000);
+            }
         });
     </script>
 </body>

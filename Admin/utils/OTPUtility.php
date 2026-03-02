@@ -6,7 +6,7 @@ class OTPUtility {
      * Generate a 6-digit random OTP
      */
     public static function generateOTP() {
-        return sprintf("%06d", mt_rand(100000, 999999));
+        return sprintf("%06d", random_int(100000, 999999));
     }
 
     /**

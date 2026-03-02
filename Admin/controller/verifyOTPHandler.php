@@ -7,7 +7,19 @@ require_once __DIR__ . '/../utils/OTPUtility.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_otp = $_POST['otp_code'] ?? '';
-    
+
+    // Brute-force protection: max 5 attempts
+    if (!isset($_SESSION['otp_attempts'])) {
+        $_SESSION['otp_attempts'] = 0;
+    }
+    if ($_SESSION['otp_attempts'] >= 5) {
+        \Admin\Utils\OTPUtility::clearOTP();
+        unset($_SESSION['otp_attempts']);
+        $_SESSION['otp_error'] = "Too many incorrect attempts. Please request a new OTP.";
+        header("Location: ../views/verifyOTP.php");
+        exit();
+    }
+
     if (strlen($user_otp) !== 6) {
         $_SESSION['otp_error'] = "Please enter a valid 6-digit code.";
         header("Location: ../views/verifyOTP.php");
@@ -52,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             \Admin\Utils\OTPUtility::clearOTP();
             unset($_SESSION['otp_signup_data']);
             unset($_SESSION['otp_action']);
+            unset($_SESSION['otp_attempts']);
             header("Location: ../views/loginPage.php");
             exit();
 
@@ -74,10 +87,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             \Admin\Utils\OTPUtility::clearOTP();
             unset($_SESSION['otp_forgot_data']);
             unset($_SESSION['otp_action']);
+            unset($_SESSION['otp_attempts']);
             header("Location: ../views/loginPage.php");
             exit();
         }
     } else {
+        $_SESSION['otp_attempts']++;
         $_SESSION['otp_error'] = $verification['message'];
         header("Location: ../views/verifyOTP.php");
         exit();

@@ -16,7 +16,9 @@ $quantity     = (int)($_POST['quantity'] ?? 1);
 $unit_price   = (float)($_POST['unit_price'] ?? 0);
 
 if ($service_type === '' || $service_name === '' || $travel_date === '' || $quantity <= 0 || $unit_price <= 0) {
-    die("Invalid booking data!");
+    $_SESSION['booking_error'] = "Invalid booking data. Please try again.";
+    header("Location: user_dashboard.php");
+    exit();
 }
 
 $total_price = $unit_price * $quantity;
@@ -33,6 +35,9 @@ if ($stmt->execute()) {
     header("Location: bookingHistory.php");
     exit();
 } else {
-    echo "❌ Booking failed: " . $stmt->error;
+    error_log("Booking insert failed: " . $stmt->error);
+    $_SESSION['booking_error'] = "Booking could not be completed. Please try again.";
+    header("Location: user_dashboard.php");
+    exit();
 }
 ?>

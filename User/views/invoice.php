@@ -5,7 +5,8 @@ include '../database/dbconnection.php';
 
 $booking_id = (int)($_GET['id'] ?? 0);
 if ($booking_id <= 0) {
-    die("Invalid invoice request.");
+    header("Location: bookingHistory.php");
+    exit();
 }
 
 $email = $_SESSION['email'];
@@ -23,7 +24,9 @@ $stmt->execute();
 $booking = $stmt->get_result()->fetch_assoc();
 
 if (!$booking) {
-    die("Invoice not found or you don't have permission.");
+    $_SESSION['booking_error'] = "Invoice not found or you don't have permission to view it.";
+    header("Location: bookingHistory.php");
+    exit();
 }
 
 /* Fetch payment info (if paid/exists) */

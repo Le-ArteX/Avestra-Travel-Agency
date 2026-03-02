@@ -77,15 +77,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['role'] = $user['role'];
                     
-                    // Remember me: set/clear cookies for 30 days
+                    // Remember me: store only email in cookie (never password)
                     if (isset($_POST['remember-me'])) {
                         $cookie_time = time() + (30 * 24 * 60 * 60); // 30 days
-                        setcookie('remember_email', $email, $cookie_time, '/');
-                        setcookie('remember_password', $password, $cookie_time, '/');
+                        setcookie('remember_email', $email, ['expires' => $cookie_time, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
                     } else {
-                        // Clear cookies if not selected
+                        // Clear cookie if not selected
                         setcookie('remember_email', '', time() - 3600, '/');
-                        setcookie('remember_password', '', time() - 3600, '/');
                     }
                     
                     // Clear form data
@@ -129,15 +127,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $_SESSION['role'] = $user['role'];
                         $_SESSION['phone'] = $user['phoneNumber'];
                         
-                        // Remember me: set/clear cookies for 30 days
+                        // Remember me: store only email in cookie (never password)
                         if (isset($_POST['remember-me'])) {
                             $cookie_time = time() + (30 * 24 * 60 * 60); // 30 days
-                            setcookie('remember_email', $email, $cookie_time, '/');
-                            setcookie('remember_password', $password, $cookie_time, '/');
+                            setcookie('remember_email', $email, ['expires' => $cookie_time, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
                         } else {
-                            // Clear cookies if not selected
+                            // Clear cookie if not selected
                             setcookie('remember_email', '', time() - 3600, '/');
-                            setcookie('remember_password', '', time() - 3600, '/');
                         }
                         
                         // Clear form data

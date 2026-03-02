@@ -12,7 +12,9 @@ $stmt->execute();
 $booking = $stmt->get_result()->fetch_assoc();
 
 if (!$booking) {
-    die("Invalid booking.");
+    $_SESSION['payment_error'] = "Invalid or inaccessible booking.";
+    header("Location: bookingHistory.php");
+    exit();
 }
 ?>
 <!DOCTYPE html>

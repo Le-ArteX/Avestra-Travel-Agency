@@ -11,13 +11,15 @@ if (empty($admin_email)) {
 }
 
 if (isset($_FILES['profile-image']) && $_FILES['profile-image']['error'] === 0) {
-    $allowed_types = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-    $file_type = $_FILES['profile-image']['type'];
+    // Validate using actual file contents, not the client-supplied MIME type
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $real_mime = $finfo->file($_FILES['profile-image']['tmp_name']);
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
     $file_size = $_FILES['profile-image']['size'];
-    
+
     $proceed_with_upload = true;
 
-    if (!in_array($file_type, $allowed_types)) {
+    if (!in_array($real_mime, $allowed_types)) {
         $_SESSION['error_message'] = 'Invalid file type. Only JPG, PNG, and GIF are allowed.';
         $proceed_with_upload = false;
     }
@@ -29,7 +31,7 @@ if (isset($_FILES['profile-image']) && $_FILES['profile-image']['error'] === 0) 
     if ($proceed_with_upload) {
         $upload_dir = '../images/profiles/';
         if (!file_exists($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
+            mkdir($upload_dir, 0755, true);
         }
         $file_extension = pathinfo($_FILES['profile-image']['name'], PATHINFO_EXTENSION);
         $new_filename = 'profile_' . md5($admin_email) . '.' . $file_extension;

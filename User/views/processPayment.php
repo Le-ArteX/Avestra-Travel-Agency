@@ -12,7 +12,9 @@ $method = trim($_POST['payment_method'] ?? '');
 $email = $_SESSION['email'];
 
 if ($booking_id <= 0 || $method === '') {
-    die("Invalid payment request.");
+    $_SESSION['payment_error'] = "Invalid payment request.";
+    header("Location: user_dashboard.php");
+    exit();
 }
 
 /* Get booking amount */
@@ -21,7 +23,11 @@ $stmt->bind_param("is", $booking_id, $email);
 $stmt->execute();
 $b = $stmt->get_result()->fetch_assoc();
 
-if (!$b) die("Booking not found.");
+if (!$b) {
+    $_SESSION['payment_error'] = "Booking not found.";
+    header("Location: bookingHistory.php");
+    exit();
+}
 
 $amount = (float)$b['total_price'];
 $txn = strtoupper(uniqid("TXN"));
@@ -36,7 +42,10 @@ $pay = $conn->prepare("
 $pay->bind_param("isdss", $booking_id, $email, $amount, $method, $txn);
 
 if (!$pay->execute()) {
-    die("Payment failed: " . $pay->error);
+    error_log("Payment insert failed: " . $pay->error);
+    $_SESSION['payment_error'] = "Payment could not be processed. Please try again.";
+    header("Location: payment.php?booking_id=" . $booking_id);
+    exit();
 }
 
 /* Update booking */

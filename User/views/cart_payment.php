@@ -28,7 +28,8 @@ while ($row = $bookings->fetch_assoc()) {
 }
 
 if (empty($items)) {
-    die("No pending bookings found.");
+    header("Location: bookingHistory.php");
+    exit();
 }
 ?>
 <!DOCTYPE html>

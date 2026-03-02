@@ -14,18 +14,28 @@ $service_type = trim($_POST['service_type'] ?? '');
 $service_id_raw = trim($_POST['service_id'] ?? '');
 
 if ($service_type === '' || empty($service_id_raw)) {
-    die("Invalid booking request.");
+    $_SESSION['booking_error'] = "Invalid booking request.";
+    header("Location: user_dashboard.php");
+    exit();
 }
 
 /* Fetch service from DB based on service_type */
 if ($service_type === 'ticket') {
     $service_id = (int)$service_id_raw;
-    if ($service_id <= 0) die("Invalid booking request.");
+    if ($service_id <= 0) {
+        $_SESSION['booking_error'] = "Invalid booking request.";
+        header("Location: start_Booking.php");
+        exit();
+    }
     $q = $conn->prepare("SELECT route, price FROM tickets WHERE id=? AND status='active'");
     $q->bind_param("i", $service_id);
     $q->execute();
     $s = $q->get_result()->fetch_assoc();
-    if (!$s) die("Ticket not found.");
+    if (!$s) {
+        $_SESSION['booking_error'] = "Ticket not found or no longer available.";
+        header("Location: start_Booking.php");
+        exit();
+    }
 
     $service_name = $s['route'];
     $total_price  = (float)$s['price'];
@@ -39,7 +49,11 @@ if ($service_type === 'ticket') {
     $q->bind_param("s", $hotel_id);
     $q->execute();
     $s = $q->get_result()->fetch_assoc();
-    if (!$s) die("Hotel not found.");
+    if (!$s) {
+        $_SESSION['booking_error'] = "Hotel not found or no longer available.";
+        header("Location: find_Hotels.php");
+        exit();
+    }
 
     $service_name = $s['name'];
     $total_price  = (float)$s['price_per_night'];
@@ -49,12 +63,16 @@ if ($service_type === 'ticket') {
 
 } elseif ($service_type === 'tour') {
     $tour_id = trim($service_id_raw); // String ID like TRV-001
-    
+
     $q = $conn->prepare("SELECT name, price FROM tours WHERE id=? AND status='active'");
     $q->bind_param("s", $tour_id);
     $q->execute();
     $s = $q->get_result()->fetch_assoc();
-    if (!$s) die("Tour package not found.");
+    if (!$s) {
+        $_SESSION['booking_error'] = "Tour package not found or no longer available.";
+        header("Location: explore_Tour_Packages.php");
+        exit();
+    }
 
     $service_name = $s['name'];
     $total_price  = (float)$s['price'];
@@ -63,7 +81,9 @@ if ($service_type === 'ticket') {
     }
 
 } else {
-    die("Invalid service type.");
+    $_SESSION['booking_error'] = "Invalid service type.";
+    header("Location: user_dashboard.php");
+    exit();
 }
 
 /* Default booking values */
@@ -89,4 +109,7 @@ if ($ins->execute()) {
     exit();
 }
 
-die("Booking failed: " . $ins->error);
+error_log("Booking insert failed: " . $ins->error);
+$_SESSION['booking_error'] = "Booking could not be completed. Please try again.";
+header("Location: user_dashboard.php");
+exit();

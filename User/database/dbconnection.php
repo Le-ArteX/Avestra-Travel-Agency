@@ -10,7 +10,8 @@ $conn = new mysqli($host, $user, $password, $database);
 
 // Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    error_log("DB connection failed: " . $conn->connect_error);
+    die("A database error occurred. Please try again later.");
 }
 
 // Set charset to UTF-8

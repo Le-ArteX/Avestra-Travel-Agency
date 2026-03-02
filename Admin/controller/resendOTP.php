@@ -14,6 +14,7 @@ if (isset($_SESSION['otp_action'])) {
     if (!empty($email)) {
         $otp = \Admin\Utils\OTPUtility::generateOTP();
         \Admin\Utils\OTPUtility::storeOTP($otp);
+        unset($_SESSION['otp_attempts']); // Reset attempt counter for new OTP
         
         $mailSent = \Admin\Utils\MailUtility::sendOTPMail($email, $otp);
         

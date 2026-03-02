@@ -70,7 +70,7 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../styleSheets/user.css">
     <link rel="stylesheet" href="../styleSheets/start_Booking.css">
     <link rel="stylesheet" href="../styleSheets/footer.css">
-    <link rel="stylesheet" href="../styleSheets/user-dark-mode.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../styleSheets/user-dark-mode.css?v=<?php echo filemtime(__DIR__ . '/../styleSheets/user-dark-mode.css'); ?>">
     <link rel="icon" href="../images/logo.png" type="image/png">
 </head>
 <body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">

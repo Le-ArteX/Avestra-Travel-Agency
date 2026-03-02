@@ -10,11 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $email = trim($_POST['email']);
+    $email    = trim($_POST['email']);
     $password = trim($_POST['password']);
 
+    // Query the customer table (corrected from the legacy 'signup' table)
     $stmt = $conn->prepare(
-        "SELECT username, email, password, role FROM signup WHERE email=?"
+        "SELECT username, email, password, role, status FROM customer WHERE email = ?"
     );
     $stmt->bind_param("s", $email);
     $stmt->execute();
@@ -25,32 +26,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (password_verify($password, $user['password'])) {
 
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role'];
-
-            /* Admin redirect */
-            // if ($user['role'] === 'admin') {
-            //     header("Location: ../Admin/views/Admin.php");
-            //     exit();
-            // }
-
-            /* Redirect back after booking */
-            if (isset($_SESSION['redirect_after_login'])) {
-                $redirect = $_SESSION['redirect_after_login'];
-                unset($_SESSION['redirect_after_login']);
-                header("Location: $redirect");
+            // Block inactive / suspended accounts
+            if ($user['status'] !== 'Active') {
+                $_SESSION['login_error_message'] = "Your account is " . strtolower($user['status']) . ". Please contact support.";
+                header("Location: ../../Admin/views/loginPage.php");
                 exit();
             }
 
-            /* Default user dashboard */
+            $_SESSION['email']    = $user['email'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['role']     = $user['role'];
+
+            // Redirect back to original page after login (local paths only — prevents open redirect)
+            if (isset($_SESSION['redirect_after_login'])) {
+                $redirect = $_SESSION['redirect_after_login'];
+                unset($_SESSION['redirect_after_login']);
+                if (strpos($redirect, '/') === 0) {
+                    header("Location: $redirect");
+                    exit();
+                }
+            }
+
+            // Default user dashboard
             header("Location: ../User/views/user_dashboard.php");
             exit();
         }
     }
 
     $_SESSION['login_error_message'] = "Invalid email or password.";
-    header("Location: ../Admin/views/loginPage.php");
+    header("Location: ../../Admin/views/loginPage.php");
     exit();
 }
 ?>
