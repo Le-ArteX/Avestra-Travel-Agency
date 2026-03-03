@@ -1,9 +1,9 @@
 <?php
 // Database connection configuration
-$host     = getenv('DB_HOST')     ?: 'localhost';
-$user     = getenv('DB_USER')     ?: 'root';
-$password = getenv('DB_PASSWORD') ?: '';
-$database = getenv('DB_NAME')     ?: 'avestra-Travel-Agency';
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "avestra-Travel-Agency";
 
 // Create connection
 $conn = new mysqli($host, $user, $password, $database);
