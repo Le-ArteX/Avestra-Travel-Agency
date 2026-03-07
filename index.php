@@ -1,4 +1,4 @@
 <?php
-header("Location: Admin/views/homePage.php");
+header("Location: Admin/views/homePage");
 exit();
 ?>

@@ -17,7 +17,7 @@ include '../controller/forgotPasswordFormDataHandler.php';
         <h2>Forgot Password</h2>
         <?php include '../controller/ForgotPasswordMessageDisplay.php'; ?>
         
-        <form class="forgot-form" action="../controller/forgotPasswordValidation.php" method="post">
+        <form class="forgot-form" action="../controller/forgotPasswordValidation" method="post">
             <div class="form-group">
                 <input type="email" id="email" name="email" placeholder=" " autocomplete="email"
                     title="Please enter your registered email address"

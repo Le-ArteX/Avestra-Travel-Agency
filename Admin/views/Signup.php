@@ -41,7 +41,7 @@ include '../controller/SignupFormDataHandler.php';
         <h2>Create Your Account</h2>
         <?php include '../controller/SignupMessageDisplay.php'; ?>
         
-        <form class="signup-form" action="../controller/SignupValidation.php" method="post">
+        <form class="signup-form" action="../controller/SignupValidation" method="post">
             <div class="form-group">
                 <input type="text" id="username" name="username" placeholder=" " autocomplete="username"
                     title="Full name must contain only letters and spaces."

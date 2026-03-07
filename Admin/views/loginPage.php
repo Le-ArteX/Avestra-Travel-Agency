@@ -51,7 +51,7 @@ include '../controller/loginFormDataHandler.php';
         unset($_SESSION['login_form_errors']);
         ?>
         
-        <form class="login-form" action="../controller/loginValidation.php" method="post">
+        <form class="login-form" action="../controller/loginValidation" method="post">
             <div class="form-group">
                 <input type="email" id="email" name="email" placeholder=" " 
                     autocomplete="email"
