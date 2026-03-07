@@ -116,6 +116,21 @@ include '../controller/SignupFormDataHandler.php';
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             applyStoredTheme();
+
+            // Auto-dismiss success/error messages after 7 seconds
+            const messages = document.querySelectorAll('.success-message, .general-error-message, .error-message');
+            messages.forEach(msg => {
+                // For span.error-message (inline errors), we might not want to hide them automatically 
+                // but let's hide only the main banners for now if they are divs/blocks
+                if (msg.tagName === 'DIV' || msg.classList.contains('success-message') || msg.classList.contains('general-error-message')) {
+                    setTimeout(() => {
+                        msg.style.opacity = '0';
+                        setTimeout(() => { 
+                            msg.style.display = 'none'; 
+                        }, 600); // Wait for CSS transition
+                    }, 7000);
+                }
+            });
         });
     </script>
 </body>

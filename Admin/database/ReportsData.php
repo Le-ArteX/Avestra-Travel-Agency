@@ -22,8 +22,8 @@ function getReportStats($conn) {
     $revenueQuery = $conn->query("SELECT SUM(amount) as total_revenue, COUNT(*) as total_bookings FROM payments WHERE payment_status IN ('success', 'paid')");
     if ($revenueQuery) {
         $row = $revenueQuery->fetch_assoc();
-        $stats['total_revenue'] = $row['total_revenue'] ?? 0;
-        $stats['total_bookings'] = $row['total_bookings'] ?? 0;
+        $stats['total_revenue'] = isset($row['total_revenue']) ? $row['total_revenue'] : 0;
+        $stats['total_bookings'] = isset($row['total_bookings']) ? $row['total_bookings'] : 0;
     }
 
     // 3. Total active ticket routes

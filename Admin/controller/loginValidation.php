@@ -4,6 +4,12 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 include '../database/dbconnection.php';
 
+if (!$conn || $conn->connect_error) {
+    $_SESSION['login_error_message'] = "Database connection error. Please try again later.";
+    header("Location: ../views/loginPage.php");
+    exit();
+}
+
 $email = $password = "";
 $email_error = $password_error = "";
 $general_error = "";
@@ -49,9 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $check_admin = $conn->prepare("SELECT username, email, password, role, status, phoneNumber, date FROM admin WHERE email = ?");
             $check_admin->bind_param("s", $email);
             $check_admin->execute();
-            $admin_result = $check_admin->get_result();
+            $admin_result = safe_get_result($check_admin);
             
-            if ($admin_result->num_rows > 0) {
+            if ($admin_result && $admin_result->num_rows > 0) {
                 // User found in admin table
                 $user = $admin_result->fetch_assoc();
                 
@@ -80,7 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Remember me: store only email in cookie (never password)
                     if (isset($_POST['remember-me'])) {
                         $cookie_time = time() + (30 * 24 * 60 * 60); // 30 days
-                        setcookie('remember_email', $email, ['expires' => $cookie_time, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
+                        // PHP < 7.3 legacy signature: name, value, expire, path, domain, secure, httponly
+                        setcookie('remember_email', $email, $cookie_time, '/', '', false, true);
                     } else {
                         // Clear cookie if not selected
                         setcookie('remember_email', '', time() - 3600, '/');
@@ -103,9 +110,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $check_user = $conn->prepare("SELECT username, email, password, role, status, phoneNumber, date FROM customer WHERE email = ?");
                 $check_user->bind_param("s", $email);
                 $check_user->execute();
-                $result = $check_user->get_result();
+                $result = safe_get_result($check_user);
                 
-                if ($result->num_rows > 0) {
+                if ($result && $result->num_rows > 0) {
                     $user = $result->fetch_assoc();
                     
                     // Verify password
@@ -130,7 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Remember me: store only email in cookie (never password)
                         if (isset($_POST['remember-me'])) {
                             $cookie_time = time() + (30 * 24 * 60 * 60); // 30 days
-                            setcookie('remember_email', $email, ['expires' => $cookie_time, 'path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
+                            // PHP < 7.3 legacy signature
+                            setcookie('remember_email', $email, $cookie_time, '/', '', false, true);
                         } else {
                             // Clear cookie if not selected
                             setcookie('remember_email', '', time() - 3600, '/');

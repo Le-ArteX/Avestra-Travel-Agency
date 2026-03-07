@@ -1,54 +1,70 @@
 <?php
 include('dark_mode.php');
-include('../database/dbconnection.php');
+
+// Define data variables first to prevent undefined variable errors
+$hotels = array();
+$tours = array();
+
+try {
+    include('../database/dbconnection.php');
+    include('../database/HotelsData.php');
+} catch (Exception $e) {
+    echo "<div style='background:#fee; color:#900; padding:10px; border:1px solid #f99; margin:20px; text-align:center;'>";
+    echo "<strong>Database Error:</strong> " . htmlspecialchars($e->getMessage());
+    echo "</div>";
+}
 
 
-include('../database/HotelsData.php');
-
-
-function getActiveHotelsCount(array $hotels): int {
+function getActiveHotelsCount($hotels) {
     return count(array_filter($hotels, function ($hotel) {
         return isset($hotel['status']) && strcasecmp($hotel['status'], 'Active') === 0;
     }));
 }
 
 
-function getAvailableHotelsCount(array $hotels): int {
+function getAvailableHotelsCount($hotels) {
     return count($hotels);
 }
 
 
-$activeHotelsCount = getActiveHotelsCount($hotels);
-$availableHotelsCount = getAvailableHotelsCount($hotels);
+$activeHotelsCount = function_exists('getActiveHotelsCount') ? getActiveHotelsCount($hotels) : 0;
+$availableHotelsCount = function_exists('getAvailableHotelsCount') ? getAvailableHotelsCount($hotels) : 0;
 
 
 $acSeats = 0;
 $nonAcSeats = 0;
 $totalSeats = 0;
-$sql = "SELECT bus_class, seat_count FROM tickets WHERE ticket_type='Bus' AND status='active'";
-$result = $conn->query($sql);
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        if (strcasecmp($row['bus_class'], 'AC') === 0) {
-            $acSeats += (int)$row['seat_count'];
-        } elseif (strcasecmp($row['bus_class'], 'Non-AC') === 0) {
-            $nonAcSeats += (int)$row['seat_count'];
+if ($conn && !$conn->connect_error) {
+    $sql = "SELECT bus_class, seat_count FROM tickets WHERE ticket_type='Bus' AND status='active'";
+    $result = $conn->query($sql);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            if (strcasecmp($row['bus_class'], 'AC') === 0) {
+                $acSeats += (int)$row['seat_count'];
+            } elseif (strcasecmp($row['bus_class'], 'Non-AC') === 0) {
+                $nonAcSeats += (int)$row['seat_count'];
+            }
         }
+        $totalSeats = $acSeats + $nonAcSeats;
     }
-    $totalSeats = $acSeats + $nonAcSeats;
 }
 
-include('../database/ToursData.php');
-$totalToursCount = isset($tours) ? getTotalToursCount($tours) : 0;
-$activeToursCount = isset($tours) ? getActiveToursCount($tours) : 0;
+try {
+    include('../database/ToursData.php');
+} catch (Exception $e) {}
+
+$totalToursCount = function_exists('getTotalToursCount') ? getTotalToursCount($tours) : 0;
+$activeToursCount = function_exists('getActiveToursCount') ? getActiveToursCount($tours) : 0;
 
 $pendingBookingsCount = 0;
-$pbQuery = $conn->query("SELECT COUNT(*) as count FROM bookings WHERE booking_status = 'pending'");
-if ($pbQuery) {
-    $pendingBookingsCount = $pbQuery->fetch_assoc()['count'];
+if ($conn && !$conn->connect_error) {
+    $pbQuery = $conn->query("SELECT COUNT(*) as count FROM bookings WHERE booking_status = 'pending'");
+    if ($pbQuery) {
+        $pendingBookingsCount = $pbQuery->fetch_assoc()['count'];
+    }
 }
 
-$message_option = $_SESSION['settings']['message_option'] ?? 'enabled';
+$message_option = isset($_SESSION['settings']['message_option']) ? $_SESSION['settings']['message_option'] : 'enabled';
 $is_dark = isset($_SESSION['settings']['dark_mode']) && $_SESSION['settings']['dark_mode'] === 'dark';
 ?>
 <!DOCTYPE html>

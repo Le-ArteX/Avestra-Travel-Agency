@@ -6,7 +6,7 @@ require_once __DIR__ . '/../database/dbconnection.php';
 require_once __DIR__ . '/../utils/OTPUtility.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $user_otp = $_POST['otp_code'] ?? '';
+    $user_otp = isset($_POST['otp_code']) ? $_POST['otp_code'] : '';
 
     // Brute-force protection: max 5 attempts
     if (!isset($_SESSION['otp_attempts'])) {
@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $verification = \Admin\Utils\OTPUtility::verifyOTP($user_otp);
 
     if ($verification['success']) {
-        $action = $_SESSION['otp_action'] ?? '';
+        $action = isset($_SESSION['otp_action']) ? $_SESSION['otp_action'] : '';
 
         if ($action === 'signup') {
             $data = $_SESSION['otp_signup_data'];
@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         } elseif ($action === 'forgot') {
             $data = $_SESSION['otp_forgot_data'];
-            $table = $data['table'] ?? 'customer'; // Default to customer
+            $table = isset($data['table']) ? $data['table'] : 'customer'; // Default to customer
             
             $update = $conn->prepare("UPDATE $table SET password = ? WHERE email = ?");
             $update->bind_param("ss", $data['new_password'], $data['email']);

@@ -7,7 +7,8 @@
     --text: #222831;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -107,8 +108,8 @@ body {
 }
 
 /* Float label up when input is focused or has value */
-.login-form input:focus + label,
-.login-form input:not(:placeholder-shown) + label {
+.login-form input:focus+label,
+.login-form input:not(:placeholder-shown)+label {
     top: -10px !important;
     font-size: 0.85em;
     color: var(--accent);
@@ -162,6 +163,7 @@ body {
     display: block;
     font-weight: 600;
     line-height: 1.3;
+    transition: opacity 0.6s ease;
 }
 
 body.dark-mode .error-message {
@@ -178,6 +180,7 @@ body.dark-mode .error-message {
     border-radius: 8px;
     font-weight: 600;
     text-align: center;
+    transition: opacity 0.6s ease;
 }
 
 .info-message {
@@ -200,7 +203,41 @@ body.dark-mode .error-message {
     font-weight: 500;
 }
 
+.success-message {
+    background-color: #d4edda !important;
+    border: 1px solid #c3e6cb !important;
+    color: #155724 !important;
+    padding: 14px 15px !important;
+    border-radius: 10px !important;
+    margin-bottom: 22px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    display: block !important;
+    animation: fadeInScale 0.4s ease-out;
+    transition: opacity 0.6s ease !important;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 /* Dark mode message styles */
+body.dark-mode .success-message {
+    background-color: rgba(40, 167, 69, 0.25) !important;
+    border-color: rgba(40, 167, 69, 0.4) !important;
+    color: #9cf39c !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
 body.dark-mode .error-message {
     color: #ff6b6b;
 }
@@ -341,10 +378,10 @@ body.dark-mode .login-form label {
     color: var(--accent);
 }
 
-body.dark-mode .login-form input:focus + label,
-body.dark-mode .login-form input:not(:placeholder-shown) + label {
+body.dark-mode .login-form input:focus+label,
+body.dark-mode .login-form input:not(:placeholder-shown)+label {
     background: var(--mid-bg) !important;
-    padding: 0 5px!important;
+    padding: 0 5px !important;
 }
 
 body.dark-mode .login-form input:focus {
@@ -364,11 +401,13 @@ body.dark-mode .login-footer {
         border-radius: 0;
         box-shadow: none;
     }
+
     .login-form input[type="text"],
     .login-form input[type="password"] {
         font-size: 1em;
         padding: 10px 8px;
     }
+
     .login-form button {
         font-size: 1em;
         padding: 10px;

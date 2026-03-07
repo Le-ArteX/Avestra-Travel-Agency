@@ -1,6 +1,6 @@
 <?php
 // Add profile_image column to admin table
-include('dbconnection.php');
+include_once(__DIR__ . '/dbconnection.php');
 
 // Check if column already exists
 $check_sql = "SHOW COLUMNS FROM admin LIKE 'profile_image'";

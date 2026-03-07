@@ -4,6 +4,12 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 include '../database/dbconnection.php';
 
+if (!$conn || $conn->connect_error) {
+    $_SESSION['form_errors'] = ['general_error' => "Database connection error. Please try again later."];
+    header("Location: ../views/Signup.php");
+    exit();
+}
+
 $username = $email = $phoneNumber = $role = $password = $confirmPassword = "";
 $username_error = $email_error = $phoneNumber_error =
     $role_error = $password_error = $confirmPassword_error = "";
@@ -82,12 +88,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ];
         
         // Send OTP
-        \Admin\Utils\MailUtility::sendOTPMail($email, $otp);
-        $_SESSION['otp_success'] = "Verification code sent successfully!";
-        
-        // Redirect to OTP verification page
-        header("Location: ../views/verifyOTP.php");
-        exit();
+        $mailSent = \Admin\Utils\MailUtility::sendOTPMail($email, $otp);
+
+        if ($mailSent) {
+            $_SESSION['otp_success'] = "Verification code sent to $email. Please check your inbox.";
+            header("Location: ../views/verifyOTP.php");
+            exit();
+        } else {
+            $_SESSION['signup_error_message'] = "Failed to send verification email. Please try again.";
+            header("Location: ../views/Signup.php");
+            exit();
+        }
         // --- END OTP IMPLEMENTATION ---
     }
 

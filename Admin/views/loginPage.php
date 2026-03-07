@@ -94,6 +94,17 @@ include '../controller/loginFormDataHandler.php';
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             applyStoredTheme();
+
+            // Auto-dismiss success/error messages after 7 seconds
+            const messages = document.querySelectorAll('.success-message, .general-error-message, .info-message, .warning-message');
+            messages.forEach(msg => {
+                setTimeout(() => {
+                    msg.style.opacity = '0';
+                    setTimeout(() => { 
+                        msg.style.display = 'none'; 
+                    }, 600); // Wait for CSS transition
+                }, 7000);
+            });
         });
     </script>
 </body>

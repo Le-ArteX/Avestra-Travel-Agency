@@ -1,9 +1,19 @@
 <?php
-// Database connection configuration
-$host = "localhost";
-$user = "root";
-$password = "";
-$database = "avestra-Travel-Agency";
+
+$isLocal = in_array($_SERVER['SERVER_NAME'] ?? 'localhost', ['localhost', '127.0.0.1', '::1']);
+
+if ($isLocal) {
+    
+    $host     = "localhost";
+    $user     = "root";
+    $password = "";
+    $database = "avestra_db"; 
+} else {
+    $host     = "sql208.infinityfree.com";
+    $user     = "if0_41288586";
+    $password = "bQmut138SiJr";
+    $database = "if0_41288586_avestra_db";
+}
 
 // Create connection
 $conn = new mysqli($host, $user, $password, $database);

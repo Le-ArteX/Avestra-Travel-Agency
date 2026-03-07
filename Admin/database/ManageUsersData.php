@@ -1,9 +1,9 @@
 <?php
-include('dbconnection.php');
+include_once(__DIR__ . '/dbconnection.php');
 
-$search = $_POST['search'] ?? '';
-$role_filter = $_POST['role_filter'] ?? '';
-$status_filter = $_POST['status_filter'] ?? '';
+$search = isset($_POST['search']) ? $_POST['search'] : '';
+$role_filter = isset($_POST['role_filter']) ? $_POST['role_filter'] : '';
+$status_filter = isset($_POST['status_filter']) ? $_POST['status_filter'] : '';
 
 $items_per_page = 5;
 $current_page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
@@ -50,14 +50,14 @@ if (!empty($params)) {
     $count_stmt = $conn->prepare("SELECT COUNT(*) as total FROM customer $where_clause");
     $count_stmt->bind_param($types, ...$params);
     $count_stmt->execute();
-    $result = $count_stmt->get_result();
+    $result = safe_get_result($count_stmt);
     $row = $result->fetch_assoc();
-    $customer_count = intval($row['total'] ?? 0);
+    $customer_count = intval(isset($row['total']) ? $row['total'] : 0);
     $count_stmt->close();
 } else {
     $result = $conn->query("SELECT COUNT(*) as total FROM customer");
     $row = $result->fetch_assoc();
-    $customer_count = intval($row['total'] ?? 0);
+    $customer_count = intval(isset($row['total']) ? $row['total'] : 0);
 }
 
 // Count admins (excluding Pending)
@@ -70,14 +70,14 @@ if (!empty($params)) {
     $count_stmt = $conn->prepare("SELECT COUNT(*) as total FROM admin WHERE $admin_where_simple");
     $count_stmt->bind_param($types, ...$params);
     $count_stmt->execute();
-    $result = $count_stmt->get_result();
+    $result = safe_get_result($count_stmt);
     $row = $result->fetch_assoc();
-    $admin_count = intval($row['total'] ?? 0);
+    $admin_count = intval(isset($row['total']) ? $row['total'] : 0);
     $count_stmt->close();
 } else {
     $result = $conn->query("SELECT COUNT(*) as total FROM admin WHERE $admin_where_simple");
     $row = $result->fetch_assoc();
-    $admin_count = intval($row['total'] ?? 0);
+    $admin_count = intval(isset($row['total']) ? $row['total'] : 0);
 }
 
 $total_users = $customer_count + $admin_count;
@@ -101,7 +101,7 @@ if (!empty($params)) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param($types . $types, ...$all_params);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $result = safe_get_result($stmt);
 } else {
     $result = $conn->query($sql);
 }

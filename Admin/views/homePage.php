@@ -1,12 +1,24 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 include('dark_mode.php');
 include('../database/MaintenanceCheck.php');
 
-include('../database/ToursData.php');
-include('../database/HotelsData.php');
+// Initialize data arrays to prevent crashes if includes fail
+$tours = array();
+$hotels = array();
+
+try {
+    include('../database/ToursData.php');
+    include('../database/HotelsData.php');
+} catch (Exception $e) {
+    echo "<div style='background:#fee; color:#900; padding:10px; border:1px solid #f99; margin:20px;'>";
+    echo "<strong>Database Helper Error:</strong> " . htmlspecialchars($e->getMessage());
+    echo "</div>";
+}
 
 // Helper: count active hotels
-function getActiveHotelsCount(array $hotels): int {
+function getActiveHotelsCount($hotels) {
     return count(array_filter($hotels, function ($hotel) {
         return isset($hotel['status']) && strcasecmp($hotel['status'], 'Active') === 0;
     }));
@@ -15,7 +27,7 @@ $activeHotelsCount = getActiveHotelsCount($hotels);
 
 
 checkMaintenanceMode(true);
-$activeToursCount = getActiveToursCount($tours);
+$activeToursCount = function_exists('getActiveToursCount') ? getActiveToursCount($tours) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +38,7 @@ $activeToursCount = getActiveToursCount($tours);
     <title>Avestra Travel Agency : Book Tickets, Hotel, Transport</title>
     <link rel="stylesheet" href="../styleSheets/homePage.css?v=<?php echo time(); ?>">
     <script>
-        // Intelligent theme application: trust session if set, fallback to localStorage for guests
+
         (function() {
             const savedTheme = localStorage.getItem('theme');
             const sessionThemeSet = <?= $session_theme_set ? 'true' : 'false' ?>;
@@ -37,7 +49,7 @@ $activeToursCount = getActiveToursCount($tours);
                 document.documentElement.setAttribute('data-theme', currentTheme);
             } else if (savedTheme) {
                 document.documentElement.setAttribute('data-theme', savedTheme);
-                // Also update body class immediately if possible, or theme.js will handle it
+
                 document.addEventListener('DOMContentLoaded', () => {
                     document.body.classList.remove('light-mode', 'dark-mode');
                     document.body.classList.add(savedTheme + '-mode');
@@ -70,7 +82,7 @@ $activeToursCount = getActiveToursCount($tours);
 
 <body class="<?= $session_theme_set ? ($is_dark ? 'dark-mode' : 'light-mode') : '' ?>">
     <script>
-        // Apply localStorage theme to body class immediately to prevent flicker if session isn't set
+
         if (!<?= $session_theme_set ? 'true' : 'false' ?>) {
             const theme = localStorage.getItem('theme') || 'light';
             document.body.classList.add(theme + '-mode');

@@ -69,11 +69,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'table' => $is_admin ? 'admin' : 'customer'
             ];
             
-            \Admin\Utils\MailUtility::sendOTPMail($email, $otp);
-            $_SESSION['otp_success'] = "Verification code sent successfully!";
-            
-            header("Location: ../views/verifyOTP.php");
-            exit();
+            $mailSent = \Admin\Utils\MailUtility::sendOTPMail($email, $otp);
+
+            if ($mailSent) {
+                $_SESSION['otp_success'] = "Verification code sent to $email. Please check your inbox.";
+                header("Location: ../views/verifyOTP.php");
+                exit();
+            } else {
+                $_SESSION['forgot_error_message'] = "Failed to send verification email. Please check your email address and try again.";
+                header("Location: ../views/forgotPassword.php");
+                exit();
+            }
             // --- END OTP IMPLEMENTATION ---
 
         } else {

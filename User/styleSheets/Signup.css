@@ -7,7 +7,8 @@
     --text: #222831;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -97,8 +98,8 @@ body {
 }
 
 /* Float label */
-.signup-form input:focus + label,
-.signup-form input:not(:placeholder-shown) + label {
+.signup-form input:focus+label,
+.signup-form input:not(:placeholder-shown)+label {
     top: -10px;
     font-size: 0.8em;
     background: var(--surface);
@@ -129,11 +130,11 @@ body {
     -webkit-appearance: none;
     cursor: pointer;
     background-image: linear-gradient(45deg, transparent 50%, var(--accent) 50%),
-                      linear-gradient(135deg, var(--accent) 50%, transparent 50%);
+        linear-gradient(135deg, var(--accent) 50%, transparent 50%);
     background-position: calc(100% - 18px) calc(50% - 3px),
-                         calc(100% - 13px) calc(50% - 3px);
+        calc(100% - 13px) calc(50% - 3px);
     background-size: 8px 8px,
-                     8px 8px;
+        8px 8px;
     background-repeat: no-repeat;
 }
 
@@ -154,13 +155,13 @@ body {
 .signup-form button {
     width: 100%;
     padding: 10px;
-    background:  var(--accent);
+    background: var(--accent);
     color: var(--dark-bg);
     border: none;
     border-radius: 5px;
     font-size: 1.1em;
     font-weight: bold;
-    cursor:  pointer;
+    cursor: pointer;
     transition: background 0.2s, color 0.2s;
 }
 
@@ -222,8 +223,8 @@ body.dark-mode .signup-form label {
     color: var(--accent);
 }
 
-body.dark-mode .signup-form input:focus + label,
-body.dark-mode .signup-form input:not(:placeholder-shown) + label {
+body.dark-mode .signup-form input:focus+label,
+body.dark-mode .signup-form input:not(:placeholder-shown)+label {
     background: var(--mid-bg);
     padding: 0 5px;
 }
@@ -251,6 +252,7 @@ body.dark-mode .signup-footer {
         border-radius: 0;
         box-shadow: none;
     }
+
     .signup-form input[type="text"],
     .signup-form input[type="email"],
     .signup-form input[type="password"],
@@ -259,6 +261,7 @@ body.dark-mode .signup-footer {
         font-size: 1em;
         padding: 10px 8px;
     }
+
     .signup-form button {
         font-size: 1em;
         padding: 10px;

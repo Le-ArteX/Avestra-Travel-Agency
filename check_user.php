@@ -1,5 +1,5 @@
 <?php
-require_once 'c:/xampp/htdocs/Avestra-Travel-Agency/Admin/database/dbconnection.php';
+require_once __DIR__ . '/Admin/database/dbconnection.php';
 
 $email = 'mursalinleon95@gmail.com';
 

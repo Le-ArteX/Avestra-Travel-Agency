@@ -1,6 +1,6 @@
 <?php
 // Include database connection
-include('dbconnection.php');
+include_once(__DIR__ . '/dbconnection.php');
 
 
 if (!$conn->query($create_admin_table)) {
@@ -37,7 +37,7 @@ function getAdminUsers($conn, $search = '', $status_filter = '') {
     }
     
     $stmt->execute();
-    $result = $stmt->get_result();
+    $result = safe_get_result($stmt);
     $admins = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
     
@@ -49,7 +49,7 @@ function adminExists($conn, $email) {
     $stmt = $conn->prepare("SELECT email FROM admin WHERE email = ?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $result = safe_get_result($stmt);
     $exists = $result->num_rows > 0;
     $stmt->close();
     return $exists;

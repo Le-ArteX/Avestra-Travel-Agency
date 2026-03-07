@@ -1,6 +1,6 @@
 <?php
 // Add image column to tickets table
-include('dbconnection.php');
+include_once(__DIR__ . '/dbconnection.php');
 
 // Check if column already exists
 $check_sql = "SHOW COLUMNS FROM tickets LIKE 'image'";

@@ -2,26 +2,19 @@
 session_start();
 include '../database/dbconnection.php';
 
+if (!$conn || $conn->connect_error) {
+    $_SESSION['login_error_message'] = "Database connection error. Please try again later.";
+    header("Location: ../../Admin/views/loginPage.php");
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (empty($_POST['email']) || empty($_POST['password'])) {
-        $_SESSION['login_error_message'] = "All fields required.";
-        header("Location: ../../Admin/views/loginPage.php");
-        exit();
-    }
-
-    $email    = trim($_POST['email']);
-    $password = trim($_POST['password']);
-
-    // Query the customer table (corrected from the legacy 'signup' table)
-    $stmt = $conn->prepare(
-        "SELECT username, email, password, role, status FROM customer WHERE email = ?"
-    );
+// ... existing code ...
     $stmt->bind_param("s", $email);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $result = safe_get_result($stmt);
 
-    if ($result->num_rows === 1) {
+    if ($result && $result->num_rows === 1) {
         $user = $result->fetch_assoc();
 
         if (password_verify($password, $user['password'])) {

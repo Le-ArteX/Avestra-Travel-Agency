@@ -1,7 +1,7 @@
 <?php
-include('dbconnection.php');
+include_once(__DIR__ . '/dbconnection.php');
 
-$admin_email = $_SESSION['admin_email'] ?? '';
+$admin_email = isset($_SESSION['admin_email']) ? $_SESSION['admin_email'] : '';
 $admin_profile_image = '../images/logo.png';
 
 if (!empty($admin_email)) {
@@ -10,15 +10,15 @@ if (!empty($admin_email)) {
     if ($stmt) {
         $stmt->bind_param("s", $admin_email);
         $stmt->execute();
-        $result = $stmt->get_result();
+        $result = safe_get_result($stmt);
         if ($result->num_rows > 0) {
             $admin = $result->fetch_assoc();
-            $_SESSION['admin_name'] = $admin['username'] ?? 'Admin User';
-            $_SESSION['admin_email'] = $admin['email'] ?? '';
-            $_SESSION['admin_phone'] = $admin['phoneNumber'] ?? '';
-            $_SESSION['admin_role'] = $admin['role'] ?? 'Administrator';
-            $_SESSION['admin_status'] = $admin['status'] ?? 'Active';
-            $_SESSION['admin_date'] = $admin['created_at'] ?? date('Y-m-d');
+            $_SESSION['admin_name'] = isset($admin['username']) ? $admin['username'] : 'Admin User';
+            $_SESSION['admin_email'] = isset($admin['email']) ? $admin['email'] : '';
+            $_SESSION['admin_phone'] = isset($admin['phoneNumber']) ? $admin['phoneNumber'] : '';
+            $_SESSION['admin_role'] = isset($admin['role']) ? $admin['role'] : 'Administrator';
+            $_SESSION['admin_status'] = isset($admin['status']) ? $admin['status'] : 'Active';
+            $_SESSION['admin_date'] = isset($admin['created_at']) ? $admin['created_at'] : date('Y-m-d');
             if (!empty($admin['profile_image']) && file_exists('../images/profiles/' . $admin['profile_image'])) {
                 $admin_profile_image = '../images/profiles/' . $admin['profile_image'];
             }

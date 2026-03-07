@@ -1,6 +1,6 @@
 <?php
 // Include database connection
-include('dbconnection.php');
+include_once(__DIR__ . '/dbconnection.php');
 
 // Ensure admin table has id column (check and add if missing)
 $check_id = $conn->query("SHOW COLUMNS FROM admin LIKE 'id'");
@@ -25,7 +25,7 @@ $requests_sql = "SELECT id, username, email, phoneNumber as phone_number, date a
 $stmt = $conn->prepare($requests_sql);
 $stmt->bind_param("ii", $pending_items_per_page, $pending_offset);
 $stmt->execute();
-$requests_result = $stmt->get_result();
+$requests_result = safe_get_result($stmt);
 $pending_requests = $requests_result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 

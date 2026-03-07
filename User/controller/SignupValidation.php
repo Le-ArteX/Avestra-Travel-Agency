@@ -2,6 +2,12 @@
 session_start();
 include '../database/dbconnection.php';
 
+if (!$conn || $conn->connect_error) {
+    $_SESSION['signup_error_message'] = "Database connection error. Please try again later.";
+    header("Location: ../../Admin/views/Signup.php");
+    exit();
+}
+
 $username = $email = $phoneNumber = $role = $password = "";
 $username_error = $email_error = $phoneNumber_error =
 $role_error = $password_error = $confirmPassword_error = "";
@@ -57,12 +63,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         empty($confirmPassword_error) && empty($general_error)
     ) {
 
-        $check = $conn->prepare("SELECT email FROM signup WHERE email=?");
+        $check = $conn->prepare("SELECT email FROM customer WHERE email=?");
+        if (!$check) {
+            // Fallback to signup table if customer table query fails
+            $check = $conn->prepare("SELECT email FROM signup WHERE email=?");
+        }
         $check->bind_param("s", $email);
         $check->execute();
-        $res = $check->get_result();
+        $res = safe_get_result($check);
 
-        if ($res->num_rows > 0) {
+        if ($res && $res->num_rows > 0) {
             $_SESSION['signup_error_message'] = "Email already exists.";
             header("Location: ../views/Signup.php");
             exit();
@@ -77,23 +87,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $insert->bind_param("sssss", $username, $email, $phoneNumber, $role, $hashed);
 
         if ($insert->execute()) {
+            // --- OTP IMPLEMENTATION ---
+            require_once __DIR__ . '/../../Admin/utils/OTPUtility.php';
+            require_once __DIR__ . '/../../Admin/utils/MailUtility.php';
+            
+            $otp = \Admin\Utils\OTPUtility::generateOTP();
+            \Admin\Utils\OTPUtility::storeOTP($otp);
+            
+            // Store session data specifically for OTP verification
+            $_SESSION['otp_action'] = 'signup';
+            $_SESSION['otp_signup_data'] = [
+                'username' => $username,
+                'email' => $email,
+                'phoneNumber' => $phoneNumber,
+                'role' => $role,
+                'password' => $hashed,
+                'date' => date('Y-m-d H:i:s')
+            ];
+            
+            // Send OTP
+            $mailSent = \Admin\Utils\MailUtility::sendOTPMail($email, $otp);
 
-            /* Auto login */
-            $_SESSION['email'] = $email;
-            $_SESSION['username'] = $username;
-            $_SESSION['role'] = $role;
-
-            /* Redirect back after booking */
-            if (isset($_SESSION['redirect_after_login'])) {
-                $redirect = $_SESSION['redirect_after_login'];
-                unset($_SESSION['redirect_after_login']);
-                header("Location: $redirect");
+            if ($mailSent) {
+                $_SESSION['otp_success'] = "Verification code sent to $email. Please check your inbox.";
+                header("Location: ../../Admin/views/verifyOTP.php");
+                exit();
+            } else {
+                $_SESSION['signup_error_message'] = "Failed to send verification email. Please try again.";
+                header("Location: ../../Admin/views/Signup.php");
                 exit();
             }
-
-            /* Default */
-            header("Location: ../../Admin/views/loginPage.php");
-            exit();
+            // --- END OTP IMPLEMENTATION ---
         }
     }
 
