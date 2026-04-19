@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['success' => false, 'message' => 'Please enter a valid email address.']);
             exit();
         }
-        
+
         $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $name, $email, $message);
         
